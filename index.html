@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>عمر التجاني | Portfolio</title>
+    <style>
+        /* تصميم الخلفية والصفحة */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(45deg, #0f2027, #203a43, #2c5364);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            overflow: hidden;
+        }
+
+        /* كارت البروفايل الزجاجي */
+        .profile-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 30px;
+            padding: 40px 20px;
+            text-align: center;
+            width: 90%;
+            max-width: 380px;
+            box-shadow: 0 25px 45px rgba(0,0,0,0.2);
+        }
+
+        /* قسم الصورة الشخصية */
+        .avatar-wrapper {
+            position: relative;
+            width: 130px;
+            height: 130px;
+            margin: 0 auto 20px;
+        }
+
+        #profile-img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid #4CAF50;
+            cursor: pointer;
+            transition: 0.4s ease;
+        }
+
+        #profile-img:hover {
+            transform: rotate(5deg) scale(1.05);
+        }
+
+        .upload-hint {
+            font-size: 12px;
+            color: #aaa;
+            margin-top: 5px;
+        }
+
+        /* النصوص */
+        h1 {
+            margin: 10px 0 5px;
+            font-size: 24px;
+            letter-spacing: 1px;
+        }
+
+        .bio {
+            font-size: 14px;
+            color: #4CAF50;
+            margin-bottom: 25px;
+            font-weight: 300;
+        }
+
+        /* أزرار المشاريع */
+        .projects-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .project-link {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            text-decoration: none;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 500;
+            transition: 0.3s;
+            border: 1px solid transparent;
+        }
+
+        .project-link:hover {
+            background: #4CAF50;
+            color: white;
+            transform: translateY(-5px);
+            border-color: rgba(255,255,255,0.5);
+        }
+
+        /* أيقونات السوشيال ميديا */
+        .social-media {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .social-media a {
+            color: white;
+            text-decoration: none;
+            font-size: 13px;
+            opacity: 0.6;
+            transition: 0.3s;
+        }
+
+        .social-media a:hover {
+            opacity: 1;
+            color: #4CAF50;
+        }
+
+        /* إخفاء زر الرفع الأصلي */
+        #file-input { display: none; }
+    </style>
+</head>
+<body>
+
+    <div class="profile-card">
+        <div class="avatar-wrapper">
+            <label for="file-input">
+                <img id="profile-img" src="https://via.placeholder.com/150?text=أضف+صورتك" alt="Omar Tegany">
+            </label>
+            <input id="file-input" type="file" accept="image/*" onchange="saveAndPreviewImage(event)">
+            <div class="upload-hint">اضغط على الصورة لتغييرها</div>
+        </div>
+
+        <h1>عمر التجاني</h1>
+        <p class="bio">مطور واجهات مستخدم | مصمم مشروع "وذكر" و "JJK"</p>
+
+        <div class="projects-container">
+            <a href="#" class="project-link">✨ موقع وذكر (صدقة جارية)</a>
+            <a href="#" class="project-link">👊 ساحة فعاليات JJK</a>
+            <a href="https://github.com/omartegany8-create" target="_blank" class="project-link">📂 مستودع الأكواد GitHub</a>
+        </div>
+
+        <div class="social-media">
+            <a href="#">Facebook</a>
+            <a href="#">Instagram</a>
+            <a href="#">WhatsApp</a>
+        </div>
+    </div>
+
+    <script>
+        // دالة حفظ ومعاينة الصورة
+        function saveAndPreviewImage(event) {
+            const file = event.target.files[0];
+            const reader = new FileReader();
+
+            reader.onload = function() {
+                const imageData = reader.result;
+                // عرض الصورة فوراً
+                document.getElementById('profile-img').src = imageData;
+                // حفظها في Local Storage
+                localStorage.setItem('user_profile_pic', imageData);
+            }
+
+            if (file) {
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // عند تحميل الصفحة، ابحث عن صورة محفوظة
+        window.onload = function() {
+            const savedImage = localStorage.getItem('user_profile_pic');
+            if (savedImage) {
+                document.getElementById('profile-img').src = savedImage;
+            }
+        };
+    </script>
+
+</body>
+</html>
