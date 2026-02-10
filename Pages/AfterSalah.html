@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>أذكار بعد الصلاة | وذكر</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@700&family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #f0f4f3;
+            --nav-bg: linear-gradient(135deg, #16a085, #0e6251);
+            --card: #ffffff;
+            --text: #2c3e50;
+            --primary: #16a085;
+            --accent: #e8f8f5;
+            --shadow: 0 10px 25px rgba(0,0,0,0.05);
+        }
+
+        [data-theme="dark"] {
+            --bg: #0f172a;
+            --nav-bg: #1e293b;
+            --card: #1e293b;
+            --text: #f1f5f9;
+            --accent: #16a08522;
+            --shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; user-select: none; transition: all 0.3s ease; }
+
+        body {
+            font-family: 'Cairo', sans-serif; background: var(--bg);
+            margin: 0; min-height: 100vh; color: var(--text); padding-bottom: 50px;
+        }
+
+        /* الساكورا */
+        .sakura-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
+        .leaf { position: absolute; background: #ffd1dc; border-radius: 100% 0 100% 0; opacity: 0.3; animation: fall linear infinite; }
+        @keyframes fall {
+            0% { transform: translateY(-10vh) rotate(0deg); opacity: 0; }
+            100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
+        }
+
+        /* الناف بار */
+        .navbar {
+            height: 70px; background: var(--nav-bg); display: flex; align-items: center;
+            justify-content: space-between; padding: 0 20px;
+            box-shadow: var(--shadow); position: sticky; top: 0; z-index: 100; color: #fff;
+        }
+        .nav-title { font-family: 'Amiri', serif; font-weight: 800; font-size: 1.4rem; }
+        .nav-btn { width: 45px; height: 45px; display: grid; place-items: center; cursor: pointer; border-radius: 12px; background: rgba(255,255,255,0.1); color: #fff; text-decoration: none; }
+
+        .container { padding: 20px; max-width: 600px; margin: auto; position: relative; z-index: 5; }
+
+        /* كرت الذكر */
+        .zkr-card {
+            background: var(--card); padding: 25px; border-radius: 25px;
+            margin-bottom: 20px; position: relative; box-shadow: var(--shadow);
+            border-right: 6px solid var(--primary);
+        }
+        .actions { display: flex; gap: 15px; position: absolute; top: 15px; left: 20px; }
+        .action-icon { cursor: pointer; color: #94a3b8; font-size: 1rem; }
+
+        .zkr-text {
+            font-family: 'Amiri', serif; font-size: 1.5rem; line-height: 1.9;
+            margin: 25px 0 15px 0; text-align: center; color: var(--text);
+        }
+
+        /* العداد */
+        .counter-btn {
+            width: 100%; padding: 15px; background: var(--accent);
+            color: var(--primary); border: none;
+            border-radius: 18px; font-size: 1.2rem; font-weight: 800; cursor: pointer;
+            display: flex; justify-content: center; align-items: center; gap: 8px;
+        }
+        .counter-btn span { background: var(--primary); color: white; padding: 2px 12px; border-radius: 10px; }
+        .counter-btn.done { background: #10b981 !important; color: #fff !important; opacity: 0.6; }
+
+        /* توست وإعادة ضبط */
+        #toast {
+            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+            background: #1e293b; color: #fff; padding: 10px 25px;
+            border-radius: 50px; display: none; z-index: 2000; font-size: 0.85rem;
+        }
+        .reset-page {
+            display: block; margin: 30px auto; background: var(--card);
+            color: var(--primary); border: 2px solid var(--primary);
+            padding: 12px 30px; border-radius: 50px; font-weight: 800; cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="sakura-container" id="sakura"></div>
+
+    <nav class="navbar">
+        <div class="nav-btn" onclick="toggleTheme()"><i class="fa-solid fa-moon"></i></div>
+        <div class="nav-title">أذكار بعد الصلاة</div>
+        <div class="nav-btn" onclick="history.back()"><i class="fa-solid fa-chevron-left"></i></div>
+    </nav>
+
+    <div class="container">
+        
+        <div class="zkr-card">
+            <div class="actions">
+                <i class="fa-solid fa-rotate-left action-icon" onclick="resetCard(this, 3)"></i>
+                <i class="fa-regular fa-copy action-icon" onclick="copyText(this)"></i>
+            </div>
+            <p class="zkr-text">أَسْتَغْفِرُ اللهَ</p>
+            <button class="counter-btn" onclick="handleCount(this)">باقي: <span>3</span></button>
+        </div>
+
+        <div class="zkr-card">
+            <div class="actions">
+                <i class="fa-solid fa-rotate-left action-icon" onclick="resetCard(this, 1)"></i>
+                <i class="fa-regular fa-copy action-icon" onclick="copyText(this)"></i>
+            </div>
+            <p class="zkr-text">اللَّهُمَّ أَنْتَ السَّلامُ وَمِنْكَ السَّلامُ، تَبَارَكْتَ يَا ذَا الْجَلَالِ وَالإِكْرَامِ.</p>
+            <button class="counter-btn" onclick="handleCount(this)">باقي: <span>1</span></button>
+        </div>
+
+        <div class="zkr-card">
+            <div class="actions">
+                <i class="fa-solid fa-rotate-left action-icon" onclick="resetCard(this, 33)"></i>
+                <i class="fa-regular fa-copy action-icon" onclick="copyText(this)"></i>
+            </div>
+            <p class="zkr-text">سُبْحَانَ اللهِ</p>
+            <button class="counter-btn" onclick="handleCount(this)">باقي: <span>33</span></button>
+        </div>
+
+        <div class="zkr-card">
+            <div class="actions">
+                <i class="fa-solid fa-rotate-left action-icon" onclick="resetCard(this, 33)"></i>
+                <i class="fa-regular fa-copy action-icon" onclick="copyText(this)"></i>
+            </div>
+            <p class="zkr-text">الْحَمْدُ للهِ</p>
+            <button class="counter-btn" onclick="handleCount(this)">باقي: <span>33</span></button>
+        </div>
+
+        <div class="zkr-card">
+            <div class="actions">
+                <i class="fa-solid fa-rotate-left action-icon" onclick="resetCard(this, 33)"></i>
+                <i class="fa-regular fa-copy action-icon" onclick="copyText(this)"></i>
+            </div>
+            <p class="zkr-text">اللهُ أَكْبَرُ</p>
+            <button class="counter-btn" onclick="handleCount(this)">باقي: <span>33</span></button>
+        </div>
+
+        <div class="zkr-card">
+            <div class="actions">
+                <i class="fa-solid fa-rotate-left action-icon" onclick="resetCard(this, 1)"></i>
+                <i class="fa-regular fa-copy action-icon" onclick="copyText(this)"></i>
+            </div>
+            <p class="zkr-text" style="font-size: 1.2rem;">﴿اللَّهُ لَا إِلَهَ إِلَّا هُوَ الْحَيُّ الْقَيُّومُ لَا تَأْخُذُهُ سِنَةٌ وَلَا نَوْمٌ لَهُ مَا فِي السَّمَاوَاتِ وَمَا فِي الْأَرْضِ...﴾</p>
+            <button class="counter-btn" onclick="handleCount(this)">قراءة: <span>1</span></button>
+        </div>
+
+        <button class="reset-page" onclick="location.reload()"><i class="fa-solid fa-rotate-right"></i> إعادة كل الأذكار</button>
+
+    </div>
+
+    <div id="toast">تم النسخ بنجاح</div>
+
+    <script>
+        function handleCount(btn) {
+            let span = btn.querySelector('span');
+            let val = parseInt(span.innerText);
+            if (val > 1) {
+                span.innerText = val - 1;
+                if(navigator.vibrate) navigator.vibrate(35);
+            } else {
+                btn.innerHTML = '<i class="fa-solid fa-check"></i> تم بحمد الله';
+                btn.classList.add('done');
+                btn.parentElement.style.opacity = "0.7";
+                if(navigator.vibrate) navigator.vibrate([50, 50]);
+            }
+        }
+
+        function resetCard(icon, originalCount) {
+            const card = icon.closest('.zkr-card');
+            const btn = card.querySelector('.counter-btn');
+            btn.innerHTML = `باقي: <span>${originalCount}</span>`;
+            btn.classList.remove('done');
+            card.style.opacity = "1";
+            showToast("تم إعادة العداد");
+        }
+
+        function copyText(icon) {
+            const text = icon.closest('.zkr-card').querySelector('.zkr-text').innerText;
+            navigator.clipboard.writeText(text);
+            showToast("تم نسخ الذكر");
+        }
+
+        function toggleTheme() {
+            const b = document.body;
+            const icon = document.querySelector('.navbar .fa-solid');
+            if(b.getAttribute('data-theme') === 'dark') {
+                b.removeAttribute('data-theme');
+                icon.className = "fa-solid fa-moon";
+            } else {
+                b.setAttribute('data-theme', 'dark');
+                icon.className = "fa-solid fa-sun";
+            }
+        }
+
+        function showToast(m) {
+            let t = document.getElementById('toast');
+            t.innerText = m; t.style.display = 'block';
+            setTimeout(() => t.style.display = 'none', 1500);
+        }
+
+        function initSakura() {
+            const c = document.getElementById('sakura');
+            for(let i=0; i<15; i++) {
+                let l = document.createElement('div'); l.className = 'leaf';
+                l.style.left = Math.random() * 100 + '%';
+                l.style.width = l.style.height = (Math.random() * 6 + 5) + 'px';
+                l.style.animationDuration = (Math.random() * 5 + 8) + 's';
+                c.appendChild(l);
+            }
+        }
+
+        document.documentElement.style.webkitTapHighlightColor = 'transparent';
+        initSakura();
+    </script>
+</body>
+</html>
