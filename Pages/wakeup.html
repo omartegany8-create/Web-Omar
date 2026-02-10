@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>وذكر | أذكار الاستيقاظ</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* ألوان الاستيقاظ الكيوت: باستيل سماوي وخوخي */
+            --bg: #f0f9ff;
+            --nav-bg: rgba(255, 255, 255, 0.85);
+            --card-bg: #ffffff;
+            --text-main: #475569;
+            --primary: #60a5fa; /* أزرق سماوي ناعم */
+            --accent: #fb923c; /* خوخي مشرق */
+            --shadow: 0 15px 35px rgba(96, 165, 250, 0.1);
+            --btn-bg: #f8fafc;
+        }
+
+        [data-theme="dark"] {
+            /* دارك مود بنفسجي ليلي كيوت (Midnight Berry) */
+            --bg: #1e1b4b; 
+            --nav-bg: rgba(30, 27, 75, 0.9);
+            --card-bg: #312e81;
+            --text-main: #e0e7ff;
+            --primary: #818cf8;
+            --accent: #f472b6; /* وردي متوهج */
+            --btn-bg: #3730a3;
+            --shadow: 0 15px 40px rgba(0,0,0,0.3);
+        }
+
+        * { 
+            -webkit-tap-highlight-color: transparent; 
+            user-select: none; 
+            box-sizing: border-box; 
+            outline: none; 
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        body { 
+            margin: 0; font-family: 'Cairo', sans-serif; min-height: 100vh;
+            background: var(--bg);
+            background-image: url('https://www.transparenttextures.com/patterns/pollen.png');
+            display: flex; flex-direction: column; align-items: center;
+            padding: 90px 15px 30px; color: var(--text-main);
+            overflow-x: hidden;
+        }
+
+        /* الناف بار */
+        .navbar {
+            position: fixed; top: 0; width: 100%; height: 75px;
+            background: var(--nav-bg); backdrop-filter: blur(20px);
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 5%; z-index: 1000; box-shadow: var(--shadow);
+            border-bottom: 2px solid rgba(255,255,255,0.1);
+            border-radius: 0 0 25px 25px;
+        }
+
+        .nav-icon {
+            width: 45px; height: 45px; background: var(--btn-bg);
+            border-radius: 15px; display: grid; place-items: center;
+            color: var(--primary); cursor: pointer; font-size: 1.2rem;
+        }
+
+        .nav-title { font-family: 'Amiri'; font-size: 24px; color: var(--primary); font-weight: 700; }
+
+        .container { width: 100%; max-width: 500px; }
+
+        /* كارد كيوت */
+        .zkr-card {
+            background: var(--card-bg); border-radius: 35px; padding: 30px 25px;
+            margin-bottom: 25px; position: relative; box-shadow: var(--shadow);
+            border: 2px solid rgba(255,255,255,0.5);
+            animation: slideIn 0.7s ease;
+        }
+
+        @keyframes slideIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+
+        .actions { display: flex; gap: 15px; position: absolute; top: 20px; left: 25px; }
+        .action-icon { color: #cbd5e1; cursor: pointer; transition: 0.3s; }
+        .action-icon:hover { color: var(--accent); transform: rotate(15deg); }
+
+        .zkr-text {
+            font-family: 'Amiri', serif; font-size: 1.5rem; line-height: 1.8;
+            text-align: center; color: var(--text-main); margin: 35px 0 20px;
+        }
+
+        .zkr-source {
+            display: block; text-align: center; font-size: 0.85rem;
+            color: var(--accent); font-weight: 700; margin-bottom: 20px;
+        }
+
+        /* زر التسبيح والأنيميشن */
+        .counter-btn {
+            width: 100%; padding: 18px; background: var(--btn-bg);
+            color: var(--text-main); border: none;
+            border-radius: 25px; font-size: 1.1rem; font-weight: 800;
+            cursor: pointer; display: flex; justify-content: center; 
+            align-items: center; gap: 12px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        .counter-btn span {
+            background: var(--primary); color: #fff;
+            min-width: 40px; height: 40px; display: grid; place-items: center;
+            border-radius: 50%; font-size: 1.2rem;
+            box-shadow: 0 4px 10px rgba(96, 165, 250, 0.3);
+        }
+
+        /* حالة الانتهاء */
+        .counter-btn.done {
+            background: var(--accent) !important;
+            color: #fff !important;
+            animation: bounce 0.5s ease;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .check-mark { display: none; font-size: 1.4rem; }
+        .counter-btn.done .check-mark { display: inline-block; }
+        .counter-btn.done span, .counter-btn.done .btn-txt { display: none; }
+
+        #toast {
+            position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%);
+            background: var(--primary); color: #fff; padding: 12px 30px;
+            border-radius: 50px; font-size: 0.9rem; display: none; z-index: 2000;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+
+        .reset-page {
+            margin: 30px; background: var(--card-bg); border: none;
+            color: var(--primary); padding: 14px 40px; border-radius: 20px;
+            font-weight: 800; cursor: pointer; box-shadow: var(--shadow);
+        }
+    </style>
+</head>
+<body oncontextmenu="return false;">
+
+    <nav class="navbar">
+        <div class="nav-icon" onclick="toggleTheme()" id="theme-toggle">
+            <i class="fa-solid fa-wand-magic-sparkles"></i>
+        </div>
+        <div class="nav-title">أذكار الاستيقاظ</div>
+        <div class="nav-icon" onclick="history.back()">
+            <i class="fa-solid fa-chevron-left"></i>
+        </div>
+    </nav>
+
+    <div class="container" id="azkar-list">
+        </div>
+
+    <button class="reset-page" onclick="location.reload()">إعادة من جديد</button>
+
+    <div id="toast"></div>
+
+    <script>
+        const wakingAzkar = [
+            { text: "الحَمْدُ للهِ الذِي أَحْيَانَا بَعْدَ مَا أَمَاتَنَا وَإِلَيْهِ النُّشُورُ.", count: 1, source: "رواه البخاري" },
+            { text: "الحَمْدُ للهِ الَّذِي عَافَانِي فِي جَسَدِي، وَرَدَّ عَلَيَّ رُوحِي، وَأَذِنَ لِي بِذِكْرِهِ.", count: 1, source: "رواه الترمذي" },
+            { text: "لَا إِلَهَ إِلَّا اللهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ، وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ، سُبْحَانَ اللهِ، وَالْحَمْدُ للهِ، وَلَا إِلَهَ إِلَّا اللهُ، وَاللهُ أَكْبَرُ، وَلَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِاللهِ الْعَلِيِّ الْعَظِيمِ، ربِّ اغْفِرْ لِي.", count: 1, source: "من تعارّ من الليل (صحا فجأة) - استجيب له" },
+            { text: "قراءة الآيات العشر الأواخر من سورة آل عمران: {إِنَّ فِي خَلْقِ السَّمَاوَاتِ وَالْأَرْضِ وَاخْتِلَافِ اللَّيْلِ وَالنَّهَارِ لَآيَاتٍ لِّأُولِي الْأَلْبَابِ...}", count: 1, source: "كان النبي ﷺ يقرأها إذا استيقظ" },
+            { text: "الحمدُ للهِ الذي ردَّ عليَّ رُوحِي ولَم يُمِتْها في مَنَامِها، الحمدُ للهِ الذي يُمْسِكُ السَّمواتِ والأرضَ أن تزولا.", count: 1, source: "دعاء الاستيقاظ" },
+            { text: "اللَّهُمَّ اجْعَلْ فِي قَلْبِي نُورًا، وَفِي بَصَرِي نُورًا، وَفِي سَمْعِي نُورًا، وَعَنْ يَمِينِي نُورًا، وَعَنْ يَسَارِي نُورًا، وَفَوْقِي نُورًا، وَتَحْتِي نُورًا، وَأَمَامِي نُورًا، وَخَلْفِي نُورًا، وَاجْعَلْ لِي نُورًا.", count: 1, source: "رواه مسلم (دعاء التوجه للمسجد بعد الاستيقاظ)" },
+            { text: "اللهم إني أسألك خير هذا اليوم فتحه ونصره ونوره وبركته وهداه، وأعوذ بك من شر ما فيه وشر ما بعده.", count: 1, source: "دعاء الصباح" },
+            { text: "اللَّهُمَّ بِكَ أَصْبَحْنَا، وَبِكَ أَمْسَيْنَا، وَبِكَ نَحْيَا، وَبِكَ نَمُوتُ، وَإِلَيْكَ النُّشُورُ.", count: 1, source: "رواه الترمذي" },
+            { text: "لا إله إلا أنت سبحانك اللهم أستغفرك لذنبي وأسألك رحمتك، اللهم زدني علماً ولا تزغ قلبي بعد إذ هديتني وهب لي من لدنك رحمة إنك أنت الوهاب.", count: 1, source: "من أدعية الاستيقاظ المأثورة" },
+            { text: "اللهم عافني في بدني، اللهم عافني في سمعي، اللهم عافني في بصري، لا إله إلا أنت.", count: 3, source: "ثلاث مرات للبركة في الجسد" },
+            { text: "أصبحنا وأصبح الملك لله، والحمد لله، لا إله إلا الله وحده لا شريك له، له الملك وله الحمد وهو على كل شيء قدير.", count: 1, source: "بداية اليوم بذكر الله" },
+            { text: "آمَنَ الرَّسُولُ بِمَا أُنزِلَ إِلَيْهِ مِن رَّبِّهِ وَالْمُؤْمِنُونَ... (أواخر سورة البقرة)", count: 1, source: "من قرأهما في ليلة (أو عند قيامه) كفتاه" }
+        ];
+
+        const list = document.getElementById('azkar-list');
+
+        function render() {
+            list.innerHTML = '';
+            wakingAzkar.forEach((zkr, index) => {
+                list.innerHTML += `
+                    <div class="zkr-card">
+                        <div class="actions">
+                            <i class="fa-solid fa-rotate-right action-icon" onclick="resetSingle(${index}, ${zkr.count})"></i>
+                            <i class="fa-regular fa-copy action-icon" onclick="copyZkr(${index})"></i>
+                        </div>
+                        <p class="zkr-text" id="text-${index}">${zkr.text}</p>
+                        <span class="zkr-source">${zkr.source}</span>
+                        <button class="counter-btn" id="btn-${index}" onclick="countDown(this)">
+                            <span id="count-${index}">${zkr.count}</span>
+                            <div class="btn-txt">تكرار</div>
+                            <i class="fa-solid fa-heart-pulse check-mark"></i>
+                        </button>
+                    </div>
+                `;
+            });
+        }
+
+        function countDown(btn) {
+            let span = btn.querySelector('span');
+            let count = parseInt(span.innerText);
+            if (count > 1) {
+                span.innerText = count - 1;
+                if(navigator.vibrate) navigator.vibrate(30);
+            } else {
+                btn.classList.add('done');
+                btn.innerHTML = '<i class="fa-solid fa-check-double check-mark" style="display:inline-block"></i> تمت القراءة';
+                btn.onclick = null;
+                if(navigator.vibrate) navigator.vibrate([40, 40, 40]);
+            }
+        }
+
+        function toggleTheme() {
+            const body = document.body;
+            const icon = document.querySelector('#theme-toggle i');
+            if (body.getAttribute('data-theme') === 'dark') {
+                body.removeAttribute('data-theme');
+                icon.className = 'fa-solid fa-wand-magic-sparkles';
+            } else {
+                body.setAttribute('data-theme', 'dark');
+                icon.className = 'fa-solid fa-sun';
+            }
+        }
+
+        function resetSingle(index, original) {
+            const btn = document.getElementById(`btn-${index}`);
+            btn.classList.remove('done');
+            btn.innerHTML = `<span>${original}</span> <div class="btn-txt">تكرار</div> <i class="fa-solid fa-heart-pulse check-mark"></i>`;
+            btn.onclick = function() { countDown(this); };
+            showToast("تم تصفير العداد");
+        }
+
+        function copyZkr(index) {
+            const txt = document.getElementById(`text-${index}`).innerText;
+            navigator.clipboard.writeText(txt);
+            showToast("نسخت الذكر يا بطل");
+        }
+
+        function showToast(m) {
+            const t = document.getElementById('toast');
+            t.innerText = m;
+            t.style.display = 'block';
+            setTimeout(()=> t.style.display='none', 2000);
+        }
+
+        // منع النسخ
+        document.addEventListener('copy', (e) => e.preventDefault());
+
+        render();
+    </script>
+</body>
+</html>
