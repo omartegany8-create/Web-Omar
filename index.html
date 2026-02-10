@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta property="og:title" content="وذكر | رفيقك للتقرب إلى الله">
+    <meta property="og:description" content="صدقة جارية || أذكار، مواقيت الصلاة، أحاديث نبوية، وتذكير تلقائي بالذكر.">
+    <meta property="og:image" content="https://magnificent-lebkuchen-a74cdf.netlify.app/image/logo.png">
+    <meta property="og:url" content="https://magnificent-lebkuchen-a74cdf.netlify.app/">
+    <meta property="og:type" content="website">
+    <title>الصفحة الرئيسية | وذكر </title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Amiri&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="الاذكار.css">
+</head>
+
+<div class="beta-ribbon-wrapper">
+    <div class="beta-ribbon-content">
+        جاري التطوير
+    </div>
+</div>
+
+<body class="theme-green">
+
+    <div class="premium-news-bar">
+        <div class="scrolling-wrapper" id="mainTickerWrapper">
+            <div class="ticker-item welcome-part">
+                <i class="fa-solid fa-star-and-crescent"></i>
+                <span id="user-display-name">أهلاً بك في رحاب الذكر</span>
+            </div>
+
+            <span class="diamond-sep">◆</span>
+
+            <div class="ticker-item date-part">
+                <i class="fa-regular fa-calendar-check"></i>
+                <span id="live-full-date">جاري ضبط التقويم...</span>
+            </div>
+
+            <span class="diamond-sep">◆</span>
+
+            <div class="ticker-item prayer-part">
+                <i class="fa-solid fa-heart"></i>
+                <span>صلي على النبي ﷺ</span>
+            </div>
+            <span class="diamond-sep">◆</span>
+            <div class="ticker-item ramadan-part">
+                <i class="fa-solid fa-moon"></i>
+                <span id="ramadan-countdown">جاري التحميل ...</span>
+            </div>
+        </div>
+    </div>
+
+
+    <script type="module">
+        import { auth, db } from './auth.js';
+        import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        function renderDateTime() {
+            const dateNow = new Date();
+
+            // 1. التاريخ الميلادي
+            const mOption = { day: 'numeric', month: 'long', year: 'numeric' };
+            const gregDate = dateNow.toLocaleDateString('ar-EG', mOption);
+
+            // 2. التاريخ الهجري (ضبط المصدر ليعطي نتائج دقيقة)
+            const hOption = {};
+            // استخدام 'ar-SA-u-ca-islamic-uma' مع فرض الأرقام العربية
+            const hijriFormatter = new Intl.DateTimeFormat('ar-SA-u-ca-islamic-uma-nu-arab', hOption);
+            const hijriDate = hijriFormatter.format(dateNow);
+
+            const dateTarget = document.getElementById('live-full-date');
+            if (dateTarget) {
+                dateTarget.innerText = `${gregDate}  م  `;
+            }
+
+// 3. حساب الأيام المتبقية أو ترتيب أيام رمضان
+function calculateRamadan() {
+    const today = new Date();
+    // بداية رمضان فلكياً 18 فبراير 2026
+    const ramadanStart = new Date(2026, 1, 18);
+    // نهاية رمضان تقريباً 19 مارس 2026 (لتبديل الحالة بعد الشهر)
+    const ramadanEnd = new Date(2026, 2, 20);
+
+    const diffTime = ramadanStart - today;
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+    const ramadanDisplay = document.getElementById('ramadan-countdown');
+    if (!ramadanDisplay) return;
+
+    if (diffDays > 0) {
+        // إدارة لغوية: يوم، يومان، أيام
+        let dayText = "يوم";
+        if (diffDays >= 3 && diffDays <= 10) {
+            dayText = "أيام";
+        } else if (diffDays === 2) {
+            ramadanDisplay.innerText = `متبقي يومان على رمضان 🌙`;
+            return;
+        } else if (diffDays === 1) {
+            ramadanDisplay.innerText = `غداً أول أيام رمضان 🌙`;
+            return;
+        }
+        ramadanDisplay.innerText = `متبقي ${diffDays.toLocaleString('ar-EG')} ${dayText} على رمضان`;
+
+    } else if (today >= ramadanStart && today <= ramadanEnd) {
+        // حساب اليوم الحالي في رمضان
+        const currentRamadanDay = Math.floor((today - ramadanStart) / (1000 * 60 * 60 * 24)) + 1;
+        ramadanDisplay.innerText = `${currentRamadanDay.toLocaleString('ar-EG')} رمضان 🌙`;
+        
+    } else {
+        ramadanDisplay.innerText = `تقبل الله منا ومنكم صالح الأعمال 🌙`;
+    }
+}
+
+            calculateRamadan();
+        }
+
+        // استدعاء الدالة عند تحميل الصفحة
+        renderDateTime();
+
+        // 2. التحقق من المستخدم وجلب اسمه الأول
+        onAuthStateChanged(auth, async (user) => {
+            const nameDisplay = document.getElementById('user-display-name');
+
+            if (user) {
+                try {
+                    // بنروح للفايرستور نجيب الدوكيومنت اللي اسمه نفس الـ UID
+                    const docRef = doc(db, "users_azkar", user.uid);
+                    const docSnap = await getDoc(docRef);
+
+                    if (docSnap.exists()) {
+                        const userData = docSnap.data();
+                        // بنعرض الاسم الأول اللي سيفناه وقت الـ Signup
+                        nameDisplay.innerText = `مرحباً، ${userData.firstName}`;
+                    } else {
+                        nameDisplay.innerText = "مرحباً بك يا ميرو";
+                    }
+                } catch (err) {
+                    console.error("Error fetching name:", err);
+                    nameDisplay.innerText = "مرحباً بك في وذكر";
+                }
+            } else {
+                // لو مش مسجل دخول
+                nameDisplay.innerText = "أهلاً بك في وذكر";
+            }
+        });
+
+        // تشغيل التاريخ
+        renderDateTime();
+    </script>
+    <div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+
+    <aside class="sidebar" id="sidebar">
+        <ul class="sidebar-menu">
+            <li onclick="location.href='index.html'">
+                <i class="fa-solid fa-house"></i>
+                <span>الرئيسية</span>
+            </li>
+
+            <li id="profileItem" onclick="location.href='profile.html'">
+                <i class="fa-solid fa-user-gear"></i>
+                <span>الملف الشخصي</span>
+            </li>
+
+            <li onclick="location.href='pages/hisn.html'">
+                <i class="fa-solid fa-book-quran"></i>
+                <span>حصن المسلم</span>
+            </li>
+
+            <li onclick="location.href='pages/morning.html?type=الصباح'">
+                <i class="fa-solid fa-sun"></i>
+                <span>أذكار الصباح</span>
+            </li>
+
+            <li onclick="location.href='pages/evening.html?type=المساء'">
+                <i class="fa-solid fa-moon"></i>
+                <span>أذكار المساء</span>
+            </li>
+
+            <li onclick="location.href='pages/Salah.html?type=الصلاة'">
+                <i class="fa-solid fa-mosque"></i>
+                <span>أذكار الصلاة</span>
+            </li>
+
+            <li onclick="location.href='pages/help.html'">
+                <i class="fa-solid fa-circle-info"></i>
+                <span>المساعدة</span>
+            </li>
+
+            <li class="login-item" id="authItem">
+                <i class="fa-solid fa-right-to-bracket" id="authIcon"></i>
+                <span id="authText">تسجيل الدخول</span>
+            </li>
+
+            <li class="omar-signature">
+                <span><a href="https://wa.me/201158601817">🌿 by : Omar Tegany</a></span>
+
+            </li>
+
+        </ul>
+    </aside>
+
+    <div id="bot-trigger" onclick="toggleChat()">
+        <i class="fas fa-robot"></i>
+    </div>
+    <!-- البوت -->
+    <div id="chat-container">
+        <div id="chat-header">
+            <div onclick="openRenameModal()" class="header-info">
+                <div class="bot-avatar">
+                    <img src="https://cdn-icons-png.flaticon.com/512/4712/4712035.png" alt="Bot">
+                    <span class="online-dot"></span>
+                </div>
+                <div class="bot-details">
+                    <strong id="bot-name-display">آدم</strong>
+                    <small id="bot-status-text">متصل الآن</small>
+                </div>
+            </div>
+            <i class="fas fa-times close-btn" onclick="toggleChat()"></i>
+        </div>
+
+        <div id="chat-body"></div>
+
+        <div id="chat-input-area">
+            <input type="text" id="user-input" placeholder="كيف يمكنني مساعدتك؟">
+            <button id="send-btn" onclick="handleSendMessage()">
+                <i class="fas fa-paper-plane"></i>
+            </button>
+        </div>
+
+        <div id="rename-modal">
+            <div class="modal-content">
+                <h4>تخصيص اسم البوت</h4>
+                <input type="text" id="new-bot-name" maxlength="10" placeholder="اكتب الاسم الجديد...">
+                <div class="modal-buttons">
+                    <button onclick="saveBotName()" class="save-btn">حفظ التعديل</button>
+                    <button onclick="closeRenameModal()" class="cancel-btn">إلغاء</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <audio id="bot-sound" src="https://notificationsounds.com/storage/sounds/file-sounds-1150-pristine.mp3"></audio>
+
+    <script>
+        // 1. الإعدادات والذاكرة السريعة
+        let botName = localStorage.getItem('bot_name') || "آدم";
+        let userName = "يا بطل";
+        let isFirstOpen = true;
+
+        // 2. دالة "خطف" الاسم من الـ Div الخاص بك
+        function getStoredName() {
+            const nameDisplay = document.getElementById('user-display-name');
+            if (nameDisplay) {
+                let text = nameDisplay.innerText;
+                let cleanName = text.replace('مرحباً،', '').replace('مرحباً بك يا', '').replace('أهلاً بك في رحاب الذكر', '').replace('أهلاً بك في وذكر', '').trim();
+                if (cleanName && cleanName.length > 1) {
+                    userName = cleanName;
+                    localStorage.setItem('userFirstName', cleanName);
+                    return cleanName;
+                }
+            }
+            return localStorage.getItem('userFirstName') || "يا بطل";
+        }
+
+        // 3. وظيفة فتح الشات والترحيب
+        function toggleChat() {
+            const chat = document.getElementById('chat-container');
+            if (!chat) return;
+            const isOpen = chat.style.display === 'flex';
+            chat.style.display = isOpen ? 'none' : 'flex';
+
+            if (!isOpen && isFirstOpen) {
+                isFirstOpen = false;
+                userName = getStoredName();
+                showTypingIndicator(true);
+                setTimeout(() => {
+                    showTypingIndicator(false);
+                    sendBotReply(`مرحباً يا ${userName}، محتاج مساعدة..؟ ✨`);
+                }, 1000);
+            }
+        }
+
+        // --- [جديد] دالة جلب مواقيت الصلاة من الـ API ---
+        async function getPrayerTimes() {
+            try {
+                // ملاحظة: يمكنك تغيير Cairo و Egypt حسب رغبتك أو جعلها ديناميكية
+                const response = await fetch('https://api.aladhan.com/v1/timingsByCity?city=Cairo&country=Egypt&method=5');
+                const data = await response.json();
+                return data.data.timings;
+            } catch (error) {
+                console.error("خطأ في جلب المواقيت:", error);
+                return null;
+            }
+        }
+
+        // 4. منطق إرسال الرسائل وردود الفعل الذكية
+        async function handleSendMessage() {
+            const inp = document.getElementById('user-input');
+            const txt = inp.value.trim();
+            if (!txt) return;
+
+            appendMsg(txt, 'user-m');
+            inp.value = "";
+            userName = getStoredName();
+
+            showTypingIndicator(true);
+
+            // --- محرك الردود الذكي المطور ---
+            let reply = "";
+            const input = txt.toLowerCase();
+
+            // أ- التحقق من أوامر الوقت والصلاة أولاً (الذكاء الجديد)
+            if (input.includes("المغرب") || input.includes("صلاة") || input.includes("مواقيت")) {
+                const timings = await getPrayerTimes();
+                if (timings) {
+                    if (input.includes("المغرب")) {
+                        reply = `صلاة المغرب اليوم في تمام الساعة ${timings.Maghrib} بتوقيتك المحلي يا ${userName}.`;
+                    } else {
+                        reply = `مواقيت الصلاة اليوم:\nالفجر: ${timings.Fajr}\nالظهر: ${timings.Dhuhr}\nالعصر: ${timings.Asr}\nالمغرب: ${timings.Maghrib}\nالعشاء: ${timings.Isha}`;
+                    }
+                } else {
+                    reply = "عذراً يا بطل، واجهت مشكلة في جلب مواقيت الصلاة حالياً، جرب كمان شوية.";
+                }
+            }
+            else if (input.includes("رمضان")) {
+                const today = new Date();
+                const ramadanDate = new Date("March 1, 2026"); // تاريخ رمضان المتوقع 2026
+                const diffTime = ramadanDate - today;
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+                if (input.includes("امتى") || input.includes("متى")) {
+                    reply = "من المتوقع أن يبدأ شهر رمضان المبارك يوم 1 مارس 2026 بإذن الله، اللهم بلغنا رمضان.";
+                } else if (input.includes("باقي") || input.includes("كام يوم")) {
+                    reply = diffDays > 0 ? `باقي على شهر الخير والبركة ${diffDays} يوم تقريباً يا ${userName}.` : "نحن في رحاب شهر رمضان الآن، أعاده الله علينا بالخير!";
+                }
+            }
+            else if (input.includes("الساعة") || input.includes("الوقت")) {
+                const now = new Date();
+                reply = `الساعة دلوقتي ${now.toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' })}.`;
+            }
+
+            // ب- إذا لم يكن سؤال وقت، ابحث في قاموس (ميرو برين)
+            if (!reply) {
+                const brain = {
+                    "اسمي ايه": `أنت اسمك ${getStoredName()}.. هو أنا أقدر أنسى الباشمهندس الكبير؟`,
+                    "اسمك": `أنا اسمي ${botName}، ونا هنا مخصوص عشانك.`,
+
+                    "السلام عليكم": `وعليكم السلام ورحمة الله وبركاته يا ${userName}.. نورت الشات!`,
+                    "صباح الخير": "يا صباح الفل والرضا والذكر.. يومك جميل بإذن الله يا بطل.",
+
+                    // --- ردود الفقه والعبادات (السنن والركعات) ---
+                    "الظهر": "صلاة الظهر 4 ركعات، والسنن الرواتب التابعة لها 4 قبلها (بتسليمتين) و2 بعدها.",
+                    "الضهر": "صلاة الظهر 4 ركعات، والسنن الرواتب التابعة لها 4 قبلها (بتسليمتين) و2 بعدها.",
+                    "العصر": "صلاة العصر 4 ركعات، وليس لها سنة راتبة مؤكدة، لكن يستحب صلاة 4 ركعات قبلها.",
+                    "المغرب": "صلاة المغرب 3 ركعات، وسنتها الراتبة 2 بعدها.",
+                    "العشاء": "صلاة العشاء 4 ركعات، وسنتها الراتبة 2 بعدها، وبعدها صلاة الوتر (أقلها ركعة).",
+                    "الفجر": "صلاة الفجر ركعتان (فرض)، ويسبقها ركعتا سنة الفجر وهي آكد السنن الرواتب.",
+                    "الصبح": "صلاة الصبح هي نفسها الفجر، ركعتان فرض وسنتها ركعتان قبلها.",
+                    "الوتر": "صلاة الوتر سنة مؤكدة، ووقتها من بعد صلاة العشاء إلى طلوع الفجر، وأقلها ركعة واحدة.",
+                    "الضحى": "صلاة الضحى سنة، وأقلها ركعتان وأكثرها ثمانية، ووقتها يبدأ بعد شروق الشمس بـ 15 دقيقة.",
+                    "عدد الركعات": "الفجر: 2 | الظهر: 4 | العصر: 4 | المغرب: 3 | العشاء: 4.",
+                    "السنن الرواتب": "السنن الرواتب 12 ركعة: 2 قبل الفجر، 4 قبل الظهر و2 بعده، 2 بعد المغرب، و2 بعد العشاء.",
+
+                    // --- ردود رمضان والصيام ---
+                    "رمضان كام يوم": "شهر رمضان يكون إما 29 أو 30 يوماً، حسب رؤية الهلال.",
+                    "صيام": "الصيام ركن من أركان الإسلام الخمسة، وهو مدرسة التقوى.. 'لعلكم تتقون'.",
+                    "ليلة القدر": "ليلة القدر في العشر الأواخر من رمضان، وهي خير من ألف شهر.",
+
+                    // --- ردود الذكر المتقدمة ---
+                    "سيد الاستغفار": "اللهم أنت ربي لا إله إلا أنت، خلقتني وأنا عبدك، وأنا على عهدك ووعدك ما استطعت.. (كمل الدعاء لتاخد الأجر كاملاً ✨)",
+                    "تعبان": "سلامة قلبك.. قل: 'أني مسني الضر وأنت أرحم الراحمين'.",
+                    "خايف": "ردد: 'حسبي الله ونعم الوكيل'، 'لا إله إلا أنت سبحانك إني كنت من الظالمين'.",
+                    "رزق": "عليك بالاستغفار وسورة الواقعة، وقل: 'اللهم اكفني بحلالك عن حرامك'.",
+                    "مهموم": "قل: 'يا حي يا قيوم برحمتك أستغيث'، وصلي على النبي كثيراً.",
+
+                    // --- ردود فرفشة ومنوعة ---
+                    "منور": "ده نورك يا غالي، المكان منور بذكرك لله.",
+                    "يا اسطى": "يا عيوني! معك آدم (رفيقك الذكي)، أؤمرني يا بطل.",
+                    "يا أسطى": "يا عيوني! معك آدم (رفيقك الذكي)، أؤمرني يا بطل.",
+                    // --- ردود التفاعل الإنساني (الذوقيات) ---
+                    "أمين": "اللهم آمين يا رب.. تقبل الله منا ومنك صالح الدعاء.",
+                    "امين": "يا رب يستجيب ويجبر خاطرك ويحقق لك كل اللي بتتمناه.",
+                    "جزاك الله خير": "وإياك يا غالي! ربنا يجعله في ميزان حسناتنا جميعاً.",
+                    "حبيبي": "تسلم يا غالي، ده من ذوقك والله.. ربنا يحبب فيك خلقه.",
+                    "تسلم": "الله يسلمك من كل سوء يا بطل.. نورتني.",
+                    "شكرا": "العفو، أنا في الخدمة دايماً.. لا تنساني من صالح دعائك.",
+
+                    // --- ركن "الثانوية العامة" والنجاح (مخصوص عشانك يا عمر) ---
+                    "ثانوية عامة": "يا بطل شد حيلك! 'وأن ليس للإنسان إلا ما سعى'.. ذاكر واعمل اللي عليك وميرو بيدعيلك بالنجاح.",
+                    "مذاكرة": "قبل ما تبدأ قول: 'اللهم إني أسألك فهم النبيين وحفظ المرسلين'.. ربنا يفتح عليك فتوح العارفين.",
+                    "مخنو من المذاكرة": "خد استراحة 5 دقائق، سبح فيها ربنا، وارجع تاني.. 'بذكر الله تطمئن القلوب' وهتلاقي المعلومة ثبتت.",
+                    "نجحني": "يا رب نجح ${userName} ووفقه في امتحاناته وفرح قلبه وقلب أهله.. آمين.",
+
+                    // --- ردود الذكر السريعة (Shortcuts) ---
+                    "عايز اذكر": "أجمل ذكر دلوقتي: 'لا إله إلا الله وحده لا شريك له، له الملك وله الحمد وهو على كل شيء قدير'.",
+                    "تعبان": "سلامة قلبك.. قل: 'أني مسني الضر وأنت أرحم الراحمين'.. ربنا يزيح عنك كل هم.",
+                    "مخنوق": "صلي على النبي 10 مرات كدا.. 'اللهم صل وسلم على نبينا محمد'.. وهتلاقي صدرك انشرح.",
+
+                    // --- ردود الروقان والفرفشة ---
+                    "بتعمل ايه": "مستني حد جميل زيك يدخل يذكر الله معايا عشان ناخد حسنات سوا.",
+                    "مين ميرو": "ميرو هو عمر التيجاني، العقل المدبر اللي خلاني أكلمك دلوقتي.. ربنا يحفظه.",
+                    "اضحك": "مرة واحد بخيل أبوه مات، راح يكتب نعي في الجريدة.. قالهم 'رزق مات'.. قالوله 'أقل حاجة 3 كلمات'.. قالهم 'رزق مات وللبيع فيات' 😂",
+
+                    // --- ردود الوداع ---
+                    "تصبح على خير": "وأنت من أهل الخير والسعادة.. متنساش أذكار النوم وسورة الملك.. في حفظ الله يا ${userName}.",
+                    "سلام": "في رعاية الله يا بطل.. خلي لسانك دايماً عامر بذكر الله.. هتوحشني!",
+
+                    "هلا": "هلا والله فيك شو اخبارك.",
+                    "عامل ايه": "الحمد لله في فضل ونعمة طول ما أنت بخير.. أنت طمني عليك؟",
+                    "صلي": `عليه أفضل الصلاة وأتم التسليم.. صلاتك عليه معروضة عليه يا ${userName}، فاستزد!`,
+                    "اذكر الله": `لا إله إلا الله وحده لا شريك له.. ذكرت الله فذكرك، 'فاذكروني أذكركم'.`,
+                    "شكرا": "العفو يا حبيبي، الشكر لله.. أنا موجود هنا عشانك أنت.",
+                    "باي": `في أمان الله يا ${userName}.. متنساش الأذكار، هتوحشني والله!`
+                    // يمكنك إضافة باقي القاموس هنا بنفس الطريقة
+                };
+
+                for (let key in brain) {
+                    if (input.includes(key)) {
+                        reply = brain[key];
+                        break;
+                    }
+                }
+            }
+
+            // ج- رد عشوائي لو ملقيناش حاجة
+            if (!reply) {
+                const randomReplies = [
+                    `كلامك جميل يا ${userName}.. بس قولي، صليت على النبي النهاردة؟`,
+                    "ذكرت الله النهاردة؟ 'ألا بذكر الله تطمئن القلوب'.",
+                    "أنا لسه بتعلم، بس كلامك ده منور الشات والله 😂"
+                ];
+                reply = randomReplies[Math.floor(Math.random() * randomReplies.length)];
+            }
+
+            // إخفاء الأنيميشن وإرسال الرد
+            setTimeout(() => {
+                showTypingIndicator(false);
+                sendBotReply(reply);
+            }, 1200);
+        }
+
+        // 5. وظيفة إظهار/إخفاء مؤشر الكتابة
+        function showTypingIndicator(show) {
+            const statusText = document.getElementById('bot-status-text');
+            const chatBody = document.getElementById('chat-body');
+            if (show) {
+                if (statusText) statusText.innerText = `${botName} يكتب الآن...`;
+                if (!document.getElementById('typing-bubble')) {
+                    const typingDiv = document.createElement('div');
+                    typingDiv.id = 'typing-bubble';
+                    typingDiv.className = 'miro-msg bot-m animate-msg';
+                    typingDiv.innerHTML = `<div class="typing-dots"><span></span><span></span><span></span></div>`;
+                    chatBody.appendChild(typingDiv);
+                }
+            } else {
+                if (statusText) statusText.innerText = "متصل الآن";
+                const bubble = document.getElementById('typing-bubble');
+                if (bubble) bubble.remove();
+            }
+            chatBody.scrollTop = chatBody.scrollHeight;
+        }
+
+        // 6. وظائف عرض الرسائل
+        function sendBotReply(txt) {
+            appendMsg(txt, 'bot-m');
+            const s = document.getElementById('bot-sound');
+            if (s) s.play().catch(() => { });
+        }
+
+        function appendMsg(txt, cls) {
+            const body = document.getElementById('chat-body');
+            if (!body) return;
+            const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            const div = document.createElement('div');
+            div.className = `miro-msg ${cls} animate-msg`;
+            div.innerHTML = `${txt} 
+            <div style="display:flex; justify-content:flex-end; gap:5px; font-size:10px; color:#888; margin-top:4px;">
+                <span>${time}</span>
+                <i class="far fa-copy" style="cursor:pointer" onclick="navigator.clipboard.writeText('${txt.replace(/'/g, "\\'")}');alert('تم النسخ!');"></i>
+            </div>`;
+            body.appendChild(div);
+            body.scrollTop = body.scrollHeight;
+        }
+
+        // 7. تغيير اسم البوت
+        function openRenameModal() {
+            document.getElementById('rename-modal').style.display = 'flex';
+            document.getElementById('new-bot-name').value = botName;
+        }
+        function closeRenameModal() { document.getElementById('rename-modal').style.display = 'none'; }
+        function saveBotName() {
+            const n = document.getElementById('new-bot-name').value.trim();
+            if (n) {
+                botName = n;
+                localStorage.setItem('bot_name', n);
+                document.getElementById('bot-name-display').innerText = botName;
+                closeRenameModal();
+                appendMsg(`تم تحديث اسمي لـ ${botName} 👍🏻`, 'bot-m');
+            }
+        }
+
+        window.addEventListener('load', () => {
+            const input = document.getElementById('user-input');
+            if (input) {
+                input.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleSendMessage(); });
+            }
+            document.getElementById('bot-name-display').innerText = botName;
+            getStoredName();
+        });
+    </script>
+
+    <script type="module">
+        import { auth } from './auth.js';
+        import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+        // ننتظر حتى تحمل الصفحة بالكامل
+        window.addEventListener('DOMContentLoaded', () => {
+
+            onAuthStateChanged(auth, (user) => {
+                const authText = document.getElementById('authText');
+                const authIcon = document.getElementById('authIcon');
+                const authItem = document.getElementById('authItem');
+
+                if (user) {
+                    // المستخدم مسجل دخول
+                    if (authText) authText.innerHTML = '<span style="cursor:pointer">تبديل الحساب</span>';
+                    if (authIcon) authIcon.className = "fa-solid fa-arrows-rotate";
+
+                    // إضافة وظيفة تسجيل الخروج عند الضغط
+                    if (authItem) {
+                        authItem.onclick = async (e) => {
+                            e.preventDefault();
+                            if (confirm) {
+                                await signOut(auth);
+                                window.location.href = "login.html";
+                            }
+                        };
+                    }
+                } else {
+                    // المستخدم غير مسجل
+                    if (authText) authText.innerHTML = '<a href="login.html" style="text-decoration:none; color:inherit;">تسجيل الدخول</a>';
+                    if (authIcon) authIcon.className = "fa-solid fa-right-to-bracket";
+                    if (authItem) authItem.onclick = null; // إزالة حدث الضغط
+                }
+            });
+        });
+
+    </script>
+
+    <main class="main-container">
+
+        <section class="hero-section">
+
+            <!-- واجهة الموقع -->
+
+            <!-- ايقونة القايمة الجانبية -->
+            <div class="icona">
+                <i class="fa-solid fa-bars-staggered menu-btn" onclick="toggleSidebar()"></i>
+            </div>
+            <!-- ايقونة الاشعارات -->
+            <div id="smart-notif-left-system">
+
+                <!-- الواجهة -->
+                <div class="miro-hero-master">
+
+                    <div class="hero-glow-1"></div>
+                    <div class="hero-glow-2"></div>
+
+                    <div class="hero-frame">
+                        <div class="hero-badge">🌱 وذكـــــــــر</div>
+
+                        <h1 class="hero-main-heading">فَاذْكُرُونِي أَذْكُرْكُمْ</h1>
+
+                        <p class="hero-description">
+                            زينة الحياة الدنيا ذكر الله وطمأنينة القلب،
+                            اجعل لسانك رطباً بذكر الرحمن.
+                        </p>
+
+                        <div class="hero-metrics-grid">
+                            <div class="metric-line"></div>
+                        </div>
+                    </div>
+                    <div class="miro-scroll-trigger" onclick="scrollToQuiz()">
+                        <div class="scroll-wrapper">
+                            <span class="scroll-hint">أرح قلبك بذكر الله</span>
+                            <div class="scroll-icon-box">
+                                <i class="fa-solid fa-chevron-down"></i>
+                                <div class="pulse-ring"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="notif-fixed-left" onclick="window.location.href='notifications.html'">
+                    <div class="bell-wrapper">
+                        <img id="notif-bell-icon" src="https://cdn-icons-png.flaticon.com/512/3602/3602145.png"
+                            width="22">
+                        <span id="notif-count-badge" style="display:none;">0</span>
+                    </div>
+                    <span id="notif-text-hint"></span>
+                </div>
+
+                <script type="module">
+                    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+                    import { getFirestore, collection, query, where, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+                    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+                    const firebaseConfig = { apiKey: "AIzaSyA4h9MsH0Szht7taowp95WcBr2y6scXe1k", projectId: "dev-fbfd8" };
+                    const app = initializeApp(firebaseConfig);
+                    const db = getFirestore(app);
+                    const auth = getAuth(app);
+
+                    onAuthStateChanged(auth, (user) => {
+                        if (user) {
+                            const q = query(collection(db, "notifications"), where("userId", "in", [user.uid, "all"]));
+
+                            onSnapshot(q, (snap) => {
+                                const readNotifs = JSON.parse(localStorage.getItem('reads') || '[]');
+                                let unreadCount = 0;
+
+                                snap.forEach(docSnap => {
+                                    if (!readNotifs.includes(docSnap.id)) {
+                                        unreadCount++;
+                                    }
+                                });
+
+                                const badge = document.getElementById('notif-count-badge');
+                                const textHint = document.getElementById('notif-text-hint');
+                                const bell = document.getElementById('notif-bell-icon');
+
+                                if (unreadCount > 0) {
+                                    badge.style.display = "flex";
+                                    badge.innerText = unreadCount;
+                                    textHint.style.display = "block";
+
+                                    // تخصيص الرسالة حسب العدد
+                                    if (unreadCount === 1) {
+                                        textHint.innerText = "لديك إشعار واحد جديد";
+                                    } else {
+                                        textHint.innerText = "لديك إشعارات جديدة";
+                                    }
+
+                                    // تأثير الرنة
+                                    bell.classList.add('shake-it');
+                                    setTimeout(() => bell.classList.remove('shake-it'), 500);
+                                } else {
+                                    badge.style.display = "none";
+                                    textHint.style.display = "none";
+                                }
+                            });
+                        }
+                    });
+                </script>
+            </div>
+
+
+            <div id="quiz-section" class="mi-container"></div>
+
+
+        </section>
+
+        <section class="mir-quran-box">
+            <div class="mir-card-frame" id="mir-ayah-display">
+                <div class="mir-quote-mark">“</div>
+
+                <div class="mir-content-body">
+                    <h2 id="mir-text-output" class="mir-ayah-style">جاري التحميل...</h2>
+
+                    <div id="mir-source-output" class="mir-ayah-info"></div>
+
+                    <div class="mir-divider">
+                        <span></span><i class="fa-solid fa-star-and-crescent"></i><span></span>
+                    </div>
+
+                    <div class="mir-lesson-wrapper">
+                        <p id="mir-lesson-output" class="mir-lesson-text"></p>
+                    </div>
+                </div>
+
+                <div class="mir-timer-bg">
+                    <div id="mir-progress-fill" class="mir-timer-bar"></div>
+                </div>
+            </div>
+        </section>
+
+
+        <section class="azkar-container">
+            <a href="pages/morning.html" class="mini-card" id="morning-card">
+                <div id="morning-bubble" class="card-talk"></div>
+                <div class="card-icon">
+                    <img src="image/sun.jpg" alt="أذكار الصباح" class="custom-img-icon" draggable="false">
+                </div>
+                <h4>أذكار الصباح</h4>
+            </a>
+
+            <a href="pages/evening.html" class="mini-card" id="evening-card">
+                <div id="evening-bubble" class="card-talk"></div>
+                <div class="card-icon">
+                    <img src="image/moon.jpg" alt="أذكار المساء" class="custom-img-icon" draggable="false">
+                </div>
+                <h4>أذكار المساء</h4>
+            </a>
+
+            <a href="pages/wakeup.html" class="mini-card" id="wakeup-card">
+                <div id="wakeup-bubble" class="card-talk wakeup-style"></div>
+                <div class="card-icon">
+                    <img src="image/wakeup.jpg" alt="أذكار الاستيقاظ" class="custom-img-icon" draggable="false">
+                </div>
+                <h4>أذكار الاستيقاظ</h4>
+            </a>
+
+            <a href="pages/prayer-times.html" class="mini-card" id="prayer-card">
+                <div id="prayer-bubble" class="card-talk"></div>
+                <div class="card-icon prayer-icon-wrapper">
+                    <img src="image/prayer.jpg" alt="الصلاة" class="custom-img-icon" draggable="false">
+                </div>
+                <h4>مواقيت الصلاة</h4>
+            </a>
+
+            <a href="pages/sleep.html" class="mini-card" id="sleep-card">
+                <div id="sleep-bubble" class="card-talk"></div>
+                <div class="card-icon sleep-icon-wrapper">
+                    <img src="image/sleep.jpg" alt="Sleep" class="sleep-img" id="sleep-img-id">
+                    <div class="zzz-container" id="zzz-box"></div>
+                </div>
+                <h4>أذكار النوم</h4>
+            </a>
+            <a href="pages/tasbeeh.html" class="mini-card" id="tasbeeh-card">
+                <div id="tasbeeh-bubble" class="card-talk tasbeeh-count-style">0</div>
+                <div id="tasbeeh-count-float" class="tasbeeh-float"></div>
+                <div class="card-icon">
+                    <img src="image/sapha.png" alt="السبحة" class="sapha-img" id="sapha-img" draggable="false">
+                </div>
+                <h4>السبحة الإلكترونية</h4>
+            </a>
+            <a href="pages/mosque.html" class="mini-card">
+                <div class="card-icon">
+                    <img src="image/mosque.png" alt="المسجد" class="custom-img-icon" draggable="false">
+                </div>
+                <h4>المسجد والوضوء</h4>
+            </a>
+
+            <a href="pages/AfterSalah.html" class="mini-card" id="aftersalah-card">
+                <div id="aftersalah-bubble" class="card-talk aftersalah-style"></div>
+                <div class="card-icon">
+                    <img src="image/d3aa.png" alt="بعد الصلاة" class="custom-img-icon" draggable="false">
+                </div>
+                <h4>بعد الصلاة</h4>
+            </a>
+
+            <a href="pages/names.html" class="mini-card" id="names-card">
+                <div id="names-bubble" class="card-talk names-style">
+                    <span id="name-text"></span>
+                    <div class="feather f1">🪶</div>
+                    <div class="feather f2">🪶</div>
+                </div>
+                <div class="card-icon">
+                    <img src="image/names.jpg" alt="أسماء الله الحسنى" class="custom-img-icon" draggable="false">
+                </div>
+                <h4>أسماء الله الحسنى</h4>
+            </a>
+
+            <a href="pages/hadith.html" class="mini-card" id="hadith-card">
+                <div id="hadith-bubble" class="card-talk hadith-style"></div>
+                <div class="card-icon">
+                    <img src="image/hadis.png" alt="أحاديث نبوية" class="custom-img-icon" draggable="false">
+                </div>
+                <h4>أحاديث نبوية</h4>
+            </a>
+
+            <a href="pages/adab.html" class="mini-card" id="adab-card">
+                <div id="adab-bubble" class="card-talk adab-style"></div>
+                <div class="card-icon">
+                    <img src="image/adab.png" alt="الآداب" class="custom-img-icon" draggable="false">
+                </div>
+                <h4>الآداب الإسلامية</h4>
+            </a>
+
+            <a href="pages/nawawi.html" class="mini-card" id="nawawi-card">
+                <div id="nawawi-bubble" class="card-talk nawawi-style"></div>
+                <div class="card-icon">
+                    <i class="fa-solid fa-scroll"></i>
+                </div>
+                <h4>الأربعون النووية</h4>
+            </a>
+
+
+            <a href="pages/hisn.html" class="mini-card" id="hisn-card">
+                <div id="hisn-bubble" class="card-talk hisn-style"></div>
+                <div class="card-icon">
+                    <img src="image/book(1).png" alt="حصن المسلم" class="custom-img-icon" draggable="false">
+                </div>
+                <h4>حصن المسلم</h4>
+            </a>
+
+
+            <a href="pages/quiz.html" class="mini-card" id="quiz-card">
+                <div id="quiz-bubble" class="card-talk quiz-style"></div>
+                <div class="card-icon">
+                    <img src="image/exam.png" alt="اختبر حفظك" class="custom-img-icon" draggable="false">
+                </div>
+                <h4>اختبر حفظك</h4>
+            </a>
+        </section>
+
+
+
+
+
+
+    </main>
+
+
+    <footer class="footer">
+        <p class="quran-ayah">
+            ﴿ وَذَكِّرْ فَإِنَّ الذِّكْرَىٰ تَنفَعُ الْمُؤْمِنِينَ ﴾
+        </p>
+        <hr>
+        <p class="dev">
+            🌿 Developed by
+            <a href="https://wa.me/201158601817" target="_blank">
+                Omar Tegany
+            </a>
+        </p>
+        <div class="dhikr-container">
+            <div class="dhikr-track">
+                <span>سبحان الله وبحمده</span>
+                <span>لا إله إلا الله</span>
+                <span>أستغفر الله العظيم</span>
+                <span>صلّ على محمد ﷺ</span>
+                <span>سبحان الله العظيم</span>
+                <span>لا حول ولا قوة إلا بالله</span>
+                <span>الحمد لله حمداً كثيراً</span>
+                <span>يا حي يا قيوم</span>
+                <span>سبحان الله وبحمده</span>
+                <span>لا إله إلا الله</span>
+                <span>أستغفر الله العظيم</span>
+                <span>صلّ على محمد ﷺ</span>
+                <span>سبحان الله العظيم</span>
+                <span>لا حول ولا قوة إلا بالله</span>
+                <span>الحمد لله حمداً كثيراً</span>
+                <span>يا حي يا قيوم</span>
+            </div>
+        </div>
+        <style>
+            .dhikr-container {
+                width: 100%;
+                overflow: hidden;
+                background: rgba(45, 106, 79, 0.05);
+                backdrop-filter: blur(5px);
+                padding: 12px 0;
+                margin-top: 70px;
+                border-bottom: 1px solid rgba(45, 106, 79, 0.1);
+                white-space: nowrap;
+                position: relative;
+            }
+
+            /* إضافة تدرج شفاف في الأطراف عشان الأذكار تظهر وتختفي بنعومة */
+            .dhikr-container::before,
+            .dhikr-container::after {
+                content: "";
+                position: absolute;
+                top: 0;
+                width: 50px;
+                height: 100%;
+                z-index: 2;
+            }
+
+            .dhikr-container::before {
+                left: 0;
+                background: linear-gradient(to right, var(--bg), transparent);
+            }
+
+            .dhikr-container::after {
+                right: 0;
+                background: linear-gradient(to left, var(--bg), transparent);
+            }
+
+            .dhikr-track {
+                display: inline-flex;
+                gap: 60px;
+                animation: scrollDhikr 30s linear infinite;
+                /* زيادة الوقت (30 ثانية) تخلي الحركة أهدى وأشيك */
+            }
+
+            .dhikr-track span {
+                font-size: 15px;
+                color: var(--primary);
+                font-weight: 700;
+                opacity: 0.8;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
+
+            /* إضافة أيقونة فاصلة صغيرة بين كل ذكر والثاني */
+            .dhikr-track span::after {
+                content: "•";
+                color: var(--accent);
+                font-size: 20px;
+                margin-right: 30px;
+            }
+
+            @keyframes scrollDhikr {
+                0% {
+                    transform: translateX(0);
+                }
+
+                100% {
+                    transform: translateX(50%);
+                }
+
+                /* بنحرك لنص المسافة فقط لأننا مكررين العناصر */
+            }
+
+            /* توقف الحركة عند الوقوف بالماوس عشان لو المستخدم عايز يقرأ ذكر معين */
+            .dhikr-container:hover .dhikr-track {
+                animation-play-state: paused;
+            }
+        </style>
+    </footer>
+    <button id="backToTop" class="back-to-top" title="العودة للأعلى">
+        <i class="fa-solid fa-arrow-up"></i>
+    </button>
+
+    <script src="الاذكار.js"></script>
+</body>
+
+</html>
