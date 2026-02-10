@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>المساعدة  | وذكر</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-pink: #ffb7c5;
+            --bg-color: #fff5f7;
+            --card-bg: #ffffff;
+            --text-main: #4a3438;
+            --nav-bg: #ffffff;
+            --whatsapp-green: #25d366;
+        }
+
+        .dark-mode {
+            --bg-color: #121212;
+            --card-bg: #1e1e1e;
+            --text-main: #e0e0e0;
+            --nav-bg: #181818;
+            --primary-pink: #ff8fa3;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding-top: 80px;
+            overflow-x: hidden;
+            transition: background 0.4s ease;
+        }
+
+        /* Navbar */
+        .navbar {
+            position: fixed;
+            top: 0; width: 100%; height: 65px;
+            background: var(--nav-bg);
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 20px; box-sizing: border-box;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.1); z-index: 1000;
+        }
+
+        .navbar i { font-size: 22px; cursor: pointer; color: var(--primary-pink); }
+        .navbar .title { font-weight: bold; font-size: 1.3rem; }
+
+        /* Container & Cards */
+        .container { max-width: 500px; margin: auto; padding: 20px; position: relative; z-index: 10; }
+        
+        .help-card {
+            background: var(--card-bg);
+            border-radius: 15px; padding: 20px; margin-bottom: 20px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+            border: 1px solid rgba(255, 183, 197, 0.3);
+        }
+
+        .help-card h3 { color: var(--primary-pink); margin-top: 0; }
+
+        /* WhatsApp Button */
+        .whatsapp-btn {
+            display: flex; align-items: center; justify-content: center;
+            background: var(--whatsapp-green); color: white;
+            padding: 15px; border-radius: 12px; text-decoration: none;
+            font-weight: bold; font-size: 1.1rem; gap: 10px;
+            box-shadow: 0 5px 15px rgba(37, 211, 102, 0.3);
+            transition: transform 0.2s;
+        }
+        .whatsapp-btn:hover { transform: scale(1.02); }
+
+        /* Sakura Animation Styles */
+        .sakura {
+            position: fixed; top: -10%;
+            background: linear-gradient(120deg, #ffb7c5, #ffdae0);
+            border-radius: 100% 0% 100% 0% / 100% 0% 100% 0%;
+            pointer-events: none; z-index: 1;
+            animation: fall linear infinite;
+        }
+
+        @keyframes fall {
+            0% { transform: translateY(0vh) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <i class="fa-solid fa-chevron-left" onclick="history.back()"></i>
+        <div class="title">المساعدة</div>
+        <i class="fa-solid fa-moon" id="theme-btn" onclick="toggleDarkMode()"></i>
+    </nav>
+
+    <div class="container">
+        <div class="help-card">
+            <h3><i class="fa-solid fa-circle-info"></i> عن التطبيق</h3>
+            <p>أهلاً بك يا صديقي، هذا التطبيق صُمم لمساعدتك في الوصول للأذكار بسهولة مع تجربة بصرية مريحة.</p>
+        </div>
+
+        <div class="help-card">
+            <h3><i class="fa-solid fa-comments"></i> هل تحتاج لمساعدة؟</h3>
+            <p>يمكنك التواصل معي للاستفسارات أو الإقتراحات لتحسن تجربتك.</p>
+            <br>
+            <a href="https://wa.me/201158601817" class="whatsapp-btn" target="_blank">
+                <i class="fa-brands fa-whatsapp"></i> تواصل معي 
+            </a>
+        </div>
+    </div>
+
+    <script>
+        // --- Sakura Falling Effect ---
+        function createSakura() {
+            const leaf = document.createElement('div');
+            leaf.classList.add('sakura');
+            
+            // إعدادات عشوائية للأوراق
+            const size = Math.random() * 10 + 10 + 'px';
+            leaf.style.width = size;
+            leaf.style.height = size;
+            leaf.style.left = Math.random() * 100 + 'vw';
+            leaf.style.animationDuration = Math.random() * 3 + 2 + 's'; // سرعة السقوط
+            leaf.style.opacity = Math.random();
+            
+            document.body.appendChild(leaf);
+
+            // حذف الورقة بعد انتهاء الأنميشن
+            setTimeout(() => { leaf.remove(); }, 5000);
+        }
+
+        // إنشاء ورقة كل 300 مللي ثانية
+        setInterval(createSakura, 300);
+
+        // --- Dark Mode Logic ---
+        function toggleDarkMode() {
+            const body = document.body;
+            const icon = document.getElementById('theme-btn');
+            body.classList.toggle('dark-mode');
+            
+            if (body.classList.contains('dark-mode')) {
+                icon.classList.replace('fa-moon', 'fa-sun');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                icon.classList.replace('fa-sun', 'fa-moon');
+                localStorage.setItem('theme', 'light');
+            }
+        }
+
+        if (localStorage.getItem('theme') === 'dark') {
+            document.body.classList.add('dark-mode');
+            document.getElementById('theme-btn').classList.replace('fa-moon', 'fa-sun');
+        }
+    </script>
+</body>
+</html>
