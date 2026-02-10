@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>وذكر | مواقيت الصلاة</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* باليتة الألوان: كحلي ملكي، ذهبي، ولون سماوي فاتح */
+            --bg: #f1f5f9;
+            --nav-bg: rgba(15, 23, 42, 0.9);
+            --main-gradient: linear-gradient(135deg, #0f172a, #1e293b);
+            --accent: #c5a059;
+            --light-soft: #e0f2fe; /* اللون الفاتح الإضافي */
+            --card-white: #ffffff;
+            --text-dark: #1e293b;
+            --shadow: 0 10px 30px rgba(0,0,0,0.08);
+        }
+
+        /* حماية ومنع التحديد والنسخ */
+        * { 
+            -webkit-tap-highlight-color: transparent; 
+            user-select: none; 
+            box-sizing: border-box; 
+            outline: none; 
+        }
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: var(--bg);
+            margin: 0; padding: 0;
+            color: var(--text-dark);
+            background-image: url('https://www.transparenttextures.com/patterns/pollen.png');
+            padding-top: 70px; /* مساحة للناف بار */
+        }
+
+        /* الناف بار الموحد */
+        .navbar {
+            position: fixed; top: 0; width: 100%; height: 70px;
+            background: var(--nav-bg); backdrop-filter: blur(15px);
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 5%; z-index: 1000; box-shadow: var(--shadow);
+            border-bottom: 1px solid rgba(197, 160, 89, 0.3);
+        }
+
+        .nav-icon {
+            width: 40px; height: 40px; background: rgba(255,255,255,0.1);
+            border-radius: 12px; display: grid; place-items: center;
+            color: var(--accent); cursor: pointer; text-decoration: none;
+        }
+
+        .nav-title { font-family: 'Amiri'; font-size: 24px; color: #fff; font-weight: 700; }
+
+        /* الهيدر والساعة */
+        .premium-header {
+            background: var(--main-gradient);
+            padding: 40px 20px 50px;
+            border-radius: 0 0 40px 40px;
+            text-align: center;
+            color: #fff;
+            position: relative;
+        }
+
+        .clock-glass {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            padding: 15px 25px;
+            border-radius: 25px;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .time-part { font-size: 2.2rem; font-weight: 900; color: #fff; }
+        .colon { animation: blink 1s infinite; font-size: 1.8rem; color: var(--accent); }
+        @keyframes blink { 50% { opacity: 0.2; } }
+
+        /* شريط الحالة القادم */
+        .status-bar {
+            width: 85%; max-width: 450px;
+            background: var(--light-soft); /* استخدام اللون الفاتح */
+            margin: -25px auto 25px;
+            padding: 15px; border-radius: 18px;
+            text-align: center; font-weight: 800;
+            box-shadow: var(--shadow);
+            color: #0369a1; /* أزرق داكن متناسق مع السماوي */
+            border: 1px solid #bae6fd;
+            z-index: 10; position: relative;
+        }
+
+        /* كروت التواريخ */
+        .date-grid {
+            display: grid; grid-template-columns: 1fr 1fr;
+            gap: 15px; width: 90%; max-width: 500px; margin: 0 auto 25px;
+        }
+
+        .date-item {
+            background: var(--card-white);
+            padding: 12px; border-radius: 20px;
+            text-align: center; box-shadow: var(--shadow);
+        }
+
+        .date-item span { display: block; font-size: 0.75rem; color: #64748b; font-weight: 700; }
+        .date-item b { font-size: 1rem; color: var(--text-dark); margin-top: 4px; display: block; }
+
+        /* القائمة */
+        .prayer-container {
+            width: 90%; max-width: 500px; margin: 0 auto;
+            display: flex; flex-direction: column; gap: 12px;
+        }
+
+        .prayer-card {
+            background: var(--card-white);
+            padding: 18px 22px; border-radius: 22px;
+            display: flex; justify-content: space-between; align-items: center;
+            box-shadow: var(--shadow); transition: 0.3s;
+        }
+
+        .prayer-card.highlight {
+            background: var(--light-soft);
+            border: 1px solid var(--accent);
+            transform: scale(1.02);
+        }
+
+        .p-info { display: flex; align-items: center; gap: 12px; }
+        .p-info i { color: var(--accent); font-size: 1.2rem; }
+        .p-name { font-weight: 700; font-size: 1.1rem; }
+        .p-time { font-weight: 800; color: var(--text-dark); }
+
+        /* السنن */
+        .sunnah-card {
+            width: 90%; max-width: 500px; margin: 30px auto;
+            background: var(--main-gradient);
+            border-radius: 30px; padding: 25px; color: #fff;
+        }
+
+        .sunnah-card h3 { 
+            font-family: 'Amiri'; color: var(--accent); text-align: center;
+            margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px;
+        }
+
+        .s-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .badge { padding: 4px 10px; border-radius: 8px; font-size: 0.75rem; font-weight: 800; }
+        .b-before { background: var(--accent); color: #000; }
+        .b-after { background: var(--light-soft); color: #0369a1; }
+
+        /* فقاعة عمر */
+        .speech-bubble {
+            position: fixed; bottom: 30px; right: 20px; left: 20px;
+            background: var(--accent); color: #000;
+            padding: 15px 20px; border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            font-weight: 800; text-align: center;
+            z-index: 2000; transform: translateY(200%); transition: 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .speech-bubble.show { transform: translateY(0); }
+    </style>
+</head>
+<body oncontextmenu="return false;">
+
+    <nav class="navbar">
+        <div style="width: 40px;"></div>
+        <div class="nav-title">مواقيت الصلاة</div>
+        <a href="javascript:history.back()" class="nav-icon">
+            <i class="fa-solid fa-chevron-left"></i>
+        </a>
+    </nav>
+
+    <div class="premium-header">
+        <div class="clock-glass">
+            <div class="time-part" id="h">00</div>
+            <div class="colon">:</div>
+            <div class="time-part" id="m">00</div>
+            <div class="colon">:</div>
+            <div class="time-part" id="s">00</div>
+        </div>
+        <p id="ampm" style="margin-top:10px; color: var(--accent); font-weight: bold;"></p>
+    </div>
+
+    <div class="status-bar" id="nextPrayerCountdown">
+        جاري الحساب...
+    </div>
+
+    <div class="date-grid">
+        <div class="date-item"><span>ميلادي</span><b id="gDate">--</b></div>
+        <div class="date-item"><span>هجري</span><b id="hDate">--</b></div>
+    </div>
+
+    <div class="prayer-container">
+        <div class="prayer-card" id="fajr-row">
+            <div class="p-info"><i class="fa-solid fa-moon"></i> <span class="p-name">الفجر</span></div>
+            <span class="p-time">05:12 ص</span>
+        </div>
+        <div class="prayer-card" id="dhuhr-row">
+            <div class="p-info"><i class="fa-solid fa-sun"></i> <span class="p-name">الظهر</span></div>
+            <span class="p-time">11:58 ص</span>
+        </div>
+        <div class="prayer-card" id="asr-row">
+            <div class="p-info"><i class="fa-solid fa-cloud-sun"></i> <span class="p-name">العصر</span></div>
+            <span class="p-time">02:44 م</span>
+        </div>
+        <div class="prayer-card" id="maghrib-row">
+            <div class="p-info"><i class="fa-solid fa-mountain-sun"></i> <span class="p-name">المغرب</span></div>
+            <span class="p-time">05:04 م</span>
+        </div>
+        <div class="prayer-card" id="isha-row">
+            <div class="p-info"><i class="fa-solid fa-star-and-crescent"></i> <span class="p-name">العشاء</span></div>
+            <span class="p-time">06:27 م</span>
+        </div>
+    </div>
+
+    <div class="sunnah-card">
+        <h3><i class="fa-solid fa-kaaba"></i> السنن الرواتب</h3>
+        <div class="s-row"><b>الفجر</b> <span class="badge b-before">2 ركعة قبل</span></div>
+        <div class="s-row"><b>الظهر</b> <div><span class="badge b-before">2 قبل</span> <span class="badge b-after">4 بعد</span></div></div>
+        <div class="s-row"><b>المغرب</b> <span class="badge b-after">2 ركعة بعد</span></div>
+        <div class="s-row"><b>العشاء</b> <span class="badge b-after">2 ركعة بعد</span></div>
+    </div>
+
+    <div class="speech-bubble" id="bubble"></div>
+
+    <script>
+        const prayerTimes = [
+            { name: "الفجر", time: "05:12", id: "fajr-row" },
+            { name: "الظهر", time: "11:58", id: "dhuhr-row" },
+            { name: "العصر", time: "14:44", id: "asr-row" },
+            { name: "المغرب", time: "17:04", id: "maghrib-row" },
+            { name: "العشاء", time: "18:27", id: "isha-row" }
+        ];
+
+        const bubble = document.getElementById('bubble');
+
+        function showMessage(msg) {
+            bubble.innerText = msg;
+            bubble.classList.add('show');
+            setTimeout(() => bubble.classList.remove('show'), 7000);
+        }
+
+        function updateUI() {
+            const now = new Date();
+            let h = now.getHours();
+            let m = now.getMinutes();
+            let s = now.getSeconds();
+
+            document.getElementById('h').innerText = String(h % 12 || 12).padStart(2, '0');
+            document.getElementById('m').innerText = String(m).padStart(2, '0');
+            document.getElementById('s').innerText = String(s).padStart(2, '0');
+            document.getElementById('ampm').innerText = h >= 12 ? 'فترة المساء' : 'فترة الصباح';
+
+            let nextP = null;
+            let minDiff = Infinity;
+
+            prayerTimes.forEach(p => {
+                const [pH, pM] = p.time.split(':').map(Number);
+                let pDate = new Date();
+                pDate.setHours(pH, pM, 0);
+
+                if (pDate < now) pDate.setDate(pDate.getDate() + 1);
+                let diff = pDate - now;
+                let diffMins = Math.floor(diff / 60000);
+
+                if (s === 0) {
+                    if (diffMins === 15) showMessage(`باقي 15 دقيقة على ${p.name}.. استعد يا عمر ✨`);
+                    if (diffMins === 0) showMessage(`حان الآن موعد صلاة ${p.name}.. طمأنينة لقلبك 🕋`);
+                }
+
+                if (diff < minDiff) { minDiff = diff; nextP = p; }
+                document.getElementById(p.id).classList.remove('highlight');
+            });
+
+            let dh = Math.floor(minDiff / 3600000);
+            let dm = Math.floor((minDiff % 3600000) / 60000);
+            document.getElementById('nextPrayerCountdown').innerHTML = 
+                `باقي <b style="color:#0369a1">${dh} ساعة و ${dm} دقيقة</b> على ${nextP.name}`;
+            
+            document.getElementById(nextP.id).classList.add('highlight');
+        }
+
+        // التاريخ
+        const d = new Date();
+        document.getElementById('gDate').innerText = d.toLocaleDateString('ar-EG', {day:'numeric', month:'short'});
+        document.getElementById('hDate').innerText = new Intl.DateTimeFormat('ar-SA-u-ca-islamic-ma', {day:'numeric', month:'short'}).format(d);
+
+        setInterval(updateUI, 1000);
+        updateUI();
+
+        // منع النسخ
+        document.addEventListener('copy', (e) => e.preventDefault());
+    </script>
+</body>
+</html>
