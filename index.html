@@ -245,272 +245,199 @@ function calculateRamadan() {
     <audio id="bot-sound" src="https://notificationsounds.com/storage/sounds/file-sounds-1150-pristine.mp3"></audio>
 
     <script>
-        // 1. الإعدادات والذاكرة السريعة
-        let botName = localStorage.getItem('bot_name') || "آدم";
-        let userName = "يا بطل";
-        let isFirstOpen = true;
+    /**
+     * إعدادات البوت والذاكرة المحلية
+     * تحسين: جمعنا المتغيرات في مكان واحد لتسهيل الإدارة
+     */
+    let botName = localStorage.getItem('bot_name') || "آدم";
+    let userName = "يا بطل";
+    let isFirstOpen = true;
 
-        // 2. دالة "خطف" الاسم من الـ Div الخاص بك
-        function getStoredName() {
-            const nameDisplay = document.getElementById('user-display-name');
-            if (nameDisplay) {
-                let text = nameDisplay.innerText;
-                let cleanName = text.replace('مرحباً،', '').replace('مرحباً بك يا', '').replace('أهلاً بك في رحاب الذكر', '').replace('أهلاً بك في وذكر', '').trim();
-                if (cleanName && cleanName.length > 1) {
-                    userName = cleanName;
-                    localStorage.setItem('userFirstName', cleanName);
-                    return cleanName;
-                }
-            }
-            return localStorage.getItem('userFirstName') || "يا بطل";
-        }
-
-        // 3. وظيفة فتح الشات والترحيب
-        function toggleChat() {
-            const chat = document.getElementById('chat-container');
-            if (!chat) return;
-            const isOpen = chat.style.display === 'flex';
-            chat.style.display = isOpen ? 'none' : 'flex';
-
-            if (!isOpen && isFirstOpen) {
-                isFirstOpen = false;
-                userName = getStoredName();
-                showTypingIndicator(true);
-                setTimeout(() => {
-                    showTypingIndicator(false);
-                    sendBotReply(`مرحباً يا ${userName}، محتاج مساعدة..؟ ✨`);
-                }, 1000);
+    // دالة تجلب اسم المستخدم من الواجهة وتنظفه من الكلمات الزائدة
+    function getStoredName() {
+        const nameDisplay = document.getElementById('user-display-name');
+        if (nameDisplay) {
+            let text = nameDisplay.innerText;
+            // إزالة عبارات الترحيب للحصول على الاسم فقط
+            let cleanName = text.replace(/مرحباً،|مرحباً بك يا|أهلاً بك في رحاب الذكر|أهلاً بك في وذكر/g, '').trim();
+            if (cleanName.length > 1) {
+                userName = cleanName;
+                localStorage.setItem('userFirstName', cleanName);
+                return cleanName;
             }
         }
+        return localStorage.getItem('userFirstName') || "يا بطل";
+    }
 
-        // --- [جديد] دالة جلب مواقيت الصلاة من الـ API ---
-        async function getPrayerTimes() {
-            try {
-                // ملاحظة: يمكنك تغيير Cairo و Egypt حسب رغبتك أو جعلها ديناميكية
-                const response = await fetch('https://api.aladhan.com/v1/timingsByCity?city=Cairo&country=Egypt&method=5');
-                const data = await response.json();
-                return data.data.timings;
-            } catch (error) {
-                console.error("خطأ في جلب المواقيت:", error);
-                return null;
-            }
-        }
+    // فتح وإغلاق نافذة الدردشة مع رسالة ترحيب ذكية
+    function toggleChat() {
+        const chat = document.getElementById('chat-container');
+        if (!chat) return;
+        const isOpen = chat.style.display === 'flex';
+        chat.style.display = isOpen ? 'none' : 'flex';
 
-        // 4. منطق إرسال الرسائل وردود الفعل الذكية
-        async function handleSendMessage() {
-            const inp = document.getElementById('user-input');
-            const txt = inp.value.trim();
-            if (!txt) return;
-
-            appendMsg(txt, 'user-m');
-            inp.value = "";
+        // الترحيب عند أول فتح فقط
+        if (!isOpen && isFirstOpen) {
+            isFirstOpen = false;
             userName = getStoredName();
-
             showTypingIndicator(true);
+            setTimeout(() => {
+                showTypingIndicator(false);
+                sendBotReply(`مرحباً يا ${userName}، كيف يمكنني مساعدتك اليوم؟ ✨`);
+            }, 1000);
+        }
+    }
 
-            // --- محرك الردود الذكي المطور ---
-            let reply = "";
-            const input = txt.toLowerCase();
+    // جلب مواقيت الصلاة عبر API خارجي
+    async function getPrayerTimes() {
+        try {
+            const response = await fetch('https://api.aladhan.com/v1/timingsByCity?city=Cairo&country=Egypt&method=5');
+            const data = await response.json();
+            return data.data.timings;
+        } catch (error) {
+            console.error("خطأ في جلب المواقيت:", error);
+            return null;
+        }
+    }
 
-            // أ- التحقق من أوامر الوقت والصلاة أولاً (الذكاء الجديد)
-            if (input.includes("المغرب") || input.includes("صلاة") || input.includes("مواقيت")) {
-                const timings = await getPrayerTimes();
-                if (timings) {
-                    if (input.includes("المغرب")) {
-                        reply = `صلاة المغرب اليوم في تمام الساعة ${timings.Maghrib} بتوقيتك المحلي يا ${userName}.`;
-                    } else {
-                        reply = `مواقيت الصلاة اليوم:\nالفجر: ${timings.Fajr}\nالظهر: ${timings.Dhuhr}\nالعصر: ${timings.Asr}\nالمغرب: ${timings.Maghrib}\nالعشاء: ${timings.Isha}`;
-                    }
-                } else {
-                    reply = "عذراً يا بطل، واجهت مشكلة في جلب مواقيت الصلاة حالياً، جرب كمان شوية.";
-                }
+    /**
+     * المحرك الرئيسي لمعالجة الرسائل
+     * تم تحسينه ليكون أكثر شبهاً بالذكاء الاصطناعي في ترتيب الأولويات
+     */
+    async function handleSendMessage() {
+        const inputField = document.getElementById('user-input');
+        const userText = inputField.value.trim();
+        if (!userText) return;
+
+        // 1. عرض رسالة المستخدم فوراً وتفريغ الحقل
+        appendMsg(userText, 'user-m');
+        inputField.value = "";
+        userName = getStoredName();
+        showTypingIndicator(true);
+
+        let reply = "";
+        const lowerInput = userText.toLowerCase();
+
+        // المستوى الأول: الأوامر البرمجية الحية (صلاة، رمضان، وقت)
+        if (lowerInput.includes("صلاة") || lowerInput.includes("مواقيت") || lowerInput.includes("المغرب")) {
+            const times = await getPrayerTimes();
+            if (times) {
+                reply = lowerInput.includes("المغرب") 
+                    ? `صلاة المغرب اليوم في تمام الساعة ${times.Maghrib} بتوقيت القاهرة.`
+                    : `مواقيت الصلاة اليوم:\nالفجر: ${times.Fajr}\nالظهر: ${times.Dhuhr}\nالعصر: ${times.Asr}\nالمغرب: ${times.Maghrib}\nالعشاء: ${times.Isha}`;
             }
-            else if (input.includes("رمضان")) {
-                const today = new Date();
-                const ramadanDate = new Date("March 1, 2026"); // تاريخ رمضان المتوقع 2026
-                const diffTime = ramadanDate - today;
-                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        } 
+        else if (lowerInput.includes("رمضان")) {
+            const ramadanDate = new Date("2026-02-18");
+            const diff = Math.ceil((ramadanDate - new Date()) / (1000 * 60 * 60 * 24));
+            reply = diff > 0 ? `متبقي ${diff} يوم على شهر الخير يا ${userName}.` : "مبارك عليكم الشهر الفضيل! 🌙";
+        }
+        else if (lowerInput.includes("الساعة") || lowerInput.includes("الوقت")) {
+            reply = `الساعة الآن ${new Date().toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' })}.`;
+        }
 
-                if (input.includes("امتى") || input.includes("متى")) {
-                    reply = "من المتوقع أن يبدأ شهر رمضان المبارك يوم 1 مارس 2026 بإذن الله، اللهم بلغنا رمضان.";
-                } else if (input.includes("باقي") || input.includes("كام يوم")) {
-                    reply = diffDays > 0 ? `باقي على شهر الخير والبركة ${diffDays} يوم تقريباً يا ${userName}.` : "نحن في رحاب شهر رمضان الآن، أعاده الله علينا بالخير!";
-                }
-            }
-            else if (input.includes("الساعة") || input.includes("الوقت")) {
-                const now = new Date();
-                reply = `الساعة دلوقتي ${now.toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' })}.`;
-            }
-
-            // ب- إذا لم يكن سؤال وقت، ابحث في قاموس (ميرو برين)
-            if (!reply) {
-                const brain = {
-                    "اسمي ايه": `أنت اسمك ${getStoredName()}.. هو أنا أقدر أنسى الباشمهندس الكبير؟`,
-                    "اسمك": `أنا اسمي ${botName}، ونا هنا مخصوص عشانك.`,
-
-                    "السلام عليكم": `وعليكم السلام ورحمة الله وبركاته يا ${userName}.. نورت الشات!`,
-                    "صباح الخير": "يا صباح الفل والرضا والذكر.. يومك جميل بإذن الله يا بطل.",
-
-                    // --- ردود الفقه والعبادات (السنن والركعات) ---
-                    "الظهر": "صلاة الظهر 4 ركعات، والسنن الرواتب التابعة لها 4 قبلها (بتسليمتين) و2 بعدها.",
-                    "الضهر": "صلاة الظهر 4 ركعات، والسنن الرواتب التابعة لها 4 قبلها (بتسليمتين) و2 بعدها.",
-                    "العصر": "صلاة العصر 4 ركعات، وليس لها سنة راتبة مؤكدة، لكن يستحب صلاة 4 ركعات قبلها.",
-                    "المغرب": "صلاة المغرب 3 ركعات، وسنتها الراتبة 2 بعدها.",
-                    "العشاء": "صلاة العشاء 4 ركعات، وسنتها الراتبة 2 بعدها، وبعدها صلاة الوتر (أقلها ركعة).",
-                    "الفجر": "صلاة الفجر ركعتان (فرض)، ويسبقها ركعتا سنة الفجر وهي آكد السنن الرواتب.",
-                    "الصبح": "صلاة الصبح هي نفسها الفجر، ركعتان فرض وسنتها ركعتان قبلها.",
-                    "الوتر": "صلاة الوتر سنة مؤكدة، ووقتها من بعد صلاة العشاء إلى طلوع الفجر، وأقلها ركعة واحدة.",
-                    "الضحى": "صلاة الضحى سنة، وأقلها ركعتان وأكثرها ثمانية، ووقتها يبدأ بعد شروق الشمس بـ 15 دقيقة.",
-                    "عدد الركعات": "الفجر: 2 | الظهر: 4 | العصر: 4 | المغرب: 3 | العشاء: 4.",
-                    "السنن الرواتب": "السنن الرواتب 12 ركعة: 2 قبل الفجر، 4 قبل الظهر و2 بعده، 2 بعد المغرب، و2 بعد العشاء.",
-
-                    // --- ردود رمضان والصيام ---
-                    "رمضان كام يوم": "شهر رمضان يكون إما 29 أو 30 يوماً، حسب رؤية الهلال.",
-                    "صيام": "الصيام ركن من أركان الإسلام الخمسة، وهو مدرسة التقوى.. 'لعلكم تتقون'.",
-                    "ليلة القدر": "ليلة القدر في العشر الأواخر من رمضان، وهي خير من ألف شهر.",
-
-                    // --- ردود الذكر المتقدمة ---
-                    "سيد الاستغفار": "اللهم أنت ربي لا إله إلا أنت، خلقتني وأنا عبدك، وأنا على عهدك ووعدك ما استطعت.. (كمل الدعاء لتاخد الأجر كاملاً ✨)",
-                    "تعبان": "سلامة قلبك.. قل: 'أني مسني الضر وأنت أرحم الراحمين'.",
-                    "خايف": "ردد: 'حسبي الله ونعم الوكيل'، 'لا إله إلا أنت سبحانك إني كنت من الظالمين'.",
-                    "رزق": "عليك بالاستغفار وسورة الواقعة، وقل: 'اللهم اكفني بحلالك عن حرامك'.",
-                    "مهموم": "قل: 'يا حي يا قيوم برحمتك أستغيث'، وصلي على النبي كثيراً.",
-
-                    // --- ردود فرفشة ومنوعة ---
-                    "منور": "ده نورك يا غالي، المكان منور بذكرك لله.",
-                    "يا اسطى": "يا عيوني! معك آدم (رفيقك الذكي)، أؤمرني يا بطل.",
-                    "يا أسطى": "يا عيوني! معك آدم (رفيقك الذكي)، أؤمرني يا بطل.",
-                    // --- ردود التفاعل الإنساني (الذوقيات) ---
-                    "أمين": "اللهم آمين يا رب.. تقبل الله منا ومنك صالح الدعاء.",
-                    "امين": "يا رب يستجيب ويجبر خاطرك ويحقق لك كل اللي بتتمناه.",
-                    "جزاك الله خير": "وإياك يا غالي! ربنا يجعله في ميزان حسناتنا جميعاً.",
-                    "حبيبي": "تسلم يا غالي، ده من ذوقك والله.. ربنا يحبب فيك خلقه.",
-                    "تسلم": "الله يسلمك من كل سوء يا بطل.. نورتني.",
-                    "شكرا": "العفو، أنا في الخدمة دايماً.. لا تنساني من صالح دعائك.",
-
-                    // --- ركن "الثانوية العامة" والنجاح (مخصوص عشانك يا عمر) ---
-                    "ثانوية عامة": "يا بطل شد حيلك! 'وأن ليس للإنسان إلا ما سعى'.. ذاكر واعمل اللي عليك وميرو بيدعيلك بالنجاح.",
-                    "مذاكرة": "قبل ما تبدأ قول: 'اللهم إني أسألك فهم النبيين وحفظ المرسلين'.. ربنا يفتح عليك فتوح العارفين.",
-                    "مخنو من المذاكرة": "خد استراحة 5 دقائق، سبح فيها ربنا، وارجع تاني.. 'بذكر الله تطمئن القلوب' وهتلاقي المعلومة ثبتت.",
-                    "نجحني": "يا رب نجح ${userName} ووفقه في امتحاناته وفرح قلبه وقلب أهله.. آمين.",
-
-                    // --- ردود الذكر السريعة (Shortcuts) ---
-                    "عايز اذكر": "أجمل ذكر دلوقتي: 'لا إله إلا الله وحده لا شريك له، له الملك وله الحمد وهو على كل شيء قدير'.",
-                    "تعبان": "سلامة قلبك.. قل: 'أني مسني الضر وأنت أرحم الراحمين'.. ربنا يزيح عنك كل هم.",
-                    "مخنوق": "صلي على النبي 10 مرات كدا.. 'اللهم صل وسلم على نبينا محمد'.. وهتلاقي صدرك انشرح.",
-
-                    // --- ردود الروقان والفرفشة ---
-                    "بتعمل ايه": "مستني حد جميل زيك يدخل يذكر الله معايا عشان ناخد حسنات سوا.",
-                    "مين ميرو": "ميرو هو عمر التيجاني، العقل المدبر اللي خلاني أكلمك دلوقتي.. ربنا يحفظه.",
-                    "اضحك": "مرة واحد بخيل أبوه مات، راح يكتب نعي في الجريدة.. قالهم 'رزق مات'.. قالوله 'أقل حاجة 3 كلمات'.. قالهم 'رزق مات وللبيع فيات' 😂",
-
-                    // --- ردود الوداع ---
-                    "تصبح على خير": "وأنت من أهل الخير والسعادة.. متنساش أذكار النوم وسورة الملك.. في حفظ الله يا ${userName}.",
-                    "سلام": "في رعاية الله يا بطل.. خلي لسانك دايماً عامر بذكر الله.. هتوحشني!",
-
-                    "هلا": "هلا والله فيك شو اخبارك.",
-                    "عامل ايه": "الحمد لله في فضل ونعمة طول ما أنت بخير.. أنت طمني عليك؟",
-                    "صلي": `عليه أفضل الصلاة وأتم التسليم.. صلاتك عليه معروضة عليه يا ${userName}، فاستزد!`,
-                    "اذكر الله": `لا إله إلا الله وحده لا شريك له.. ذكرت الله فذكرك، 'فاذكروني أذكركم'.`,
-                    "شكرا": "العفو يا حبيبي، الشكر لله.. أنا موجود هنا عشانك أنت.",
-                    "باي": `في أمان الله يا ${userName}.. متنساش الأذكار، هتوحشني والله!`
-                    // يمكنك إضافة باقي القاموس هنا بنفس الطريقة
-                };
-
+        // المستوى الثاني: البحث في "دماغ ميرو" (ملف JSON الخارجي)
+        if (!reply) {
+            try {
+                const response = await fetch('bot-brain.json');
+                const brain = await response.json();
                 for (let key in brain) {
-                    if (input.includes(key)) {
-                        reply = brain[key];
+                    if (lowerInput.includes(key)) {
+                        reply = brain[key].replace(/{name}/g, userName);
                         break;
                     }
                 }
-            }
-
-            // ج- رد عشوائي لو ملقيناش حاجة
-            if (!reply) {
-                const randomReplies = [
-                    `كلامك جميل يا ${userName}.. بس قولي، صليت على النبي النهاردة؟`,
-                    "ذكرت الله النهاردة؟ 'ألا بذكر الله تطمئن القلوب'.",
-                    "أنا لسه بتعلم، بس كلامك ده منور الشات والله 😂"
-                ];
-                reply = randomReplies[Math.floor(Math.random() * randomReplies.length)];
-            }
-
-            // إخفاء الأنيميشن وإرسال الرد
-            setTimeout(() => {
-                showTypingIndicator(false);
-                sendBotReply(reply);
-            }, 1200);
+            } catch (e) { console.warn("فشل الاتصال بملف JSON"); }
         }
 
-        // 5. وظيفة إظهار/إخفاء مؤشر الكتابة
-        function showTypingIndicator(show) {
-            const statusText = document.getElementById('bot-status-text');
-            const chatBody = document.getElementById('chat-body');
-            if (show) {
-                if (statusText) statusText.innerText = `${botName} يكتب الآن...`;
-                if (!document.getElementById('typing-bubble')) {
-                    const typingDiv = document.createElement('div');
-                    typingDiv.id = 'typing-bubble';
-                    typingDiv.className = 'miro-msg bot-m animate-msg';
-                    typingDiv.innerHTML = `<div class="typing-dots"><span></span><span></span><span></span></div>`;
-                    chatBody.appendChild(typingDiv);
-                }
-            } else {
-                if (statusText) statusText.innerText = "متصل الآن";
-                const bubble = document.getElementById('typing-bubble');
-                if (bubble) bubble.remove();
+        // المستوى الثالث: ردود عشوائية عند عدم الفهم
+        if (!reply) {
+            const defaults = [
+                `كلام جميل يا ${userName}، هل تود أن نذكر الله سوياً؟`,
+                "لم أفهمك تماماً، لكن جرب أن تسألني عن مواقيت الصلاة أو أذكار معينة.",
+                "أنا في تطور مستمر بفضل الله، سأتعلم الرد على هذا قريباً!"
+            ];
+            reply = defaults[Math.floor(Math.random() * defaults.length)];
+        }
+
+        // إرسال الرد بعد تأخير بسيط لمحاكاة التفكير
+        setTimeout(() => {
+            showTypingIndicator(false);
+            sendBotReply(reply);
+        }, 1000);
+    }
+
+    // التحكم في مؤشر "يكتب الآن..."
+    function showTypingIndicator(show) {
+        const status = document.getElementById('bot-status-text');
+        const body = document.getElementById('chat-body');
+        if (show) {
+            if (status) status.innerText = `${botName} يكتب الآن...`;
+            if (!document.getElementById('typing-bubble')) {
+                const div = document.createElement('div');
+                div.id = 'typing-bubble';
+                div.className = 'miro-msg bot-m animate-msg';
+                div.innerHTML = `<div class="typing-dots"><span></span><span></span><span></span></div>`;
+                body.appendChild(div);
             }
-            chatBody.scrollTop = chatBody.scrollHeight;
+        } else {
+            if (status) status.innerText = "متصل الآن";
+            const bubble = document.getElementById('typing-bubble');
+            if (bubble) bubble.remove();
         }
+        body.scrollTop = body.scrollHeight;
+    }
 
-        // 6. وظائف عرض الرسائل
-        function sendBotReply(txt) {
-            appendMsg(txt, 'bot-m');
-            const s = document.getElementById('bot-sound');
-            if (s) s.play().catch(() => { });
-        }
+    // إرسال رد البوت وتشغيل الصوت
+    function sendBotReply(txt) {
+        appendMsg(txt, 'bot-m');
+        const sound = document.getElementById('bot-sound');
+        if (sound) sound.play().catch(() => {});
+    }
 
-        function appendMsg(txt, cls) {
-            const body = document.getElementById('chat-body');
-            if (!body) return;
-            const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-            const div = document.createElement('div');
-            div.className = `miro-msg ${cls} animate-msg`;
-            div.innerHTML = `${txt} 
+    // إنشاء وعرض فقاعة الرسالة في واجهة الشات
+    function appendMsg(txt, cls) {
+        const body = document.getElementById('chat-body');
+        if (!body) return;
+        const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        const div = document.createElement('div');
+        div.className = `miro-msg ${cls} animate-msg`;
+        div.innerHTML = `${txt} 
             <div style="display:flex; justify-content:flex-end; gap:5px; font-size:10px; color:#888; margin-top:4px;">
                 <span>${time}</span>
-                <i class="far fa-copy" style="cursor:pointer" onclick="navigator.clipboard.writeText('${txt.replace(/'/g, "\\'")}');alert('تم النسخ!');"></i>
+                <i class="far fa-copy" style="cursor:pointer" title="نسخ النص" onclick="navigator.clipboard.writeText('${txt.replace(/'/g, "\\'")}');"></i>
             </div>`;
-            body.appendChild(div);
-            body.scrollTop = body.scrollHeight;
-        }
+        body.appendChild(div);
+        body.scrollTop = body.scrollHeight;
+    }
 
-        // 7. تغيير اسم البوت
-        function openRenameModal() {
-            document.getElementById('rename-modal').style.display = 'flex';
-            document.getElementById('new-bot-name').value = botName;
-        }
-        function closeRenameModal() { document.getElementById('rename-modal').style.display = 'none'; }
-        function saveBotName() {
-            const n = document.getElementById('new-bot-name').value.trim();
-            if (n) {
-                botName = n;
-                localStorage.setItem('bot_name', n);
-                document.getElementById('bot-name-display').innerText = botName;
-                closeRenameModal();
-                appendMsg(`تم تحديث اسمي لـ ${botName} 👍🏻`, 'bot-m');
-            }
-        }
-
-        window.addEventListener('load', () => {
-            const input = document.getElementById('user-input');
-            if (input) {
-                input.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleSendMessage(); });
-            }
+    /**
+     * تغيير اسم البوت وتخزينه
+     */
+    function openRenameModal() { document.getElementById('rename-modal').style.display = 'flex'; }
+    function closeRenameModal() { document.getElementById('rename-modal').style.display = 'none'; }
+    
+    function saveBotName() {
+        const newName = document.getElementById('new-bot-name').value.trim();
+        if (newName) {
+            botName = newName;
+            localStorage.setItem('bot_name', newName);
             document.getElementById('bot-name-display').innerText = botName;
-            getStoredName();
-        });
-    </script>
+            closeRenameModal();
+            appendMsg(`تم تحديث اسمي لـ ${botName} 👍🏻`, 'bot-m');
+        }
+    }
+
+    // تشغيل الإعدادات عند تحميل الصفحة
+    window.addEventListener('load', () => {
+        const input = document.getElementById('user-input');
+        if (input) {
+            input.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleSendMessage(); });
+        }
+        document.getElementById('bot-name-display').innerText = botName;
+        getStoredName();
+    });
+</script>
 
     <script type="module">
         import { auth } from './auth.js';
