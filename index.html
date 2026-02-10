@@ -245,21 +245,19 @@ function calculateRamadan() {
    <audio id="bot-sound" src=""></audio>
 
 
-    <script>
+<script>
     /**
      * إعدادات البوت والذاكرة المحلية
-     * تحسين: جمعنا المتغيرات في مكان واحد لتسهيل الإدارة
      */
     let botName = localStorage.getItem('bot_name') || "آدم";
     let userName = "يا بطل";
     let isFirstOpen = true;
 
-    // دالة تجلب اسم المستخدم من الواجهة وتنظفه من الكلمات الزائدة
+    // دالة جلب اسم المستخدم من الصفحة
     function getStoredName() {
         const nameDisplay = document.getElementById('user-display-name');
         if (nameDisplay) {
             let text = nameDisplay.innerText;
-            // إزالة عبارات الترحيب للحصول على الاسم فقط
             let cleanName = text.replace(/مرحباً،|مرحباً بك يا|أهلاً بك في رحاب الذكر|أهلاً بك في وذكر/g, '').trim();
             if (cleanName.length > 1) {
                 userName = cleanName;
@@ -270,14 +268,13 @@ function calculateRamadan() {
         return localStorage.getItem('userFirstName') || "يا بطل";
     }
 
-    // فتح وإغلاق نافذة الدردشة مع رسالة ترحيب ذكية
+    // فتح وإغلاق الدردشة
     function toggleChat() {
         const chat = document.getElementById('chat-container');
         if (!chat) return;
         const isOpen = chat.style.display === 'flex';
         chat.style.display = isOpen ? 'none' : 'flex';
 
-        // الترحيب عند أول فتح فقط
         if (!isOpen && isFirstOpen) {
             isFirstOpen = false;
             userName = getStoredName();
@@ -289,7 +286,7 @@ function calculateRamadan() {
         }
     }
 
-    // جلب مواقيت الصلاة عبر API خارجي
+    // جلب مواقيت الصلاة
     async function getPrayerTimes() {
         try {
             const response = await fetch('https://api.aladhan.com/v1/timingsByCity?city=Cairo&country=Egypt&method=5');
@@ -302,15 +299,14 @@ function calculateRamadan() {
     }
 
     /**
-     * المحرك الرئيسي لمعالجة الرسائل
-     * تم تحسينه ليكون أكثر شبهاً بالذكاء الاصطناعي في ترتيب الأولويات
+     * المحرك الرئيسي الذكي (دماغ البوت)
      */
     async function handleSendMessage() {
         const inputField = document.getElementById('user-input');
         const userText = inputField.value.trim();
         if (!userText) return;
 
-        // 1. عرض رسالة المستخدم فوراً وتفريغ الحقل
+        // عرض رسالة المستخدم
         appendMsg(userText, 'user-m');
         inputField.value = "";
         userName = getStoredName();
@@ -319,12 +315,12 @@ function calculateRamadan() {
         let reply = "";
         const lowerInput = userText.toLowerCase();
 
-        // المستوى الأول: الأوامر البرمجية الحية (صلاة، رمضان، وقت)
+        // 1. الأوامر البرمجية الحية (أولوية قصوى)
         if (lowerInput.includes("صلاة") || lowerInput.includes("مواقيت") || lowerInput.includes("المغرب")) {
             const times = await getPrayerTimes();
             if (times) {
                 reply = lowerInput.includes("المغرب") 
-                    ? `صلاة المغرب اليوم في تمام الساعة ${times.Maghrib} بتوقيت القاهرة.`
+                    ? `صلاة المغرب اليوم في تمام الساعة ${times.Maghrib} بتوقيت القاهرة يا ${userName}.`
                     : `مواقيت الصلاة اليوم:\nالفجر: ${times.Fajr}\nالظهر: ${times.Dhuhr}\nالعصر: ${times.Asr}\nالمغرب: ${times.Maghrib}\nالعشاء: ${times.Isha}`;
             }
         } 
@@ -334,41 +330,52 @@ function calculateRamadan() {
             reply = diff > 0 ? `متبقي ${diff} يوم على شهر الخير يا ${userName}.` : "مبارك عليكم الشهر الفضيل! 🌙";
         }
         else if (lowerInput.includes("الساعة") || lowerInput.includes("الوقت")) {
-            reply = `الساعة الآن ${new Date().toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' })}.`;
+            reply = `الساعة الآن ${new Date().toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' })} يا ${userName}.`;
         }
 
-        // المستوى الثاني: البحث في "دماغ ميرو" (ملف JSON الخارجي)
+        // 2. البحث الذكي في ملف JSON (الكلمات المفتاحية | وتبديل الأسماء)
         if (!reply) {
             try {
                 const response = await fetch('bot-brain.json');
                 const brain = await response.json();
+                
                 for (let key in brain) {
-                    if (lowerInput.includes(key)) {
-                        reply = brain[key].replace(/{name}/g, userName);
+                    // تقسيم المفاتيح بناءً على العلامة |
+                    let keywords = key.split('|');
+                    // التحقق لو رسالة المستخدم تحتوي على أي كلمة مفتاحية
+                    let isFound = keywords.some(k => lowerInput.includes(k.trim()));
+                    
+                    if (isFound) {
+                        // تبديل {name} باسم المستخدم و {bot} باسم البوت
+                        reply = brain[key]
+                            .replace(/{name}/g, userName)
+                            .replace(/{bot}/g, botName);
                         break;
                     }
                 }
-            } catch (e) { console.warn("فشل الاتصال بملف JSON"); }
+            } catch (e) { 
+                console.warn("فشل الاتصال بملف JSON أو الملف غير موجود بالمسار الصحيح"); 
+            }
         }
 
-        // المستوى الثالث: ردود عشوائية عند عدم الفهم
+        // 3. الرد العشوائي الافتراضي
         if (!reply) {
             const defaults = [
                 `كلام جميل يا ${userName}، هل تود أن نذكر الله سوياً؟`,
                 "لم أفهمك تماماً، لكن جرب أن تسألني عن مواقيت الصلاة أو أذكار معينة.",
-                "أنا في تطور مستمر بفضل الله، سأتعلم الرد على هذا قريباً!"
+                "أنا لسه بتعلم من ميرو، سأتعلم الرد على هذا قريباً!"
             ];
             reply = defaults[Math.floor(Math.random() * defaults.length)];
         }
 
-        // إرسال الرد بعد تأخير بسيط لمحاكاة التفكير
+        // إرسال الرد
         setTimeout(() => {
             showTypingIndicator(false);
             sendBotReply(reply);
         }, 1000);
     }
 
-    // التحكم في مؤشر "يكتب الآن..."
+    // التحكم في "يكتب الآن..."
     function showTypingIndicator(show) {
         const status = document.getElementById('bot-status-text');
         const body = document.getElementById('chat-body');
@@ -389,14 +396,17 @@ function calculateRamadan() {
         body.scrollTop = body.scrollHeight;
     }
 
-    // إرسال رد البوت وتشغيل الصوت
+    // إرسال الرد الصوتي والمرئي
     function sendBotReply(txt) {
         appendMsg(txt, 'bot-m');
         const sound = document.getElementById('bot-sound');
-        if (sound) sound.play().catch(() => {});
+        if (sound) {
+            sound.volume = 0.4; // صوت هادي
+            sound.play().catch(() => {});
+        }
     }
 
-    // إنشاء وعرض فقاعة الرسالة في واجهة الشات
+    // إضافة الرسالة للواجهة
     function appendMsg(txt, cls) {
         const body = document.getElementById('chat-body');
         if (!body) return;
@@ -406,15 +416,13 @@ function calculateRamadan() {
         div.innerHTML = `${txt} 
             <div style="display:flex; justify-content:flex-end; gap:5px; font-size:10px; color:#888; margin-top:4px;">
                 <span>${time}</span>
-                <i class="far fa-copy" style="cursor:pointer" title="نسخ النص" onclick="navigator.clipboard.writeText('${txt.replace(/'/g, "\\'")}');"></i>
+                <i class="far fa-copy" style="cursor:pointer" onclick="navigator.clipboard.writeText('${txt.replace(/'/g, "\\'")}');"></i>
             </div>`;
         body.appendChild(div);
         body.scrollTop = body.scrollHeight;
     }
 
-    /**
-     * تغيير اسم البوت وتخزينه
-     */
+    // إدارة تغيير اسم البوت
     function openRenameModal() { document.getElementById('rename-modal').style.display = 'flex'; }
     function closeRenameModal() { document.getElementById('rename-modal').style.display = 'none'; }
     
@@ -429,7 +437,7 @@ function calculateRamadan() {
         }
     }
 
-    // تشغيل الإعدادات عند تحميل الصفحة
+    // التشغيل عند التحميل
     window.addEventListener('load', () => {
         const input = document.getElementById('user-input');
         if (input) {
@@ -439,6 +447,7 @@ function calculateRamadan() {
         getStoredName();
     });
 </script>
+
 
     <script type="module">
         import { auth } from './auth.js';
