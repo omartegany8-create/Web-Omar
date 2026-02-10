@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>أسماء الله الحسنى | وذكر</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@700&family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #fdfdfd;
+            --nav-bg: #ffffff;
+            --card: #ffffff;
+            --text: #1a4314;
+            --primary: #2d5a27;
+            --gold: #c5a059;
+            --accent: #fcf8f0;
+            --shadow: 0 10px 25px rgba(0,0,0,0.05);
+        }
+
+        [data-theme="dark"] {
+            --bg: #0f172a;
+            --nav-bg: #1e293b;
+            --card: #1e293b;
+            --text: #f1f5f9;
+            --accent: #2d5a2722;
+            --shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; user-select: none; transition: all 0.3s ease; }
+
+        body {
+            font-family: 'Cairo', sans-serif; background: var(--bg);
+            margin: 0; min-height: 100vh; color: var(--text); padding-bottom: 0;
+        }
+
+        /* الساكورا */
+        .sakura-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
+        .leaf { position: absolute; background: #ffd1dc; border-radius: 100% 0 100% 0; opacity: 0.3; animation: fall linear infinite; }
+        @keyframes fall {
+            0% { transform: translateY(-10vh) rotate(0deg); opacity: 0; }
+            100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
+        }
+
+        /* الناف بار */
+        .navbar {
+            height: 70px; background: var(--nav-bg); display: flex; align-items: center;
+            justify-content: space-between; padding: 0 20px;
+            box-shadow: var(--shadow); position: sticky; top: 0; z-index: 100;
+        }
+        .nav-title { font-weight: 800; font-size: 1.1rem; color: var(--primary); }
+        .nav-btn { width: 45px; height: 45px; display: grid; place-items: center; cursor: pointer; border-radius: 12px; background: var(--accent); color: var(--primary); }
+
+        /* الكارت العشوائي */
+        .random-section { padding: 25px 20px; position: relative; z-index: 5; }
+        .random-card {
+            background: var(--card); border-radius: 30px; padding: 30px;
+            text-align: center; border: 1px solid var(--gold);
+            box-shadow: var(--shadow); cursor: pointer;
+            position: relative; overflow: hidden;
+        }
+        .random-card::after {
+            content: "نور الهداية"; position: absolute; top: 10px; right: 20px;
+            background: var(--gold); color: #fff; padding: 2px 12px;
+            border-radius: 20px; font-size: 0.7rem; font-weight: 700;
+        }
+        .r-name { font-family: 'Amiri', serif; font-size: 2.8rem; color: var(--primary); margin-bottom: 10px; }
+        .r-info { font-size: 0.95rem; color: var(--text); line-height: 1.6; opacity: 0.8; height: 50px; }
+
+        /* الشبكة */
+        .names-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(85px, 1fr));
+            gap: 12px; padding: 20px; max-width: 800px; margin: auto;
+            position: relative; z-index: 5;
+        }
+        .n-card {
+            background: var(--card); aspect-ratio: 1/1; display: flex;
+            flex-direction: column; justify-content: center; align-items: center;
+            border-radius: 20px; border: 1px solid rgba(0,0,0,0.03);
+            box-shadow: var(--shadow); cursor: pointer;
+        }
+        .n-card:active { transform: scale(0.9); }
+        .n-card .num { font-size: 0.65rem; color: var(--gold); font-weight: 800; margin-bottom: 5px; }
+        .n-card .name { font-family: 'Amiri', serif; font-size: 1.25rem; color: var(--primary); }
+
+        /* الحديث في الأسفل */
+        .hadith-footer {
+            background: var(--primary); color: #fff; padding: 60px 30px;
+            text-align: center; border-radius: 40px 40px 0 0; margin-top: 40px;
+        }
+        .hadith-text { font-family: 'Amiri', serif; font-size: 1.5rem; line-height: 1.8; margin-bottom: 15px; }
+        .hadith-source { font-size: 0.8rem; opacity: 0.6; }
+
+        /* المودال */
+        .modal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6); z-index: 2000;
+            justify-content: center; align-items: center; backdrop-filter: blur(8px);
+        }
+        .modal-content {
+            background: var(--card); width: 85%; max-width: 380px;
+            padding: 40px 25px; border-radius: 35px; text-align: center;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.2); animation: pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        @keyframes pop { from { transform: scale(0.7); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        .close-btn {
+            margin-top: 30px; background: var(--primary); color: #fff;
+            border: none; padding: 12px 40px; border-radius: 50px;
+            font-weight: 700; cursor: pointer; width: 100%;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="sakura-container" id="sakura"></div>
+
+    <nav class="navbar">
+        <div class="nav-btn" onclick="toggleTheme()"><i class="fa-solid fa-moon"></i></div>
+        <div class="nav-title">أسماء الله الحسنى</div>
+        <div class="nav-btn" onclick="history.back()"><i class="fa-solid fa-chevron-left"></i></div>
+    </nav>
+
+    <div class="random-section">
+        <div class="random-card" onclick="setRandomName()">
+            <div id="rand-name" class="r-name">الرَّحْمَنُ</div>
+            <div id="rand-info" class="r-info">واسع الرحمة الذي شملت رحمته جميع الخلائق.</div>
+            <div style="margin-top: 15px; font-size: 0.7rem; color: var(--gold); font-weight: 700;">
+                <i class="fa-solid fa-sync fa-spin" style="margin-left: 5px;"></i> اضغط للاستكشاف
+            </div>
+        </div>
+    </div>
+
+    <div class="names-grid" id="names-container"></div>
+
+    <div class="hadith-footer">
+        <div class="hadith-text">"إِنَّ لِلَّهِ تِسْعَةً وَتِسْعِينَ اسْمًا، مَنْ أَحْصَاهَا دَخَلَ الْجَنَّةَ"</div>
+        <div class="hadith-source">رواه البخاري ومسلم</div>
+    </div>
+
+    <div class="modal" id="infoModal" onclick="closeModal()">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <div id="m-name" style="font-family: 'Amiri', serif; font-size: 3.2rem; color: var(--primary);"></div>
+            <div id="m-info" style="margin-top: 20px; line-height: 1.8; color: var(--text); font-size: 1.1rem;"></div>
+            <button class="close-btn" onclick="closeModal()">سبحان الله</button>
+        </div>
+    </div>
+
+    <script>
+        const allNames = [
+            { n: "الرحمن", i: "واسع الرحمة الذي شملت رحمته جميع الخلائق." },
+            { n: "الرحيم", i: "المُنعِم على عباده المؤمنين بالرحمة الخاصة." },
+            { n: "الملك", i: "المتصرف في ملكه كما يشاء بلا منازع." },
+            { n: "القدوس", i: "المنزه عن كل نقص، الطاهر من كل عيب." },
+            { n: "السلام", i: "الذي سلم من كل نقص، وناشر السلام والأمان بين خلقه." },
+            { n: "المؤمن", i: "المصدق لرسله، والوهاب لعباده الأمن من عذابه." },
+            { n: "المهيمن", i: "الرقيب الحافظ لكل شيء، والمطلع على خفايا الأمور." },
+            { n: "العزيز", i: "الغالب الذي لا يُهزم، وصاحب العزة والجبروت والقوة." },
+            { n: "الجبار", i: "الذي يجبر كسر القلوب، والنافذ مشيئته في كل خلقه." },
+            { n: "المتكبر", i: "المنفرد بصفات العظمة والكبرياء، المتعالي عن صفات الخلق." },
+            { n: "الخالق", i: "الموجد للأشياء من العدم على غير مثال سابق." },
+            { n: "البارئ", i: "الذي خلق الخلق فبرأهم بقدرته، متميزين عن بعضهم." },
+            { n: "المصور", i: "الذي أعطى لكل مخلوق صورته الخاصة وشكله المتميز." },
+            { n: "الغفار", i: "الذي يستر الذنوب مرة بعد مرة مهما عظمت." },
+            { n: "القهار", i: "الغالب الذي خضعت له الرقاب وذلت له الجبابرة." },
+            { n: "الوهاب", i: "كثير النعم، الذي يهب ما يشاء لمن يشاء بلا مقابل." },
+            { n: "الرزاق", i: "المتكفل برزق كل دابة، والموسع على عباده." },
+            { n: "الفتاح", i: "الذي يفتح أبواب الرحمة والرزق، ويحكم بين العباد بالحق." },
+            { n: "العليم", i: "الذي لا يخفى عليه شيء في الأرض ولا في السماء." },
+            { n: "القابض", i: "الذي يقبض الأرزاق والأرواح بحكمته وعدله." },
+            { n: "الباسط", i: "الذي يبسط الرزق لمن يشاء، ويوسع على من يشاء." },
+            { n: "الخافض", i: "الذي يخفض الكفار والمشركين ومن استحق الخفض." },
+            { n: "الرافع", i: "الذي يرفع شأن أوليائه وعباده المؤمنين." },
+            { n: "المعز", i: "الذي يعز من يشاء بطاعته والإيمان به." },
+            { n: "المذل", i: "الذي يذل من يشاء بمعصيته والبعد عنه." },
+            { n: "السميع", i: "الذي يسمع كل الأصوات، السر منها والعلن." },
+            { n: "البصير", i: "الذي يبصر كل شيء، دقيقاً كان أو جليلاً." },
+            { n: "الحكم", i: "العادل الذي لا يجور في حكمه، والفصل في القضاء." },
+            { n: "العدل", i: "المنزه عن الظلم، الذي يعطي كل ذي حق حقه." },
+            { n: "اللطيف", i: "البر بعباده، العالم بخفايا الأمور وبواطنها." },
+            { n: "الخبير", i: "الذي يعلم حقيقة الأشياء قبل وقوعها وبعده." },
+            { n: "الحليم", i: "الذي لا يعجل بالعقوبة على عباده مع قدرته عليهم." },
+            { n: "العظيم", i: "الذي تجاوزت عظمته كل حدود العقل والوصف." },
+            { n: "الغفور", i: "كثير المغفرة والستر لعباده المذنبين." },
+            { n: "الشكور", i: "الذي يعطي الكثير من الثواب على القليل من العمل." },
+            { n: "العلي", i: "الذي له العلو المطلق في ذاته وصفاته." },
+            { n: "الكبير", i: "صاحب الكبرياء والعظمة، الأكبر من كل شيء." },
+            { n: "الحفيظ", i: "الذي يحفظ الخلائق ويدبر أمورهم ويحمي عباده." },
+            { n: "المقيت", i: "المقتدر والموصل لكل مخلوق رزقه وقوته." },
+            { n: "الحسيب", i: "الكافي لعباده، والمحاسب لهم يوم القيامة." },
+            { n: "الجليل", i: "صاحب الجلال والعظمة والكمال." },
+            { n: "الكريم", i: "الذي يعطي بلا سؤال، ويصفح عن الزلل." },
+            { n: "الرقيب", i: "المطلع على ما في الصدور، الحافظ لكل الأعمال." },
+            { n: "المجيب", i: "الذي يستجيب دعاء السائلين إذا دعوه." },
+            { n: "الواسع", i: "الذي وسع رزقه ورحمته وعلمه كل شيء." },
+            { n: "الحكيم", i: "الذي يضع الأشياء في مواضعها الصحيحة بحكمته." },
+            { n: "الودود", i: "المحب لعباده المؤمنين، والمحبوب في قلوبهم." },
+            { n: "المجيد", i: "الشريف في ذاته، العظيم في أفعاله وعطائه." },
+            { n: "الباعث", i: "الذي يبعث الموتى من القبور للحساب والجزاء." },
+            { n: "الشهيد", i: "المطلع على كل شيء، الحاضر الذي لا يغيب." },
+            { n: "الحق", i: "الثابت الذي لا يزول، وقوله ولقاؤه حق." },
+            { n: "الوكيل", i: "المتولي لأمور عباده، والقائم على شؤونهم." },
+            { n: "القوي", i: "صاحب القدرة الكاملة التي لا يعجزها شيء." },
+            { n: "المتين", i: "شديد القوة الذي لا تلحقه مشقة في أفعاله." },
+            { n: "الولي", i: "المحب والناصر والمؤيد لعباده المؤمنين." },
+            { n: "الحميد", i: "المستحق للحمد والثناء في كل الأحوال." },
+            { n: "المحصي", i: "الذي أحصى كل شيء بعلمه، فلا يغيب عنه عدد." },
+            { n: "المبدئ", i: "الذي بدأ الخلق وأنشأهم من عدم." },
+            { n: "المعيد", i: "الذي يعيد الخلق بعد فنائهم إلى الحياة." },
+            { n: "المحيي", i: "الذي يحيي الأجساد والقلوب بنوره." },
+            { n: "المميت", i: "الذي كتب الموت على كل حي." },
+            { n: "الحي", i: "الباقي الذي لا يموت، صاحب الحياة الدائمة." },
+            { n: "القيوم", i: "القائم بنفسه، والمقيم لغيره من الخلائق." },
+            { n: "الواجد", i: "الذي لا يفتقر إلى شيء، وكل مراده واجد." },
+            { n: "الماجد", i: "كثير المجد والسخاء والكرم." },
+            { n: "الواحد", i: "المنفرد بذاته وصفاته وأفعاله، لا شريك له." },
+            { n: "الأحد", i: "الفرد الذي لم يلد ولم يولد." },
+            { n: "الصمد", i: "المقصود في الحوائج، الذي يحتاج إليه كل شيء." },
+            { n: "القادر", i: "المتمكن من فعل ما يشاء وفق قدرته." },
+            { n: "المقتدر", i: "تام القدرة، الذي لا يمتنع عليه شيء." },
+            { n: "المقدم", i: "الذي يقدم من يشاء بحكمته." },
+            { n: "المؤخر", i: "الذي يؤخر من يشاء بعدله." },
+            { n: "الأول", i: "الذي ليس قبله شيء، الأزلي القديم." },
+            { n: "الآخر", i: "الذي ليس بعده شيء، الباقي بعد فناء خلقه." },
+            { n: "الظاهر", i: "الغالب العالي فوق كل شيء، والظاهر بآياته." },
+            { n: "الباطن", i: "العالم ببواطن الأمور، القريب المحيط بكل شيء." },
+            { n: "الوالي", i: "المالك لكل شيء، والمتصرف فيه بمشيئته." },
+            { n: "المتعالي", i: "المنزه عن كل ما لا يليق بجلاله." },
+            { n: "البر", i: "كثير الإحسان والعطاء لعباده." },
+            { n: "التواب", i: "الذي ييسر التوبة لعباده ويقبلها منهم." },
+            { n: "المنتقم", i: "الذي ينتقم من الطغاة والظلمة بعد الإنذار." },
+            { n: "العفو", i: "الذي يمحو السيئات ويتجاوز عن الذنوب." },
+            { n: "الرؤوف", i: "شديد الرحمة والرأفة بعباده." },
+            { n: "مالك الملك", i: "المتصرف في ملكه كيف يشاء وبما يشاء." },
+            { n: "ذو الجلال والإكرام", i: "صاحب العظمة والكبرياء، والمنعم بالإحسان." },
+            { n: "المقسط", i: "العادل في حكمه، المنصف للمظلوم." },
+            { n: "الجامع", i: "الذي يجمع الخلائق ليوم لا ريب فيه." },
+            { n: "الغني", i: "الذي لا يحتاج إلى أحد، والكل يفتقر إليه." },
+            { n: "المغني", i: "الذي يغني من يشاء من فضله وكرمه." },
+            { n: "المانع", i: "الذي يمنع العطاء عمن يشاء لحكمة." },
+            { n: "الضار", i: "الذي يقدر الضر لمن يشاء من خلقه." },
+            { n: "النافع", i: "الذي يقدر النفع والخير لمن يشاء." },
+            { n: "النور", i: "هادي أهل السماوات والأرض، ومنور القلوب." },
+            { n: "الهادي", i: "الذي يهدي القلوب إلى الحق وطريق الرشاد." },
+            { n: "البديع", i: "خالق الأشياء على غير مثال، في غاية الجمال." },
+            { n: "الباقي", i: "الذي لا يلحقه فناء، الدائم الوجود." },
+            { n: "الوارث", i: "الذي يبقى بعد فناء الخلائق." },
+            { n: "الرشيد", i: "الذي يرشد الخلق لمصالحهم، وحكمه رشيد." },
+            { n: "الصبور", i: "الذي لا يعجل بالعقوبة، ويصبر على عباده." }
+        ];
+
+        // توليد البطاقات
+        const container = document.getElementById('names-container');
+        allNames.forEach((item, index) => {
+            const card = document.createElement('div');
+            card.className = 'n-card';
+            card.innerHTML = `<span class="num">${(index + 1).toString().padStart(2, '0')}</span><span class="name">${item.n}</span>`;
+            card.onclick = () => openModal(item.n, item.i);
+            container.appendChild(card);
+        });
+
+        function setRandomName() {
+            const rand = allNames[Math.floor(Math.random() * allNames.length)];
+            const nameEl = document.getElementById('rand-name');
+            const infoEl = document.getElementById('rand-info');
+            nameEl.style.opacity = 0; infoEl.style.opacity = 0;
+            setTimeout(() => {
+                nameEl.innerText = rand.n; infoEl.innerText = rand.i;
+                nameEl.style.opacity = 1; infoEl.style.opacity = 1;
+                if(navigator.vibrate) navigator.vibrate(10);
+            }, 300);
+        }
+
+        setInterval(setRandomName, 10000);
+
+        function openModal(name, info) {
+            document.getElementById('m-name').innerText = name;
+            document.getElementById('m-info').innerText = info;
+            document.getElementById('infoModal').style.display = 'flex';
+        }
+
+        function closeModal() { document.getElementById('infoModal').style.display = 'none'; }
+
+        function toggleTheme() {
+            const b = document.body;
+            const icon = document.querySelector('.navbar .fa-solid');
+            if(b.getAttribute('data-theme') === 'dark') {
+                b.removeAttribute('data-theme');
+                icon.className = "fa-solid fa-moon";
+            } else {
+                b.setAttribute('data-theme', 'dark');
+                icon.className = "fa-solid fa-sun";
+            }
+        }
+
+        function initSakura() {
+            const c = document.getElementById('sakura');
+            for(let i=0; i<15; i++) {
+                let l = document.createElement('div'); l.className = 'leaf';
+                l.style.left = Math.random() * 100 + '%';
+                l.style.width = l.style.height = (Math.random() * 6 + 5) + 'px';
+                l.style.animationDuration = (Math.random() * 5 + 8) + 's';
+                c.appendChild(l);
+            }
+        }
+
+        initSakura();
+    </script>
+</body>
+</html>
