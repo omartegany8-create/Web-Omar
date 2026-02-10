@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>مركز التنبيهات | وذكر</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+
+    <style>
+        :root { 
+            --bg: #f8fafc; --card: #ffffff; --accent: #0ea5e9; --text: #1e293b; --sub: #64748b;
+            --red: #ff3b30; --green: #22c55e; --glass: rgba(255, 255, 255, 0.8);
+        }
+        * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; font-family: 'Cairo', sans-serif; user-select: none; }
+        body { background: var(--bg); color: var(--text); margin: 0; overflow-x: hidden; min-height: 100vh; }
+
+        /* الهيدر والتابات */
+        .header { background: var(--glass); backdrop-filter: blur(20px); padding: 15px 20px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 1000; border-bottom: 1px solid rgba(0,0,0,0.05); }
+        .header h1 { font-size: 1.1rem; font-weight: 900; margin: 0; }
+        
+        .tabs { display: flex; gap: 10px; padding: 15px; overflow-x: auto; scrollbar-width: none; }
+        .tab { background: #fff; padding: 10px 22px; border-radius: 50px; font-weight: 700; font-size: 0.85rem; color: var(--sub); transition: 0.3s; border: 1px solid rgba(0,0,0,0.05); cursor: pointer; white-space: nowrap; }
+        .tab.active { background: var(--accent); color: #fff; box-shadow: 0 4px 12px rgba(14, 165, 233, 0.2); }
+
+        /* قائمة الإشعارات */
+        #list { padding: 10px 15px; display: flex; flex-direction: column; gap: 14px; }
+        .notif-card { 
+            background: var(--card); border-radius: 24px; padding: 18px; 
+            display: flex; gap: 15px; border: 1px solid rgba(0,0,0,0.03);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative; box-shadow: 0 4px 10px rgba(0,0,0,0.02);
+        }
+        .is-pinned { border: 2px solid var(--red) !important; background: #fffafb !important; }
+        .unread-dot { width: 10px; height: 10px; background: var(--red); border-radius: 50%; position: absolute; top: 18px; left: 18px; box-shadow: 0 0 10px var(--red); }
+        
+        .icon-box { width: 54px; height: 54px; border-radius: 18px; background: #f1f5f9; display: grid; place-items: center; font-size: 1.5rem; color: var(--accent); flex-shrink: 0; }
+        .content { flex: 1; }
+        .content h4 { margin: 0; font-size: 1rem; font-weight: 800; color: var(--text); }
+        .content p { margin: 6px 0 12px; font-size: 0.88rem; color: var(--sub); line-height: 1.5; }
+
+        .footer-tags { display: flex; align-items: center; gap: 12px; padding-top: 10px; border-top: 1px solid rgba(0,0,0,0.03); }
+        .tag-time { font-size: 0.75rem; font-weight: 700; padding: 2px 8px; border-radius: 6px; }
+        .time-now { color: var(--green); background: rgba(34, 197, 94, 0.1); }
+        .time-old { color: var(--sub); background: #f1f5f9; }
+        .tag-pin { font-size: 0.75rem; font-weight: 800; color: var(--red); display: flex; align-items: center; gap: 4px; }
+
+        /* القائمة المنبثقة */
+        .overlay { position: fixed; inset: 0; background: rgba(255,255,255,0.5); backdrop-filter: blur(8px); display: none; z-index: 2000; }
+        .focused { transform: scale(1.05) !important; z-index: 2001 !important; box-shadow: 0 20px 40px rgba(0,0,0,0.1) !important; }
+        .menu { 
+            position: absolute; width: 200px; background: #fff; border-radius: 22px; 
+            padding: 8px; display: none; flex-direction: column; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1); z-index: 2002;
+            top: 100%; left: 50%; transform: translateX(-50%) translateY(10px);
+            animation: pop 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+        }
+        .menu-item { padding: 12px 15px; border-radius: 14px; font-size: 0.9rem; font-weight: 700; display: flex; align-items: center; gap: 12px; }
+
+        /* حالات القسم الفاضي */
+        .empty-state { display: none; flex-direction: column; align-items: center; justify-content: center; padding: 100px 30px; text-align: center; color: var(--sub); }
+        .empty-state i { font-size: 5rem; margin-bottom: 20px; color: #cbd5e1; opacity: 0.5; animation: float 3s ease-in-out infinite; }
+        .empty-state h3 { font-weight: 900; margin: 0; font-size: 1.1rem; }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
+
+        /* الإعدادات (الترس) */
+        .drawer { position: fixed; inset: 0; background: rgba(0,0,0,0.4); display: none; align-items: flex-end; z-index: 3000; }
+        .drawer-box { width: 100%; background: #fff; border-radius: 35px 35px 0 0; padding: 30px 25px; transform: translateY(100%); transition: 0.4s ease; }
+        
+        .config-card { background: #f8fafc; border-radius: 24px; padding: 18px; margin-bottom: 12px; display: flex; align-items: center; gap: 15px; border: 1px solid transparent; transition: 0.3s; }
+        .config-card.active-card { border-color: var(--accent); background: #fff; box-shadow: 0 4px 15px rgba(14, 165, 233, 0.1); }
+        .config-icon { width: 45px; height: 45px; border-radius: 15px; background: #fff; display: grid; place-items: center; font-size: 1.2rem; color: var(--accent); box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .config-info { flex: 1; }
+        .config-info b { display: block; font-size: 0.95rem; font-weight: 900; }
+        .config-info span { font-size: 0.75rem; color: var(--sub); }
+
+        /* زر السويتش الجديد */
+        .switch { width: 55px; height: 30px; background: #cbd5e1; border-radius: 50px; position: relative; cursor: pointer; transition: 0.4s; }
+        .switch.on { background: var(--accent); }
+        .switch::after { content: 'OFF'; position: absolute; font-size: 8px; font-weight: 900; color: #fff; left: 28px; top: 9px; transition: 0.4s; }
+        .switch.on::after { content: 'ON'; left: 10px; }
+        .switch-circle { width: 22px; height: 22px; background: #fff; border-radius: 50%; position: absolute; top: 4px; left: 4px; transition: 0.4s; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+        .switch.on .switch-circle { left: 29px; }
+
+        @keyframes pop { from { opacity: 0; transform: translateX(-50%) translateY(0); } to { opacity: 1; transform: translateX(-50%) translateY(10px); } }
+    </style>
+</head>
+<body>
+
+    <div class="overlay" id="overlay" onclick="closeMenu()"></div>
+
+    <div class="header">
+        <i class="fa-solid fa-chevron-right" onclick="history.back()" style="color:var(--sub); font-size: 1.2rem; cursor: pointer;"></i>
+
+        <h1>مركز التنبيهات</h1>
+        <i class="fa-solid fa-gear" onclick="openDrawer()" style="font-size: 1.3rem; cursor: pointer; color: var(--accent);"></i>
+    </div>
+
+    <div class="tabs">
+        <div class="tab active" onclick="switchTab('all', this)"><i class="fa-solid fa-layer-group"></i> الكل</div>
+        <div class="tab" onclick="switchTab('award', this)"><i class="fa-solid fa-gift"></i> الجوائز</div>
+        <div class="tab" onclick="switchTab('system', this)"><i class="fa-solid fa-code-branch"></i> النظام</div>
+    </div>
+
+    <div id="empty-all" class="empty-state"><i class="fa-solid fa-bell-slash"></i><h3>لا يوجد لديك أي إشعارات حالياً</h3></div>
+    <div id="empty-award" class="empty-state"><i class="fa-solid fa-box-open"></i><h3>لا يوجد لديك جوائز في الوقت الحالي</h3></div>
+    <div id="empty-system" class="empty-state"><i class="fa-solid fa-screwdriver-wrench"></i><h3>لا يوجد أي تحديثات حالياً</h3></div>
+    <div id="empty-mute" class="empty-state"><i class="fa-solid fa-volume-xmark"></i><h3>الوضع الصامت قيد التشغيل</h3></div>
+
+    <div id="list"></div>
+
+    <div class="drawer" id="drawer" onclick="closeDrawer()">
+        <div class="drawer-box" onclick="event.stopPropagation()" id="dbox">
+            <h3 style="text-align: center; margin-bottom: 25px; font-weight: 900;">تفضيلات النظام</h3>
+            
+            <div class="config-card" id="card-all">
+                <div class="config-icon"><i class="fa-solid fa-bell"></i></div>
+                <div class="config-info"><b>كل الإشعارات</b><span>تعطيل شامل للتنبيهات</span></div>
+                <div class="switch" id="sw-all" onclick="toggleParent()"><div class="switch-circle"></div></div>
+            </div>
+
+            <div id="child-area">
+                <div class="config-card" id="card-award">
+                    <div class="config-icon"><i class="fa-solid fa-trophy"></i></div>
+                    <div class="config-info"><b>قسم الجوائز</b><span>الهدايا والمكافآت اليومية</span></div>
+                    <div class="switch" id="sw-award" onclick="toggleChild('award')"><div class="switch-circle"></div></div>
+                </div>
+                <div class="config-card" id="card-system">
+                    <div class="config-icon"><i class="fa-solid fa-circle-info"></i></div>
+                    <div class="config-info"><b>تنبيهات النظام</b><span>تحديثات التطبيق والأمان</span></div>
+                    <div class="switch" id="sw-system" onclick="toggleChild('system')"><div class="switch-circle"></div></div>
+                </div>
+            </div>
+            <button onclick="closeDrawer()" style="width:100%; padding:18px; background:var(--text); color:#fff; border:none; border-radius:22px; margin-top:20px; font-weight:900;">تم الحفظ</button>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, query, orderBy, onSnapshot, doc, updateDoc, deleteDoc, arrayUnion, arrayRemove, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        const firebaseConfig = { apiKey: "AIzaSyA4h9MsH0Szht7taowp95WcBr2y6scXe1k", projectId: "omardev-fbfd8" };
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const uId = "USER_OMAR_18"; 
+        let currentTab = 'all', pressTimer, globalPins = [];
+
+        function formatTime(timestamp) {
+            if (!timestamp) return { text: "الآن", class: "time-now" };
+            const diff = Math.floor((new Date() - timestamp.toDate()) / 1000);
+            if (diff < 60) return { text: "الآن", class: "time-now" };
+            const mins = Math.floor(diff / 60);
+            if (mins === 1) return { text: "منذ دقيقة واحدة", class: "time-old" };
+            if (mins === 2) return { text: "منذ دقيقتان", class: "time-old" };
+            if (mins < 11) return { text: `منذ ${mins} دقائق`, class: "time-old" };
+            return { text: timestamp.toDate().toLocaleTimeString('ar-EG', {hour: '2-digit', minute:'2-digit'}), class: "time-old" };
+        }
+
+        function load() {
+            onSnapshot(query(collection(db, "notifications"), orderBy("timestamp", "desc")), async (snap) => {
+                const uDoc = await getDoc(doc(db, "users", uId));
+                globalPins = uDoc.exists() ? (uDoc.data().pinnedNotifs || []) : [];
+                render(snap);
+            });
+            
+            // في صفحة المستخدم (User Page)
+onSnapshot(query(collection(db, "notifications"), orderBy("timestamp", "desc")), (snap) => {
+    const list = document.getElementById('notificationsList'); // القائمة عندك
+    list.innerHTML = '';
+    
+    // هنجيب الـ ID بتاع المستخدم الحالي (اللي متسجل في الـ LocalStorage مثلاً)
+    const currentUserId = localStorage.getItem("userId"); 
+
+    snap.forEach(d => {
+        const n = d.data();
+        
+        // الشرط السحري: اظهر الإشعار لو للكل أو ليا أنا بس
+        if (n.userId === "all" || n.userId === currentUserId) {
+            list.innerHTML += `
+                <div class="notif-card">
+                    <h3>${n.title}</h3>
+                    <p>${n.message}</p>
+                </div>`;
+        }
+    });
+});
+
+        }
+
+        function render(snap) {
+            const list = document.getElementById('list');
+            list.innerHTML = '';
+            document.querySelectorAll('.empty-state').forEach(s => s.style.display = 'none');
+
+            const isMuteAll = localStorage.getItem('mute_all') === 'true';
+            if (isMuteAll) {
+                document.getElementById('empty-mute').style.display = 'flex';
+                return;
+            }
+
+            let items = [];
+            snap.forEach(d => {
+                const data = d.data();
+                const isMuted = localStorage.getItem('mute_' + data.type) === 'true';
+                if (!isMuted && (currentTab === 'all' || data.type === currentTab)) {
+                    items.push({id: d.id, ...data});
+                }
+            });
+
+            // لو القسم نفسه مقفول
+            if (currentTab !== 'all' && localStorage.getItem('mute_' + currentTab) === 'true') {
+                 document.getElementById('empty-mute').style.display = 'flex';
+                 return;
+            }
+
+            if (items.length === 0) {
+                document.getElementById('empty-' + currentTab).style.display = 'flex';
+                return;
+            }
+
+            items.sort((a,b) => globalPins.includes(b.id) - globalPins.includes(a.id));
+
+            items.forEach(item => {
+                const isPinned = globalPins.includes(item.id);
+                const reads = JSON.parse(localStorage.getItem('reads') || '[]');
+                const isRead = reads.includes(item.id);
+                const timeInfo = formatTime(item.timestamp);
+                
+                const card = document.createElement('div');
+                card.className = `notif-card ${isPinned ? 'is-pinned' : ''}`;
+                card.id = `card-${item.id}`;
+                card.innerHTML = `
+                    ${!isRead ? `<div class="unread-dot" id="dot-${item.id}"></div>` : ''}
+                    <div class="icon-box"><i class="fa-solid ${item.type === 'award' ? 'fa-gift' : 'fa-bell'}"></i></div>
+                    <div class="content">
+                        <h4>${item.title}</h4>
+                        <p>${item.message}</p>
+                        <div class="footer-tags">
+                            <span class="tag-time ${timeInfo.class}">${timeInfo.text}</span>
+                            <span id="pin-tag-${item.id}" class="tag-pin" style="display: ${isPinned ? 'flex' : 'none'}">
+                                <i class="fa-solid fa-thumbtack"></i> إشعار مثبت
+                            </span>
+                        </div>
+                    </div>
+                    <div class="menu" id="menu-${item.id}">
+                        <div class="menu-item" onclick="markRead('${item.id}')"><i class="fa-solid fa-check-double" style="color:var(--accent)"></i> مقروء</div>
+                        <div class="menu-item" id="pin-btn-${item.id}" onclick="handlePin('${item.id}')">
+                            <i class="fa-solid fa-thumbtack" style="color:var(--red)"></i> 
+                            <span>${isPinned ? 'إلغاء التثبيت' : 'تثبيت للأعلى'}</span>
+                        </div>
+                        <div class="menu-item" style="color:var(--red)" onclick="handleDel('${item.id}')"><i class="fa-solid fa-trash"></i> حذف</div>
+                    </div>
+                `;
+
+                card.addEventListener('touchstart', () => { pressTimer = setTimeout(() => showMenu(item.id), 500); });
+                card.addEventListener('touchend', () => clearTimeout(pressTimer));
+                list.appendChild(card);
+            });
+        }
+
+        window.handlePin = async (id) => {
+            const isPinned = globalPins.includes(id);
+            // 1. تحديث الحالة في الواجهة فوراً (لايف)
+            const btnText = document.querySelector(`#pin-btn-${id} span`);
+            const pinTag = document.getElementById(`pin-tag-${id}`);
+            const card = document.getElementById(`card-${id}`);
+
+            if (!isPinned) {
+                globalPins.push(id);
+                btnText.innerText = "إلغاء التثبيت";
+                pinTag.style.display = "flex";
+                card.classList.add('is-pinned');
+            } else {
+                globalPins = globalPins.filter(pid => pid !== id);
+                btnText.innerText = "تثبيت للأعلى";
+                pinTag.style.display = "none";
+                card.classList.remove('is-pinned');
+            }
+
+            closeMenu();
+            // 2. التحديث في السيرفر في الخلفية
+            const ref = doc(db, "users", uId);
+            await setDoc(ref, { pinnedNotifs: !isPinned ? arrayUnion(id) : arrayRemove(id) }, { merge: true });
+        };
+
+        // 1. دالة تعليم كمقروء (النقطة تختفي فوراً)
+        window.markRead = (id) => {
+            let reads = JSON.parse(localStorage.getItem('reads') || '[]');
+            if (!reads.includes(id)) {
+                reads.push(id);
+                localStorage.setItem('reads', JSON.stringify(reads));
+                
+                const dot = document.getElementById(`dot-${id}`);
+                if (dot) {
+                    dot.style.transition = "0.4s cubic-bezier(0.4, 0, 0.2, 1)";
+                    dot.style.opacity = "0";
+                    dot.style.transform = "scale(0) translateY(-10px)";
+                    setTimeout(() => dot.remove(), 400);
+                }
+            }
+            closeMenu();
+        };
+
+        // 2. دالة التثبيت (تحديث النصوص والترتيب لايف)
+        window.handlePin = async (id) => {
+            const isPinned = globalPins.includes(id);
+            const btnText = document.querySelector(`#pin-btn-${id} span`);
+            const pinTag = document.getElementById(`pin-tag-${id}`);
+            const card = document.getElementById(`card-${id}`);
+
+            if (!isPinned) {
+                globalPins.push(id);
+                btnText.innerText = "إلغاء التثبيت";
+                pinTag.style.display = "flex";
+                card.classList.add('is-pinned');
+            } else {
+                globalPins = globalPins.filter(pid => pid !== id);
+                btnText.innerText = "تثبيت للأعلى";
+                pinTag.style.display = "none";
+                card.classList.remove('is-pinned');
+            }
+
+            closeMenu();
+            const ref = doc(db, "users", uId);
+            await setDoc(ref, { pinnedNotifs: !isPinned ? arrayUnion(id) : arrayRemove(id) }, { merge: true });
+        };
+
+        // 3. دالة الحذف (سريع ومباشر بدون تأكيد)
+        window.handleDel = async (id) => {
+            closeMenu();
+            const card = document.getElementById(`card-${id}`);
+            
+            // أنميشن طيران لليمين واختفاء
+            card.style.transition = "0.5s cubic-bezier(0.6, -0.28, 0.735, 0.045)";
+            card.style.transform = "translateX(120%) skewX(-10deg)";
+            card.style.opacity = "0";
+
+            setTimeout(async () => {
+                try {
+                    await deleteDoc(doc(db, "notifications", id));
+                } catch (error) {
+                    console.error("خطأ أثناء الحذف:", error);
+                    card.style.transform = "translateX(0) skewX(0)";
+                    card.style.opacity = "1";
+                }
+            }, 500);
+        };
+
+        window.showMenu = (id) => {
+            if (navigator.vibrate) navigator.vibrate(40);
+            document.getElementById('overlay').style.display = 'block';
+            document.getElementById(`card-${id}`).classList.add('focused');
+            document.getElementById(`menu-${id}`).style.display = 'flex';
+        };
+
+        window.closeMenu = () => {
+            document.getElementById('overlay').style.display = 'none';
+            document.querySelectorAll('.notif-card').forEach(c => c.classList.remove('focused'));
+            document.querySelectorAll('.menu').forEach(m => m.style.display = 'none');
+        };
+
+        // --- وظائف الترس ---
+        window.toggleParent = () => {
+            const sw = document.getElementById('sw-all');
+            const isOn = sw.classList.toggle('on');
+            localStorage.setItem('mute_all', !isOn);
+            updateSettingsUI();
+            load();
+        };
+
+        window.toggleChild = (t) => {
+            const sw = document.getElementById('sw-' + t);
+            const isOn = sw.classList.toggle('on');
+            localStorage.setItem('mute_' + t, !isOn);
+            updateSettingsUI();
+            load();
+        };
+
+        function updateSettingsUI() {
+            const mall = localStorage.getItem('mute_all') !== 'true';
+            document.getElementById('sw-all').className = `switch ${mall?'on':''}`;
+            document.getElementById('card-all').className = `config-card ${mall?'active-card':''}`;
+            document.getElementById('child-area').style.opacity = mall ? '1' : '0.4';
+
+            ['award', 'system'].forEach(t => {
+                const m = localStorage.getItem('mute_'+t) !== 'true';
+                document.getElementById('sw-'+t).className = `switch ${m?'on':''}`;
+                document.getElementById('card-'+t).className = `config-card ${m?'active-card':''}`;
+            });
+        }
+
+        window.openDrawer = () => {
+            document.getElementById('drawer').style.display = 'flex';
+            updateSettingsUI();
+            setTimeout(() => document.getElementById('dbox').style.transform = 'translateY(0)', 10);
+        };
+
+        window.closeDrawer = () => {
+            document.getElementById('dbox').style.transform = 'translateY(100%)';
+            setTimeout(() => document.getElementById('drawer').style.display = 'none', 400);
+        };
+
+        window.switchTab = (t, el) => {
+            currentTab = t;
+            document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
+            el.classList.add('active');
+            load();
+        };
+
+        // منع النسخ
+        document.addEventListener('copy', e => e.preventDefault());
+        document.addEventListener('selectstart', e => e.preventDefault());
+
+        load();
+    </script>
+</body>
+</html>
