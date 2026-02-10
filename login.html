@@ -1,0 +1,1029 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>وذكر | تسجيل الدخول</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@700&family=Cairo:wght@400;600;700;900&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg: #f9fbf9;
+            --nav-bg: #ffffff;
+            --card-bg: #ffffff;
+            --text: #1b4332;
+            --primary: #2d6a4f;
+            --accent: #b79067;
+            --input-bg: #f1f3f1;
+            --err-bg: rgba(231, 76, 60, 0.08);
+            --err-text: #c0392b;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+        }
+
+        [data-theme="dark"] {
+            --bg: #1a2521;
+            --nav-bg: #232f2a;
+            --card-bg: #232f2a;
+            --text: #e8f5e9;
+            --primary: #52b788;
+            --input-bg: #2d3a34;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        * {
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+            box-sizing: border-box;
+            outline: none;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Cairo', sans-serif;
+            min-height: 100vh;
+            background: var(--bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            height: 70px;
+            background: var(--nav-bg);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 5%;
+            z-index: 1000;
+            box-shadow: var(--shadow);
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-logo i {
+            color: var(--primary);
+            font-size: 24px;
+        }
+
+        .nav-logo span {
+            font-family: 'Amiri';
+            font-size: 26px;
+            color: var(--text);
+            font-weight: 700;
+        }
+
+        .theme-toggle {
+            width: 40px;
+            height: 40px;
+            background: #fff;
+            border-radius: 10px;
+            display: grid;
+            place-items: center;
+            cursor: pointer;
+            color: #333;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            border: 1px solid #eee;
+        }
+
+        [data-theme="dark"] .theme-toggle {
+            background: #2d3a34;
+            color: #fff;
+            border-color: #444;
+        }
+
+        /* ---  الساكورا (نظام تساقط الشجر الكبير) --- */
+        .sakura {
+            position: fixed;
+            background: #ff97ac;
+            border-radius: 100% 0 100% 0;
+            top: -10%;
+            animation: fall linear infinite;
+            opacity: 0.9;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        @keyframes fall {
+            0% {
+                top: -10%;
+                transform: rotate(0) translateX(0);
+            }
+
+            25% {
+                transform: rotate(90deg) translateX(30px);
+            }
+
+            50% {
+                transform: rotate(180deg) translateX(-30px);
+            }
+
+            75% {
+                transform: rotate(270deg) translateX(30px);
+            }
+
+            100% {
+                top: 110%;
+                transform: rotate(360deg) translateX(0);
+            }
+        }
+
+        .card {
+            position: relative;
+            z-index: 10;
+            width: 90%;
+            max-width: 400px;
+            background: var(--card-bg);
+            padding: 40px 30px;
+            border-radius: 30px;
+            box-shadow: var(--shadow);
+            text-align: center;
+        }
+
+        .input-group {
+            position: relative;
+            margin-bottom: 25px;
+            text-align: right;
+        }
+
+        .input-ui {
+            height: 60px;
+            background: var(--input-bg);
+            border-radius: 15px;
+            display: flex;
+            flex-direction: row-reverse;
+            align-items: center;
+            padding: 0 15px;
+            border: 2px solid transparent;
+        }
+
+        .input-ui:focus-within {
+            border-color: var(--primary);
+            background: var(--card-bg);
+        }
+
+        .input-ui i {
+            color: var(--primary);
+            width: 30px;
+            font-size: 18px;
+            text-align: center;
+        }
+
+        .input-ui input {
+            flex: 1;
+            border: none;
+            background: none;
+            font-family: 'Cairo';
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text);
+            text-align: right;
+            direction: rtl;
+        }
+
+        .err-box {
+            background: var(--err-bg);
+            color: var(--err-text);
+            padding: 8px 12px;
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: 800;
+            margin-top: 6px;
+            display: none;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn {
+            width: 100%;
+            height: 60px;
+            border: none;
+            border-radius: 15px;
+            background: var(--primary);
+            color: white;
+            font-size: 18px;
+            font-weight: 900;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .btn:disabled {
+            opacity: 0.7;
+        }
+
+        .signup-link {
+            font-size: 14px;
+            color: var(--text);
+            opacity: 0.8;
+            font-weight: 600;
+            margin-top: 30px;
+        }
+
+        .signup-link a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 800;
+            margin-right: 3px;
+
+        }
+
+        /* --- قائمة الترحيب المتطورة --- */
+        #welcome-toast {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.8);
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 35px;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+            border: 1px solid rgba(45, 106, 79, 0.1);
+            opacity: 0;
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            min-width: 280px;
+        }
+
+        #welcome-toast.show {
+            display: flex;
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        .toast-check-wrapper {
+            position: relative;
+            width: 100px;
+            height: 100px;
+            margin-bottom: 20px;
+            display: grid;
+            place-items: center;
+        }
+
+        .toast-check {
+            width: 70px;
+            height: 70px;
+            background: #3498db;
+            color: #fff;
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+            font-size: 35px;
+            z-index: 2;
+            animation: pulseCheck 1s infinite alternate;
+        }
+
+        @keyframes pulseCheck {
+            from {
+                transform: scale(1);
+            }
+
+            to {
+                transform: scale(1.05);
+            }
+        }
+
+        .decor {
+            position: absolute;
+            color: #3498db;
+            opacity: 0.6;
+            animation: floatDecor 3s infinite ease-in-out;
+        }
+
+        .decor.d1 {
+            top: 0;
+            left: 10px;
+            font-size: 20px;
+        }
+
+        .decor.d2 {
+            bottom: 10px;
+            right: 0;
+            font-size: 15px;
+        }
+
+        .decor.d3 {
+            top: 20%;
+            right: 10px;
+            font-size: 25px;
+            font-weight: 100;
+        }
+
+        .decor.d4 {
+            bottom: 20%;
+            left: 0;
+            font-size: 18px;
+        }
+
+        @keyframes floatDecor {
+
+            0%,
+            100% {
+                transform: translate(0, 0) rotate(0deg);
+            }
+
+            50% {
+                transform: translate(10px, -10px) rotate(20deg);
+            }
+        }
+
+        #userN {
+            font-weight: 900;
+            color: var(--primary);
+        }
+    </style>
+
+</head>
+
+<body oncontextmenu="return false;">
+
+    <!-- <div id="splash-screen">
+    <div class="splash-content">
+        <div class="splash-logo">
+            <i class="fa-solid fa-leaf"></i>
+        </div>
+        <h1 class="splash-text">وذكر</h1>
+        <div class="loading-bar">
+            <div class="loading-progress"></div>
+        </div>
+    </div> -->
+    </div>
+    <div class="beta-ribbon-wrapper">
+        <div class="beta-ribbon-content">
+            جاري التطوير
+        </div>
+    </div>
+
+    <style>
+        .beta-ribbon-wrapper {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 130px;
+            height: 130px;
+            overflow: hidden;
+            z-index: 9999;
+            pointer-events: none;
+        }
+
+        .beta-ribbon-content {
+            position: absolute;
+            display: block;
+            width: 200px;
+            padding: 6px 0;
+            /* تدرج لوني فخم متناسق مع الأخضر والذهبي */
+            background: linear-gradient(135deg, #2d6a4f, #1b4332);
+            color: #ffffff;
+            font-family: 'Cairo', sans-serif;
+            font-size: 10px;
+            font-weight: 700;
+            text-align: center;
+            /* ظبط الزاوية لتكون مائلة في الركن السفلي */
+            left: -50px;
+            bottom: 30px;
+            transform: rotate(45deg);
+
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(4px);
+            letter-spacing: 0.5px;
+        }
+
+        /* أنيميشن نبض هادئ جداً */
+        @keyframes subtleGlow {
+
+            0%,
+            100% {
+                opacity: 0.85;
+                filter: brightness(1);
+            }
+
+            50% {
+                opacity: 1;
+                filter: brightness(1.15);
+            }
+        }
+
+        .beta-ribbon-content {
+            animation: subtleGlow 4s infinite ease-in-out;
+        }
+
+        /* تعديل بسيط للموبايل */
+        @media (max-width: 480px) {
+            .beta-ribbon-wrapper {
+                width: 100px;
+                height: 100px;
+            }
+
+            .beta-ribbon-content {
+                width: 160px;
+                font-size: 8px;
+                left: -45px;
+                bottom: 20px;
+            }
+        }
+
+        .btn-ghost {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            padding: 14px;
+            background: #ffffff;
+            color: #64748b;
+            /* لون رمادي هادي */
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            text-decoration: none;
+            /* عشان نشيل خط الرابط */
+            font-family: 'Cairo', sans-serif;
+            font-weight: 700;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-ghost:hover {
+            background: #f8fafc;
+            border-color: #cbd5e1;
+            color: #1e293b;
+            /* يغمق شوية لما يقف عليه */
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+        }
+
+        .btn-ghost:active {
+            transform: scale(0.98);
+        }
+
+        /* تنسيق الحاوية الأساسية للمدخل */
+        .input-ui {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 2px solid transparent;
+            position: relative;
+        }
+
+        /* تأثير النبض والارتفاع عند الضغط (Focus) */
+        .input-ui:focus-within {
+            border-color: var(--primary);
+            background: var(--card-bg);
+            transform: translateY(-4px);
+            /* يرتفع للأعلى قليلاً */
+            box-shadow: 0 10px 20px rgba(45, 106, 79, 0.1);
+        }
+
+        /* حركة الأيقونة داخل الحقل */
+        .input-ui i {
+            transition: transform 0.3s ease;
+        }
+
+        .input-ui:focus-within i {
+            transform: scale(1.2);
+            /* تكبير الأيقونة عند الكتابة */
+            color: var(--primary);
+        }
+
+        /* زر الدخول الرئيسي */
+        .btn {
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 20px rgba(45, 106, 79, 0.2);
+        }
+
+        .btn:hover {
+            filter: brightness(1.1);
+            transform: translateY(-2px);
+            box-shadow: 0 12px 25px rgba(45, 106, 79, 0.3);
+        }
+
+        .btn:active {
+            transform: scale(0.96);
+            /* تأثير الضغطة */
+        }
+
+        /* زر المتابعة كضيف (الشفاف) */
+        .btn-ghost {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(100, 116, 139, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .btn-ghost:hover {
+            background: #f8fafc;
+            border-color: var(--primary);
+            color: var(--primary) !important;
+        }
+
+        .beta-ribbon-content {
+            /* تأثير البريق المتحرك على الشريط */
+            background: linear-gradient(90deg, #1b4332, #2d6a4f, #1b4332);
+            background-size: 200% auto;
+            animation: shine 3s linear infinite;
+        }
+
+        @keyframes shine {
+            to {
+                background-position: 200% center;
+            }
+        }
+
+        /* حل مشكلة لون الخلفية عند الاقتراح (Autofill) */
+        input:-webkit-autofill,
+        input:-webkit-autofill:hover,
+        input:-webkit-autofill:focus,
+        input:-webkit-autofill:active {
+            /* ده بيخلي الخلفية شفافة وبياخد لون الـ input-ui بتاعك */
+            -webkit-box-shadow: 0 0 0 1000px var(--input-bg) inset !important;
+
+            /* ده بيغير لون النص عشان يفضل واضح */
+            -webkit-text-fill-color: var(--text) !important;
+
+            /* انتقال ناعم عشان ميبقاش فيه فلاش أبيض */
+            transition: background-color 5000s ease-in-out 0s;
+        }
+
+        /* في حالة الثيم المظلم (Dark Mode) */
+        [data-theme="dark"] input:-webkit-autofill {
+            -webkit-box-shadow: 0 0 0 1000px var(--input-bg) inset !important;
+            -webkit-text-fill-color: #ffffff !important;
+        }
+
+        #splash-screen {
+            position: fixed;
+            inset: 0;
+            background: #ffffff;
+            /* لو ثيم فاتح */
+            z-index: 99999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.6s ease, visibility 0.6s;
+        }
+
+        /* دعم الثيم المظلم لشاشة التحميل */
+        [data-theme="dark"] #splash-screen {
+            background: #1a2521;
+        }
+
+        .splash-content {
+            text-align: center;
+        }
+
+        .splash-logo {
+            font-size: 80px;
+            color: var(--primary);
+            animation: pulseLogo 2s infinite ease-in-out;
+        }
+
+        .splash-text {
+            font-family: 'Amiri', serif;
+            font-size: 40px;
+            color: var(--text);
+            margin-top: 20px;
+            letter-spacing: 2px;
+        }
+
+        .loading-bar {
+            width: 150px;
+            height: 4px;
+            background: rgba(45, 106, 79, 0.1);
+            border-radius: 10px;
+            margin: 30px auto 0;
+            overflow: hidden;
+        }
+
+        .loading-progress {
+            width: 0%;
+            height: 100%;
+            background: var(--primary);
+            animation: loadProgress 2s forwards ease-out;
+        }
+
+        /* أنيميشن النبض */
+        @keyframes pulseLogo {
+
+            0%,
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+
+            50% {
+                transform: scale(1.1);
+                opacity: 0.7;
+            }
+        }
+
+        @keyframes loadProgress {
+            0% {
+                width: 0%;
+            }
+
+            100% {
+                width: 100%;
+            }
+        }
+
+        /* كلاس الإخفاء */
+        .splash-hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+
+        .remember-me-wrapper {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-right: 5px;
+        }
+
+        .custom-checkbox {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text);
+            user-select: none;
+        }
+
+        .custom-checkbox input {
+            display: none;
+            /* إخفاء المربع الأصلي */
+        }
+
+        .checkmark {
+            width: 20px;
+            height: 20px;
+            background-color: var(--input-bg);
+            border-radius: 6px;
+            margin-left: 10px;
+            position: relative;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .custom-checkbox input:checked+.checkmark {
+            background-color: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .checkmark:after {
+            content: "\f00c";
+            /* أيقونة الصح من FontAwesome */
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            position: absolute;
+            color: white;
+            font-size: 12px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            transition: all 0.2s cubic-bezier(0.12, 0.4, 0.29, 1.46);
+        }
+
+        .custom-checkbox input:checked+.checkmark:after {
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        .label-text {
+            opacity: 0.8;
+        }
+
+        .input-ui {
+            display: flex;
+            flex-direction: row;
+            /* ترتيب العناصر في سطر واحد */
+            align-items: center;
+            background: var(--input-bg);
+            padding: 0 15px;
+            border-radius: 15px;
+            height: 60px;
+            transition: 0.3s;
+        }
+
+        /* أيقونة العين */
+        .toggle-pass {
+            cursor: pointer;
+            font-size: 16px;
+            color: var(--primary);
+            opacity: 0.6;
+            transition: 0.3s;
+            padding: 10px;
+            /* margin-right: auto هي اللي بتزق الأيقونة لأقصى اليسار في نظام الـ RTL */
+            margin-right: auto;
+        }
+
+        .toggle-pass:hover {
+            opacity: 1;
+            transform: scale(1.1);
+        }
+
+        /* تصميم نقط الباسورد */
+        #password {
+            letter-spacing: 2px;
+            font-weight: bold;
+        }
+
+        body::after {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('image/names.jpg');
+            opacity: 0.05;
+            /* خفيفة جداً عشان ماتتعبش العين */
+            pointer-events: none;
+            z-index: -1;
+        }
+    </style>
+
+    <nav class="navbar">
+        <div class="nav-logo">
+            <i class="fa-solid fa-leaf"></i>
+            <span>وذكر</span>
+        </div>
+
+        <div class="theme-toggle" onclick="toggleTheme()">
+            <i class="fa-solid fa-moon" id="tIcon"></i>
+        </div>
+
+    </nav>
+
+    <div class="card">
+
+        <h2 style="color: var(--text); margin: 0 0 10px;">تسجيل الدخول</h2>
+        <p style="color: var(--text); opacity: 0.6; font-size: 14px; margin-bottom: 30px;">وذكر, رفيقك نحو الهدوء
+            والسكينة</p>
+
+        <form id="loginForm">
+            <div class="input-group">
+                <div class="input-ui">
+                    <i class="fa-solid fa-phone-flip"></i>
+                    <input type="tel" id="phone" placeholder="رقم الهاتف" maxlength="11">
+                </div>
+                <div class="err-box" id="phoneE"><i class="fa-solid fa-circle-info"></i> <span id="phoneTxt">برجاء إدخال
+                        رقم الهاتف</span></div>
+            </div>
+
+            <div class="input-group">
+                <div class="input-ui">
+                    <i class="fa-solid fa-lock" style="color: var(--primary); margin-left: 10px;"></i>
+
+                    <input type="password" id="password" placeholder="كلمة المرور" oninput="toggleEyeIcon()"
+                        style="flex: 1; border: none; background: none; outline: none; font-family: 'Cairo'; text-align: right;">
+
+                    <i class="fa-solid fa-eye-slash toggle-pass" id="eyeIcon" onclick="togglePasswordVisibility()"
+                        style="display: none;"></i>
+                </div>
+                <div class="err-box" id="passE">
+                    <i class="fa-solid fa-circle-info"></i>
+                    <span id="passTxt">برجاء إدخال كلمة المرور</span>
+                </div>
+            </div>
+
+            <div class="remember-me-wrapper">
+                <label class="custom-checkbox">
+                    <input type="checkbox" id="save-login">
+                    <span class="checkmark"></span>
+                    <span class="label-text">حفظ بيانات الدخول</span>
+                </label>
+            </div>
+
+            <button type="submit" class="btn" id="sBtn">
+                <span id="bTxt">تسجيل الدخول</span>
+                <i class="fa-solid fa-fan fa-spin" id="spin" style="display: none;"></i>
+            </button>
+
+            <div style="margin-top: 15px;">
+                <a href="index.html" class="btn-ghost">
+                    المتابعة دون حساب
+                    <i class="fa-solid fa-arrow-left-long" style="margin-right: 8px; font-size: 12px;"></i>
+                </a>
+            </div>
+            <div class="signup-link">
+                ليس لديك حساب؟ <a href="signup.html">أنشئ حساب الآن</a>
+            </div>
+
+        </form>
+    </div>
+
+    <div id="welcome-toast">
+        <div class="toast-check-wrapper">
+            <div class="toast-check"><i class="fa-solid fa-check"></i></div>
+            <i class="fa-solid fa-circle-notch decor d1"></i>
+            <i class="fa-solid fa-plus decor d2"></i>
+            <i class="fa-solid fa-circle-notch decor d3"></i>
+            <i class="fa-solid fa-plus decor d4"></i>
+        </div>
+        <div style="text-align: center;">
+            <div style="font-weight: 900; color: var(--text); font-size: 18px; margin-bottom: 5px;">مرحباً بك <span
+                    id="userN"></span></div>
+            <div style="font-size: 14px; color: var(--text); opacity: 0.7;">تم تسجيل الدخول بنجاح</div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+        const firebaseConfig = { apiKey: "AIzaSyA4h9MsH0Szht7taowp95WcBr2y6scXe1k", projectId: "omardev-fbfd8" };
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        window.toggleTheme = () => {
+            const h = document.documentElement;
+            const isDark = h.getAttribute('data-theme') === 'dark';
+            h.setAttribute('data-theme', isDark ? 'light' : 'dark');
+            document.getElementById('tIcon').className = isDark ? 'fa-solid fa-moon' : 'fa-solid fa-sun';
+        };
+
+        function createSakura() {
+            const s = document.createElement('div');
+            s.className = 'sakura';
+            s.style.left = Math.random() * 100 + 'vw';
+            s.style.width = s.style.height = (Math.random() * 8 + 5) + 'px';
+            s.style.animationDuration = (Math.random() * 3 + 4) + 's';
+            document.body.appendChild(s);
+            setTimeout(() => s.remove(), 6000);
+        }
+        setInterval(createSakura, 300);
+
+        document.getElementById('loginForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const phone = document.getElementById('phone').value.trim();
+            const pass = document.getElementById('password').value;
+            const btn = document.getElementById('sBtn');
+
+            document.getElementById('phoneE').style.display = 'none';
+            document.getElementById('passE').style.display = 'none';
+
+            if (!phone) {
+                document.getElementById('phoneTxt').innerText = "برجاء إدخال رقم هاتف";
+                document.getElementById('phoneE').style.display = 'flex';
+                return;
+            }
+            if (!pass) {
+                document.getElementById('passTxt').innerText = "برجاء إدخال كلمة المرور";
+                document.getElementById('passE').style.display = 'flex';
+                return;
+            }
+
+            btn.disabled = true;
+            document.getElementById('bTxt').innerText = "جاري التحقق";
+            document.getElementById('spin').style.display = "inline-block";
+
+            if (phone === "1098643879" && pass === "@Omar_123") {
+                showSuccess("عمر القائد", "admin-dashboard.html");
+                return;
+            }
+
+            try {
+                const email = phone + "@azkar-app.com";
+                await signInWithEmailAndPassword(auth, email, pass);
+                showSuccess("يا بطل", "index.html");
+            } catch (err) {
+                btn.disabled = false;
+                document.getElementById('bTxt').innerText = "دخول";
+                document.getElementById('spin').style.display = "none";
+                document.getElementById('passTxt').innerText = "عذراً، البيانات غير صحيحة";
+                document.getElementById('passE').style.display = 'flex';
+            }
+        };
+
+        function showSuccess(name, url) {
+            document.getElementById('userN').innerText = name;
+            const toast = document.getElementById('welcome-toast');
+            toast.style.display = 'flex';
+            setTimeout(() => { toast.classList.add('show'); }, 10);
+            setTimeout(() => { window.location.href = url; }, 2200);
+        }
+
+        document.onkeydown = e => { if (e.ctrlKey && ['c', 'u', 'i', 's'].includes(e.key.toLowerCase())) return false; };
+
+        const phoneInput = document.getElementById('phone');
+
+        // التريك: مراقبة الـ Keydown عشان نعرف إن المستخدم بدأ يمسح
+        phoneInput.addEventListener('keydown', function (e) {
+            // لو ضغط Backspace أو Delete والحقل فيه قيمة
+            if (e.key === 'Backspace' || e.key === 'Delete') {
+                // بنحول النوع لـ text فوراً وبنقفل الـ autocomplete تماماً
+                this.type = 'text';
+                this.setAttribute('autocomplete', 'off');
+            }
+        });
+
+        phoneInput.addEventListener('input', function () {
+            // لو الحقل بقى فاضي تماماً
+            if (this.value === "") {
+                // بنعمل Reset يدوي للحقل
+                this.value = '';
+                // بنرجعه tel بعد تأخير بسيط عشان ميظهرش الاقتراحات فوراً
+                setTimeout(() => {
+                    this.type = 'tel';
+                    this.setAttribute('autocomplete', 'new-password'); // تريك: استخدام new-password بيخلي المتصفح يبعد عن الـ Autofill القديم
+                }, 10);
+            }
+        });
+
+        // عند اختيار رقم من المقترحات (تأكيد القيمة كأنها كُتبت باليد)
+        phoneInput.addEventListener('animationstart', function (e) {
+            // المتصفحات بتستخدم انميشن اسمه 'onAutoFillStart' لما بتملى الحقل
+            if (e.animationName === 'onAutoFillStart') {
+                const tempVal = this.value;
+                this.value = '';
+                this.value = tempVal;
+            }
+        });
+        window.addEventListener('load', () => {
+            const splash = document.getElementById('splash-screen');
+
+            // بنخليها تظهر لثانيتين على الأقل عشان المستخدم يشوف اللوجو
+            setTimeout(() => {
+                splash.classList.add('splash-hidden');
+            }, 2500); // 2.5 ثانية
+        });
+    </script>
+
+    <script>
+        // عند تحميل الصفحة، ابحث عن البيانات المحفوظة
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedPhone = localStorage.getItem('phone');
+            const savedPass = localStorage.getItem('pass');
+
+            if (savedPhone && savedPass) {
+                document.getElementById('phone').value = savedPhone;
+                document.getElementById('password').value = savedPass;
+                document.getElementById('save-login').checked = true;
+            }
+        });
+
+        // عدل دالة تسجيل الدخول (Form Submit) لتشمل الحفظ
+        document.getElementById('loginForm').onsubmit = async (e) => {
+            // ... كود التحقق القديم بتاعك ...
+
+            // إذا نجح تسجيل الدخول، تحقق من زر الحفظ
+            if (document.getElementById('save-login').checked) {
+                localStorage.setItem('phone', document.getElementById('phone').value);
+                localStorage.setItem('pass', document.getElementById('password').value);
+            } else {
+                localStorage.removeItem('phone');
+                localStorage.removeItem('pass');
+            }
+
+            // ... باقي كود الـ Firebase ...
+        };
+        function toggleEyeIcon() {
+            const passwordInput = document.getElementById('password');
+            const eyeIcon = document.getElementById('eyeIcon');
+
+            // إظهار العين فقط لو الحقل فيه نص
+            if (passwordInput.value.length > 0) {
+                eyeIcon.style.display = 'block';
+            } else {
+                eyeIcon.style.display = 'none';
+            }
+        }
+
+        function togglePasswordVisibility() {
+            const passwordInput = document.getElementById('password');
+            const eyeIcon = document.getElementById('eyeIcon');
+
+            if (passwordInput.type === "password") {
+                // إظهار الباسورد
+                passwordInput.type = "text";
+                eyeIcon.classList.remove('fa-eye-slash');
+                eyeIcon.classList.add('fa-eye');
+            } else {
+                // إخفاء الباسورد
+                passwordInput.type = "password";
+                eyeIcon.classList.remove('fa-eye');
+                eyeIcon.classList.add('fa-eye-slash');
+            }
+        }
+    </script>
+
+</body>
+
+</html>
