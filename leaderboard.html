@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>نخبة الذاكرين | وذكر</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Amiri:wght@700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --emerald: #1b4332;
+            --mint: #2d6a4f;
+            --gold: #c5a059;
+            --sakura-pink: rgba(255, 183, 197, 0.4); /* شفافة جداً */
+        }
+
+        /* منع الشغب والنسخ */
+        * {
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+            -webkit-user-select: none;
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Cairo', sans-serif;
+            background: #f0f2f5;
+            overflow-x: hidden;
+        }
+
+        /* ساكورا خفيفة جداً وبدون لاج */
+        .sakura-container {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 1; /* خلف العناصر */
+        }
+        .leaf {
+            position: absolute; background: var(--sakura-pink);
+            border-radius: 100% 0 100% 10px;
+            animation: fall linear infinite;
+        }
+        @keyframes fall {
+            0% { transform: translateY(-10vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
+        }
+
+        .app-shell {
+            width: 100%; max-width: 480px; margin: 0 auto;
+            background: #f8fafc; min-height: 100vh;
+            position: relative; z-index: 10;
+            box-shadow: 0 0 40px rgba(0,0,0,0.1);
+        }
+
+        /* الناف بار الملونة المحترفة */
+        .nav-gold {
+            background: linear-gradient(135deg, var(--emerald), var(--mint));
+            padding: 25px 20px 50px;
+            border-radius: 0 0 40px 40px;
+            color: white;
+            position: relative;
+        }
+        .nav-content {
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .back-link {
+            width: 40px; height: 40px; background: rgba(255,255,255,0.2);
+            border-radius: 12px; display: flex; align-items: center; justify-content: center;
+            color: white; text-decoration: none; backdrop-filter: blur(5px);
+        }
+
+        /* كارت الإحصائيات العام (عشان الصفحة متبقاش فاضية) */
+        .global-stats {
+            background: white; margin: -30px 20px 20px;
+            border-radius: 25px; padding: 20px;
+            display: grid; grid-template-columns: 1fr 1fr;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            text-align: center; border: 1px solid #f1f5f9;
+        }
+        .stat-box:first-child { border-left: 1px solid #eee; }
+        .stat-box b { display: block; font-size: 18px; color: var(--emerald); }
+        .stat-box span { font-size: 11px; color: #94a3b8; font-weight: 800; }
+
+        /* القائمة */
+        .ranking-container { padding: 0 20px 40px; }
+        .list-title { font-size: 16px; font-weight: 800; color: #475569; margin-bottom: 15px; display: block; }
+
+        .user-card {
+            background: white; border-radius: 20px; padding: 12px 15px;
+            display: flex; align-items: center; gap: 15px; margin-bottom: 12px;
+            border: 1px solid #f1f5f9; transition: 0.3s;
+            animation: slideIn 0.5s ease forwards; opacity: 0;
+        }
+        @keyframes slideIn { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+        .rank-num {
+            width: 30px; font-size: 18px; font-weight: 900; color: #cbd5e1; text-align: center;
+        }
+
+        /* تميز الأوائل */
+        .top-1 { border: 2px solid var(--gold); background: #fffdf5; }
+        .top-1 .rank-num { color: var(--gold); font-size: 24px; }
+        .top-2 { border: 1px solid #C0C0C0; }
+        .top-3 { border: 1px solid #CD7F32; }
+
+        .avatar-frame {
+            position: relative; width: 50px; height: 50px;
+        }
+        .avatar-img {
+            width: 100%; height: 100%; border-radius: 15px; object-fit: cover;
+            background: #eee; border: 2px solid white; box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+        .gender-dot {
+            position: absolute; bottom: -2px; right: -2px; width: 14px; height: 14px;
+            border-radius: 50%; border: 2px solid white;
+        }
+
+        .user-info { flex: 1; }
+        .user-info b { display: block; font-size: 14px; color: #1e293b; }
+        .points-tag {
+            font-size: 11px; font-weight: 900; color: var(--mint);
+            background: #f0f7f4; padding: 2px 8px; border-radius: 6px;
+        }
+
+        .medal-icon { font-size: 20px; }
+
+        .footer-text { text-align: center; color: #cbd5e1; font-size: 11px; padding: 20px; font-weight: 700; }
+    </style>
+</head>
+<body oncontextmenu="return false;">
+
+<div class="sakura-container" id="sakura-box"></div>
+
+<div class="app-shell">
+    <div class="nav-gold">
+        <div class="nav-content">
+            <a href="profile.html" class="back-link"><i class="fa-solid fa-chevron-right"></i></a>
+            <h2 style="margin:0; font-family:'Amiri'; font-size:26px;">نخبة الذاكرين</h2>
+            <div style="width:40px"></div>
+        </div>
+        <p style="text-align:center; margin-top:10px; font-size:13px; opacity:0.9">"فِي ذَلِكَ فَلْيَتَنَافَسِ الْمُتَنَافِسُونَ"</p>
+    </div>
+
+    <div class="global-stats">
+        <div class="stat-box">
+            <b id="totalUsersCount">--</b>
+            <span>المتصنفين</span>
+        </div>
+        <div class="stat-box">
+            <b id="globalPointsSum">--</b>
+            <span>الإجمالي</span>
+        </div>
+    </div>
+
+    <div class="ranking-container">
+        <span class="list-title"><i class="fa-solid fa-trophy" style="color:var(--gold)"></i> ترتيب المستخدمين</span>
+        <div id="leaderboardList">
+            </div>
+    </div>
+
+    <div class="footer-text">تحديث لحظي لبيانات المتنافسين ⚡</div>
+</div>
+
+<script type="module">
+    import { db, auth } from './auth.js';
+    import { collection, query, orderBy, limit, onSnapshot, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+    // ساكورا احترافية وخفيفة
+    function initSakura() {
+        const box = document.getElementById('sakura-box');
+        for (let i = 0; i < 12; i++) { // عدد قليل عشان اللاج
+            let leaf = document.createElement('div');
+            leaf.className = 'leaf';
+            leaf.style.left = Math.random() * 100 + 'vw';
+            let size = Math.random() * 10 + 10 + 'px';
+            leaf.style.width = size;
+            leaf.style.height = size;
+            leaf.style.animationDuration = Math.random() * 4 + 6 + 's';
+            leaf.style.animationDelay = Math.random() * 5 + 's';
+            box.appendChild(leaf);
+        }
+    }
+    initSakura();
+
+    // جلب البيانات
+    async function fetchStats() {
+        const snap = await getDocs(collection(db, "users_azkar"));
+        document.getElementById('totalUsersCount').innerText = snap.size;
+        let sum = 0;
+        snap.forEach(doc => sum += (doc.data().totalPoints || 0));
+        document.getElementById('globalPointsSum').innerText = sum.toLocaleString();
+    }
+
+    function loadLeaderboard() {
+        const list = document.getElementById('leaderboardList');
+        const q = query(collection(db, "users_azkar"), orderBy("totalPoints", "desc"), limit(30));
+        
+        onSnapshot(q, (snap) => {
+            list.innerHTML = '';
+            let rank = 1;
+
+            snap.forEach(userDoc => {
+                const data = userDoc.data();
+                const isFemale = data.gender === 'أنثى';
+                const cardClass = rank === 1 ? 'top-1' : (rank === 2 ? 'top-2' : (rank === 3 ? 'top-3' : ''));
+                const medal = rank === 1 ? '🥇' : (rank === 2 ? '🥈' : (rank === 3 ? '🥉' : ''));
+
+                list.innerHTML += `
+                    <div class="user-card ${cardClass}" style="animation-delay: ${rank * 0.05}s">
+                        <div class="rank-num">${rank}</div>
+                        <div class="avatar-frame">
+                            <img class="avatar-img" src="${data.profilePic || (isFemale ? 'https://cdn-icons-png.flaticon.com/512/6997/6997662.png' : 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png')}">
+                            <div class="gender-dot" style="background:${isFemale ? '#ff4081' : '#2196f3'}"></div>
+                        </div>
+                        <div class="user-info">
+                            <b>${data.firstName} ${data.lastName} ${rank === 1 ? '👑' : ''}</b>
+                            <span class="points-tag">${(data.totalPoints || 0).toLocaleString()} نقطة</span>
+                        </div>
+                        <div class="medal-icon">${medal}</div>
+                    </div>
+                `;
+                rank++;
+            });
+        });
+    }
+
+    fetchStats();
+    loadLeaderboard();
+</script>
+
+</body>
+</html>
