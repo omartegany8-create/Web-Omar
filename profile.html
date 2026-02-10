@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>وذكر | لوحة التحكم</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --emerald: #1b4332;
+            --mint: #2d6a4f;
+            --gold: #c5a059;
+            --bg-body: #f8fafc;
+            --sakura: #ffb7c5;
+            --card-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+        }
+
+        /* منع التحديد والنسخ */
+        * {
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+            -webkit-user-select: none;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-body);
+            font-family: 'Cairo', sans-serif;
+            margin: 0;
+            overflow-x: hidden;
+            color: #1a1a1a;
+        }
+
+        /* الترس الخلفي */
+        .bg-gear {
+            position: fixed;
+            top: -50px;
+            right: -50px;
+            font-size: 200px;
+            color: rgba(45, 106, 79, 0.03);
+            animation: spin 20s linear infinite;
+            z-index: -1;
+        }
+
+        @keyframes spin {
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .app-shell {
+            width: 100%;
+            max-width: 480px;
+            margin: 0 auto;
+            background: white;
+            min-height: 100vh;
+            position: relative;
+            box-shadow: 0 0 40px rgba(0, 0, 0, 0.08);
+            padding-bottom: 40px;
+        }
+
+        /* ناف بار */
+        .top-bar {
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            z-index: 100;
+        }
+
+        .btn-circle {
+            width: 45px;
+            height: 45px;
+            background: #f1f5f9;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--emerald);
+            text-decoration: none;
+            font-size: 18px;
+            transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .btn-circle:active {
+            transform: scale(0.85);
+        }
+
+        /* بروفايل هيدر */
+        .hero-section {
+            padding: 10px 20px 20px;
+            text-align: center;
+        }
+
+        .main-avatar {
+            position: relative;
+            width: 135px;
+            margin: 0 auto 15px;
+        }
+
+        #displayPic {
+            width: 125px;
+            height: 125px;
+            border-radius: 40px;
+            border: 5px solid white;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            object-fit: cover;
+            transition: 0.5s;
+        }
+
+        .mini-gender {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            width: 32px;
+            height: 32px;
+            border-radius: 12px;
+            border: 3px solid white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            color: white;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .cam-btn {
+            position: absolute;
+            bottom: 5px;
+            left: 5px;
+            background: var(--gold);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 3px solid white;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        /* كارت الاقتباس الرمضاني */
+        .quote-box {
+            margin: 10px 20px;
+            padding: 18px;
+            background: linear-gradient(135deg, #f0fdf4, #ffffff);
+            border-radius: 22px;
+            border: 1px dashed var(--mint);
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--emerald);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            position: relative;
+        }
+
+        /* لوحة الإحصائيات */
+        .dash-board {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            padding: 15px 20px;
+        }
+
+        .stat-item {
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 25px;
+            border: 1px solid #f1f5f9;
+            box-shadow: var(--card-shadow);
+            transition: 0.3s;
+        }
+
+        .stat-item:hover {
+            transform: translateY(-5px);
+            border-color: var(--gold);
+        }
+
+        .stat-item i {
+            color: var(--gold);
+            margin-bottom: 10px;
+            font-size: 22px;
+        }
+
+        .stat-item b {
+            display: block;
+            font-size: 22px;
+            color: var(--emerald);
+            letter-spacing: -0.5px;
+        }
+
+        .stat-item span {
+            font-size: 11px;
+            color: #94a3b8;
+            font-weight: 800;
+            text-transform: uppercase;
+        }
+
+        /* شريط الالتزام */
+        .commitment-bar-section {
+            padding: 10px 20px 25px;
+        }
+
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-weight: 800;
+            font-size: 13px;
+            color: #475569;
+        }
+
+        .full-track {
+            height: 12px;
+            background: #f1f5f9;
+            border-radius: 20px;
+            overflow: hidden;
+        }
+
+        .fill-track {
+            height: 100%;
+            background: linear-gradient(90deg, var(--mint), #4ade80);
+            width: 0%;
+            transition: 1.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        /* القائمة */
+        .settings-list {
+            padding: 0 20px;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 16px;
+            background: white;
+            border-radius: 20px;
+            margin-bottom: 12px;
+            border: 1px solid #f1f5f9;
+            transition: 0.3s;
+            cursor: pointer;
+        }
+
+        .menu-item:hover {
+            background: #f8fafc;
+            transform: translateX(-5px);
+        }
+
+        .menu-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .btn-logout {
+            margin: 25px 20px;
+            width: calc(100% - 40px);
+            padding: 18px;
+            border-radius: 22px;
+            border: none;
+            background: #fff1f2;
+            color: #e11d48;
+            font-weight: 800;
+            font-family: 'Cairo';
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .btn-logout:hover {
+            background: #ffe4e6;
+        }
+
+        /* ساكورا */
+        .sakura-container {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 99;
+        }
+
+        .leaf {
+            position: absolute;
+            background: var(--sakura);
+            border-radius: 100% 0 100% 10px;
+            opacity: 0.6;
+            animation: fall linear infinite;
+        }
+
+        @keyframes fall {
+            to {
+                transform: translateY(110vh) rotate(360deg);
+            }
+        }
+
+        /* مودال اختيار الصور */
+        .modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            backdrop-filter: blur(8px);
+        }
+
+        .modal-content {
+            background: white;
+            width: 85%;
+            max-width: 400px;
+            border-radius: 35px;
+            padding: 30px;
+            text-align: center;
+            animation: popUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes popUp {
+            from {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+
+<body oncontextmenu="return false;">
+
+    <i class="fa-solid fa-gear bg-gear"></i>
+    <div class="sakura-container" id="sakura-box"></div>
+
+    <div class="app-shell">
+        <div class="top-bar">
+            <a href="index.html" class="btn-circle"><i class="fa-solid fa-arrow-right"></i></a>
+            <b style="font-size: 18px; color: var(--emerald)">لوحة التحكم</b>
+            <div class="btn-circle" id="toggleSakura"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+        </div>
+
+        <div class="hero-section">
+            <div class="main-avatar">
+                <div id="genderBadge" class="mini-gender"></div>
+                <img id="displayPic" src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="User">
+                <div class="cam-btn" id="openAvatarModal"><i class="fa-solid fa-camera"></i></div>
+            </div>
+            <h1 id="userName" style="margin:0; font-weight:900; color:#1e293b; font-size: 24px;">جاري التحميل...</h1>
+            <p id="userPhone" style="margin:5px 0; color:#64748b; font-size:14px; font-weight:600;"></p>
+        </div>
+
+        <div class="quote-box">
+            <i class="fa-solid fa-quote-right" style="opacity:0.2; font-size: 20px;"></i>
+            <span id="dailyQuote">أبشر، فإنّ القادم بذكر الله أجمل..</span>
+        </div>
+
+        <div class="dash-board">
+            <div class="stat-item">
+                <i class="fa-solid fa-star"></i>
+                <b id="totalPoints">0</b>
+                <span>إجمالي النقاط</span>
+            </div>
+            <div class="stat-item">
+                <i class="fa-solid fa-crown"></i>
+                <b id="levelText">مبتدئ</b>
+                <span>الرتبة الإيمانية</span>
+            </div>
+        </div>
+
+        <div class="commitment-bar-section">
+            <div class="progress-label">
+                <span>مدى الالتزام بالأذكار</span>
+                <span id="commitmentVal" style="color: var(--mint)">0%</span>
+            </div>
+            <div class="full-track">
+                <div class="fill-track" id="mainProgress"></div>
+            </div>
+        </div>
+
+        <div class="settings-list">
+            <div class="menu-item" onclick="location.href='leaderboard.html'">
+                <div class="menu-icon" style="background:#fff7ed; color:#ea580c;"><i class="fa-solid fa-trophy"></i>
+                </div>
+                <div style="flex:1"><b style="font-size:14px">قائمة المتصدرين</b><br><small style="color:#94a3b8">نافس
+                        الذاكرين حول العالم</small></div>
+                <i class="fa-solid fa-chevron-left" style="color:#cbd5e1; font-size:12px"></i>
+            </div>
+
+            <div class="menu-item">
+                <div class="menu-icon" style="background:#f0f9ff; color:#0284c7;"><i class="fa-solid fa-bell"></i></div>
+                <div style="flex:1"><b style="font-size:14px">التنبيهات الذكية</b><br><small style="color:#94a3b8">مفعلة
+                        لتحفيزك يومياً</small></div>
+                <i class="fa-solid fa-toggle-on" style="color:var(--mint); font-size:22px"></i>
+            </div>
+
+            <div class="menu-item" id="shareApp">
+                <div class="menu-icon" style="background:#f5f3ff; color:#7c3aed;"><i
+                        class="fa-solid fa-share-nodes"></i></div>
+                <div style="flex:1"><b style="font-size:14px">شارك الثواب</b><br><small style="color:#94a3b8">شارك
+                        التطبيق مع أحبائك</small></div>
+                <i class="fa-solid fa-chevron-left" style="color:#cbd5e1; font-size:12px"></i>
+            </div>
+        </div>
+
+        <button class="btn-logout" id="logoutBtn">تسجيل الخروج من الحساب</button>
+    </div>
+
+    <div class="modal" id="avatarModal">
+        <div class="modal-content">
+            <h3 style="margin-top:0; color: var(--emerald)">اختر صورتك الجديدة ✨</h3>
+            <div id="avatarOptions"
+                style="display:grid; grid-template-columns:repeat(3, 1fr); gap:12px; margin:20px 0;"></div>
+            <button onclick="document.getElementById('avatarModal').style.display='none'"
+                style="border:none; background:#f1f5f9; font-weight:800; color:#64748b; padding:12px 25px; border-radius:15px; cursor:pointer;">إلغاء</button>
+        </div>
+    </div>
+
+    <script type="module">
+        import { db, auth } from './auth.js';
+        import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        // --- نظام تساقط الساكورا ---
+        function initSakura() {
+            const box = document.getElementById('sakura-box');
+            box.innerHTML = '';
+            for (let i = 0; i < 15; i++) {
+                let leaf = document.createElement('div');
+                leaf.className = 'leaf';
+                leaf.style.left = Math.random() * 100 + 'vw';
+                leaf.style.width = Math.random() * 10 + 15 + 'px';
+                leaf.style.height = leaf.style.width;
+                leaf.style.top = '-20px';
+                leaf.style.animationDuration = Math.random() * 3 + 5 + 's';
+                leaf.style.animationDelay = Math.random() * 5 + 's';
+                box.appendChild(leaf);
+            }
+        }
+        initSakura();
+
+        // تشغيل/إيقاف الساكورا
+        document.getElementById('toggleSakura').onclick = function () {
+            const box = document.getElementById('sakura-box');
+            const isVisible = box.style.display !== 'none';
+            box.style.display = isVisible ? 'none' : 'block';
+            this.style.color = isVisible ? '#cbd5e1' : 'var(--emerald)';
+        };
+
+        // --- بيانات المستخدم من Firebase ---
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                const snap = await getDoc(doc(db, "users_azkar", user.uid));
+                if (snap.exists()) {
+                    const data = snap.data();
+                    document.getElementById('userName').innerText = data.firstName + ' ' + data.lastName;
+                    document.getElementById('userPhone').innerText = data.phone || '';
+                    document.getElementById('totalPoints').innerText = (data.totalPoints || 0).toLocaleString();
+
+                    // الصورة الشخصية
+                    const pPic = document.getElementById('displayPic');
+                    pPic.src = data.profilePic || (data.gender === 'أنثى' ? 'https://cdn-icons-png.flaticon.com/512/6997/6997662.png' : 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png');
+
+                    // شارة النوع
+                    const gBadge = document.getElementById('genderBadge');
+                    gBadge.style.background = data.gender === 'أنثى' ? '#ff4081' : '#2196f3';
+                    gBadge.innerHTML = data.gender === 'أنثى' ? '♀' : '♂';
+
+                    // حساب الالتزام
+                    const keys = ['tasbeeh', 'istighfar', 'prophet', 'hawqala'];
+                    let totalProgress = 0;
+                    keys.forEach(k => { totalProgress += Math.min(((data[k] || 0) / 1000) * 100, 100); });
+                    const avg = Math.round(totalProgress / keys.length);
+                    document.getElementById('commitmentVal').innerText = avg + '%';
+                    document.getElementById('mainProgress').style.width = avg + '%';
+
+                    // الرتبة
+                    const pts = data.totalPoints || 0;
+                    let rank = "مبتدئ";
+                    if (pts > 1000) rank = "ذاكر مجتهد";
+                    if (pts > 5000) rank = "سابق بالخيرات";
+                    document.getElementById('levelText').innerText = rank;
+                }
+            } else { window.location.replace('login.html'); }
+        });
+
+        // --- تغيير الصورة الشخصية ---
+        document.getElementById('openAvatarModal').onclick = () => {
+            const modal = document.getElementById('avatarModal');
+            const grid = document.getElementById('avatarOptions');
+            modal.style.display = 'flex';
+            const avatars = [
+                'https://cdn-icons-png.flaticon.com/512/4140/4140037.png',
+                'https://cdn-icons-png.flaticon.com/512/4140/4140048.png',
+                'https://cdn-icons-png.flaticon.com/512/4140/4140047.png',
+                'https://cdn-icons-png.flaticon.com/512/4140/4140051.png',
+                'https://cdn-icons-png.flaticon.com/512/4140/4140041.png',
+                'https://cdn-icons-png.flaticon.com/512/4140/4140044.png'
+            ];
+            grid.innerHTML = '';
+            avatars.forEach(url => {
+                const img = document.createElement('img');
+                img.src = url; img.style.width = '100%'; img.style.borderRadius = '20px'; img.style.cursor = 'pointer';
+                img.style.transition = '0.3s';
+                img.onclick = async () => {
+                    await updateDoc(doc(db, "users_azkar", auth.currentUser.uid), { profilePic: url });
+                    document.getElementById('displayPic').src = url;
+                    modal.style.display = 'none';
+                };
+                img.onmouseover = () => img.style.transform = 'scale(1.1)';
+                img.onmouseout = () => img.style.transform = 'scale(1)';
+                grid.appendChild(img);
+            });
+        };
+
+        // تسجيل الخروج
+        document.getElementById('logoutBtn').onclick = () => signOut(auth).then(() => window.location.replace('login.html'));
+
+        // مشاركة التطبيق
+        document.getElementById('shareApp').onclick = () => {
+            if (navigator.share) {
+                navigator.share({ title: 'تطبيق وذكر', text: 'انضم إلينا في طريق الذكر والخير', url: window.location.origin });
+            }
+        };
+    </script>
+</body>
+
+</html>
