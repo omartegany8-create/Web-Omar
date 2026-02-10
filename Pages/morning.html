@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>وذكر | أذكار الصباح</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* باليتة الصباح: أخضر زمردي مع خلفية فاتحة جداً */
+            --bg: #fdfdfd;
+            --nav-bg: rgba(255, 255, 255, 0.9);
+            --card-bg: #ffffff;
+            --text-main: #1e293b;
+            --primary: #1b5e20; /* أخضر صباحي */
+            --accent: #c5a059;
+            --shadow: 0 10px 30px rgba(0,0,0,0.04);
+            --btn-bg: #f0f4f0;
+        }
+
+        [data-theme="dark"] {
+            --bg: #1a2e26; /* أخضر غامق جداً (ثيم الليل الفخم) */
+            --nav-bg: rgba(26, 46, 38, 0.9);
+            --card-bg: #243d33;
+            --text-main: #e2e8f0;
+            --primary: #81c784;
+            --btn-bg: #2d4a41;
+            --shadow: 0 10px 35px rgba(0,0,0,0.2);
+        }
+
+        /* حماية ومنع اللون الأزرق */
+        * { 
+            -webkit-tap-highlight-color: transparent; 
+            user-select: none; 
+            box-sizing: border-box; 
+            outline: none; 
+            transition: background 0.4s, color 0.4s;
+        }
+
+        body { 
+            margin: 0; font-family: 'Cairo', sans-serif; min-height: 100vh;
+            background: var(--bg);
+            background-image: url('https://www.transparenttextures.com/patterns/islamic-art.png');
+            display: flex; flex-direction: column; align-items: center;
+            padding: 90px 15px 30px; color: var(--text-main);
+            overflow-x: hidden;
+        }
+
+        /* الناف بار */
+        .navbar {
+            position: fixed; top: 0; width: 100%; height: 70px;
+            background: var(--nav-bg); backdrop-filter: blur(15px);
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 5%; z-index: 1000; box-shadow: var(--shadow);
+            border-bottom: 1px solid rgba(27, 94, 32, 0.1);
+        }
+
+        .nav-icon {
+            width: 40px; height: 40px; background: var(--btn-bg);
+            border-radius: 12px; display: grid; place-items: center;
+            color: var(--primary); cursor: pointer; text-decoration: none;
+        }
+
+        .nav-title { font-family: 'Amiri'; font-size: 26px; color: var(--primary); font-weight: 700; }
+
+        .container { width: 100%; max-width: 500px; }
+
+        /* الكارد */
+        .zkr-card {
+            background: var(--card-bg); border-radius: 28px; padding: 25px;
+            margin-bottom: 20px; position: relative; box-shadow: var(--shadow);
+            border-right: 5px solid var(--primary);
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+
+        .actions { display: flex; gap: 12px; position: absolute; top: 18px; left: 20px; }
+        .action-icon { color: #94a3b8; cursor: pointer; transition: 0.3s; font-size: 1.05rem; }
+        .action-icon:hover { color: var(--primary); transform: scale(1.1); }
+
+        .zkr-text {
+            font-family: 'Amiri', serif; font-size: 1.55rem; line-height: 1.9;
+            text-align: center; color: var(--text-main); margin: 35px 0 20px;
+            padding: 0 5px;
+        }
+
+        /* تمييز النص الأخضر داخل البيانات */
+        .highlight-green { color: var(--primary); font-weight: 700; }
+
+        .zkr-source {
+            display: block; text-align: center; font-size: 0.85rem;
+            color: var(--accent); font-weight: 700; margin-bottom: 20px; opacity: 0.9;
+        }
+
+        /* زر التسبيح */
+        .counter-btn {
+            width: 100%; padding: 18px; background: var(--btn-bg);
+            color: var(--text-main); border: 2px solid transparent;
+            border-radius: 22px; font-size: 1.15rem; font-weight: 800;
+            cursor: pointer; position: relative; overflow: hidden;
+            display: flex; justify-content: center; align-items: center; gap: 10px;
+        }
+
+        .counter-btn span {
+            background: var(--primary); color: #fff;
+            min-width: 38px; height: 38px; display: grid; place-items: center;
+            border-radius: 12px; font-size: 1.2rem;
+        }
+
+        /* انيميشن الصح المطور */
+        .counter-btn.done {
+            background: var(--primary) !important; color: #fff !important;
+            animation: successStep 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes successStep {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.08); }
+            100% { transform: scale(1); }
+        }
+
+        .check-mark { display: none; font-size: 1.5rem; }
+        .counter-btn.done .check-mark { display: inline-block; animation: popIn 0.3s ease; }
+        .counter-btn.done span { display: none; }
+
+        @keyframes popIn { from { transform: scale(0); } to { transform: scale(1); } }
+
+        #toast {
+            position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%);
+            background: rgba(0,0,0,0.85); color: #fff; padding: 12px 30px;
+            border-radius: 50px; font-size: 0.9rem; display: none; z-index: 2000;
+            backdrop-filter: blur(8px);
+        }
+
+        .reset-all {
+            margin: 30px; background: transparent; border: 2px solid var(--primary);
+            color: var(--primary); padding: 14px 45px; border-radius: 50px;
+            font-family: 'Cairo'; font-weight: 800; cursor: pointer; transition: 0.3s;
+        }
+        .reset-all:active { transform: scale(0.9); background: var(--primary); color: #fff; }
+    </style>
+</head>
+<body oncontextmenu="return false;">
+
+    <nav class="navbar">
+        <div class="nav-icon" onclick="toggleTheme()" id="theme-toggle">
+            <i class="fa-solid fa-sun"></i>
+        </div>
+        <div class="nav-title">أذكار الصباح</div>
+        <div class="nav-icon" onclick="history.back()">
+            <i class="fa-solid fa-arrow-left"></i>
+        </div>
+    </nav>
+
+    <div class="container" id="azkar-list">
+        </div>
+
+    <button class="reset-all" onclick="location.reload()">إعادة البداية</button>
+
+    <div id="toast"></div>
+
+    <script>
+        // مصفوفة البيانات (ضع بياناتك هنا يا عمر)
+         const morningAzkar = [
+    {
+        id: 1,
+        title: "آية الكرسي",
+        text: "أَعُوذُ بِاللهِ مِنَ الشَّيْطَانِ الرَّجِيمِ: <span class='highlight-green'>«اللَّهُ لَا إِلَهَ إِلَّا هُوَ الْحَيُّ الْقَيُّومُ لَا تَأْخُذُهُ سِنَةٌ وَلَا نَوْمٌ لَهُ مَا فِي السَّمَاوَاتِ وَمَا فِي الْأَرْضِ مَنْ ذَا الَّذِي يَشْفَعُ عِنْدَهُ إِلَّا بِإِذْنِهِ يَعْلَمُ مَا بَيْنَ أَيْدِيهِمْ وَمَا خَلْفَهُمْ وَلَا يُحِيطُونَ بِشَيْءٍ مِنْ عِلْمِهِ إِلَّا بِمَا شَاءَ وَسِعَ كُرْسِيُّهُ السَّمَاوَاتِ وَالْأَرْضَ وَلَا يَئُودُهُ حِفْظُهُمَا وَهُوَ الْعَلِيُّ الْعَظِيمُ»</span>.",
+        source: "من قرأها حين يمسي أجير من الجن حتى يصبح",
+        count: 1
+    },
+    {
+        id: 2,
+        title: "سورة الإخلاص والمعوذتين",
+        text: "بِسْمِ اللهِ الرَّحْمنِ الرَّحِيمِ: <span class='highlight-green'>«قُلْ هُوَ اللَّهُ أَحَدٌ، اللَّهُ الصَّمَدُ، لَمْ يَلِدْ وَلَمْ يُولَدْ، وَلَمْ يَكُن لَّهُ كُفُوًا أَحَدٌ»</span>. <br> بِسْمِ اللهِ الرَّحْمنِ الرَّحِيمِ: <span class='highlight-green'>«قُلْ أَعُوذُ بِرَبِّ الْفَلَقِ، مِن شَرِّ مَا خَلَقَ، وَمِن شَرِّ غَاسِقٍ إِذَا وَقَبَ، وَمِن شَرِّ النَّفَّاثَاتِ فِي الْعُقَدِ، وَمِن شَرِّ حَاسِدٍ إِذَا حَسَدَ»</span>. <br> بِسْمِ اللهِ الرَّحْمنِ الرَّحِيمِ: <span class='highlight-green'>«قُلْ أَعُوذُ بِرَبِّ النَّاسِ، مَلِكِ النَّاسِ، إِلَهِ النَّاسِ، مِن شَرِّ الْوَسْوَاسِ الْخَنَّاسِ، الَّذِي يُوَسْوِسُ فِي صُدُورِ النَّاسِ، مِنَ الْجِنَّةِ وَ النَّاسِ»</span>.",
+        source: "تكفيه من كل شيء",
+        count: 3
+    },
+    {
+        id: 3,
+        title: "سيد الاستغفار",
+        text: "<span class='highlight-green'>«اللَّهُمَّ أَنْتَ رَبِّي لَا إِلَهَ إِلَّا أَنْتَ، خَلَقْتَنِي وَأَنَا عَبْدُكَ، وَأَنَا عَلَى عَهْدِكَ وَوَعْدِكَ مَا اسْتَطَعْتُ، أَعُوذُ بِكَ مِنْ شَرِّ مَا صَنَعْتُ، أَبُوءُ لَكَ بِنِعْمَتِكَ عَلَيَّ، وَأَبُوءُ لَكَ بِذَنْبِي فَاغْفِرْ لِي، فَإِنَّهُ لَا يَغْفِرُ الذُّنُوبَ إِلَّا أَنْتَ»</span>.",
+        source: "من قالها موقنا بها ومات من ليلته دخل الجنة",
+        count: 1
+    },
+    {
+        id: 4,
+        title: "دعاء المساء العام",
+        text: "<span class='highlight-green'>«أَمْسَيْنَا وَأَمْسَى الْمُلْكُ لِلَّهِ، وَالْحَمْدُ لِلَّهِ، لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ، رَبِّ أَسْأَلُكَ خَيْرَ مَا فِي هَذِهِ اللَّيْلَةِ وَخَيْرَ مَا بَعْدَهَا، وَأَعُوذُ بِكَ مِنْ شَرِّ مَا فِي هَذِهِ اللَّيْلَةِ وَشَرِّ مَا بَعْدَهَا، رَبِّ أَعُوذُ بِكَ مِنَ الْكَسَلِ، وَسُوءِ الْكِبَرِ، رَبِّ أَعُوذُ بِكَ مِنْ عَذَابٍ فِي النَّارِ وَعَذَابٍ فِي الْقَبْرِ»</span>.",
+        source: "رواه مسلم",
+        count: 1
+    },
+    {
+        id: 5,
+        title: "رضيت بالله ربا",
+        text: "<span class='highlight-green'>«رَضِيتُ بِاللَّهِ رَبًّا، وَبِالْإِسْلَامِ دِينًا، وَبِمُحَمَّدٍ ﷺ نَبِيًّا»</span>.",
+        source: "كان حقا على الله أن يرضيه يوم القيامة",
+        count: 3
+    },
+    {
+        id: 6,
+        title: "بسم الله الذي لا يضر",
+        text: "<span class='highlight-green'>«بِسْمِ اللَّهِ الَّذِي لَا يَضُرُّ مَعَ اسْمِهِ شَيْءٌ فِي الْأَرْضِ وَلَا فِي السَّمَاءِ وَهُوَ السَّمِيعُ الْعَلِيمُ»</span>.",
+        source: "لم يضره من الله شيء",
+        count: 3
+    },
+    {
+        id: 7,
+        title: "أعوذ بكلمات الله التامات",
+        text: "<span class='highlight-green'>«أَعُوذُ بِكَلِمَاتِ اللَّهِ التَّامَّاتِ مِنْ شَرِّ مَا خَلَقَ»</span>.",
+        source: "لم تضره حمة (سم) لو لدغ في ليلته",
+        count: 3
+    },
+    {
+        id: 8,
+        title: "الصلاة على النبي",
+        text: "<span class='highlight-green'>«اللَّهُمَّ صَلِّ وَسَلِّمْ عَلَى نَبِيِّنَا مُحَمَّدٍ»</span>.",
+        source: "من صلى عليّ حين يمسي عشراً أدركته شفاعتي",
+        count: 10
+    },
+    {
+        id: 9,
+        title: "يا حي يا قيوم",
+        text: "<span class='highlight-green'>«يَا حَيُّ يَا قَيُّومُ بِرَحْمَتِكَ أَسْتَغِيثُ أَصْلِحْ لِي شأْنِي كُلَّهُ وَلَا تَكِلْنِي إِلَى نَفْسِي طَرْفَةَ عَيْنٍ»</span>.",
+        source: "أذكار نبوية جامعة",
+        count: 1
+    },
+    {
+        id: 10,
+        title: "سبحان الله وبحمده",
+        text: "<span class='highlight-green'>«سُبْحَانَ اللهِ وَبِحَمْدِهِ»</span>.",
+        source: "حطت خطاياه وإن كانت مثل زبد البحر",
+        count: 100
+    },
+    {
+        id: 11,
+        title: "حسبي الله لا إله إلا هو",
+        text: "<span class='highlight-green'>«حَسْبِيَ اللَّهُ لَا إِلَهَ إِلَّا هُوَ عَلَيْهِ تَوَكَّلْتُ وَهُوَ رَبُّ الْعَرْشِ الْعَظِيمِ»</span>.",
+        source: "كفاه الله ما أهمه من أمر الدنيا والآخرة",
+        count: 7
+    },
+    {
+        id: 12,
+        title: "اللهم عافني في بدني",
+        text: "<span class='highlight-green'>«اللَّهُمَّ عَافِنِي فِي بَدَنِي، اللَّهُمَّ عَافِنِي فِي سَمْعِي، اللَّهُمَّ عَافِنِي فِي بَصَرِي، لَا إِلَهَ إِلَّا أَنْتَ. اللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنَ الْكُفْرِ، وَالْفَقْرِ، وَأَعُوذُ بِكَ مِنْ عَذَابِ الْقَبْرِ، لَا إِلَهَ إِلَّا أَنْتَ»</span>.",
+        source: "دعاء العافية",
+        count: 3
+    }
+];
+
+
+        const list = document.getElementById('azkar-list');
+
+        function renderAzkar() {
+            list.innerHTML = '';
+            morningAzkar.forEach((zkr, index) => {
+                list.innerHTML += `
+                    <div class="zkr-card">
+                        <div class="actions">
+                            <i class="fa-solid fa-rotate-left action-icon" onclick="resetSingle(${index}, ${zkr.count})"></i>
+                            <i class="fa-regular fa-copy action-icon" onclick="copyZkr(${index})"></i>
+                            <i class="fa-solid fa-share-nodes action-icon" onclick="shareZkr(${index})"></i>
+                        </div>
+                        <p class="zkr-text" id="text-${index}">${zkr.text}</p>
+                        <span class="zkr-source">${zkr.source}</span>
+                        <button class="counter-btn" id="btn-${index}" onclick="countDown(this)">
+                            <span><b id="count-${index}">${zkr.count}</b></span>
+                            باقي للتكرار
+                            <i class="fa-solid fa-circle-check check-mark"></i>
+                        </button>
+                    </div>
+                `;
+            });
+        }
+
+        function countDown(btn) {
+            let countEl = btn.querySelector('b');
+            if(!countEl) return;
+            let count = parseInt(countEl.innerText);
+            
+            if (count > 1) {
+                countEl.innerText = count - 1;
+                if(navigator.vibrate) navigator.vibrate(35);
+            } else {
+                btn.classList.add('done');
+                btn.innerHTML = 'تمت القراءة <i class="fa-solid fa-circle-check check-mark" style="display:inline-block"></i>';
+                btn.onclick = null;
+                if(navigator.vibrate) navigator.vibrate([50, 40, 50]);
+            }
+        }
+
+        function toggleTheme() {
+            const body = document.body;
+            const icon = document.querySelector('#theme-toggle i');
+            if (body.getAttribute('data-theme') === 'dark') {
+                body.removeAttribute('data-theme');
+                icon.className = 'fa-solid fa-sun';
+            } else {
+                body.setAttribute('data-theme', 'dark');
+                icon.className = 'fa-solid fa-moon';
+            }
+        }
+
+        function resetSingle(index, original) {
+            const btn = document.getElementById(`btn-${index}`);
+            btn.classList.remove('done');
+            btn.innerHTML = `<span><b id="count-${index}">${original}</b></span> باقي للتكرار <i class="fa-solid fa-circle-check check-mark"></i>`;
+            btn.onclick = function() { countDown(this); };
+            showToast("تمت إعادة عداد الذكر");
+        }
+
+        function copyZkr(index) {
+            const txt = document.getElementById(`text-${index}`).innerText;
+            const temp = document.createElement('textarea');
+            temp.value = txt;
+            document.body.appendChild(temp);
+            temp.select();
+            document.execCommand('copy');
+            document.body.removeChild(temp);
+            showToast("تم نسخ الذكر بنجاح");
+        }
+
+        function shareZkr(index) {
+            const txt = document.getElementById(`text-${index}`).innerText;
+            const msg = txt + "\n\n(عبر تطبيق وذكر)";
+            if (navigator.share) {
+                navigator.share({ title: 'أذكار الصباح', text: msg });
+            } else {
+                window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`);
+            }
+        }
+
+        function showToast(m) {
+            const t = document.getElementById('toast');
+            t.innerText = m;
+            t.style.display = 'block';
+            setTimeout(()=> t.style.display='none', 2000);
+        }
+
+        // حماية المحتوى
+        document.addEventListener('copy', (e) => e.preventDefault());
+        
+        renderAzkar();
+    </script>
+</body>
+</html>
