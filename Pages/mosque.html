@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>أذكار المسجد | وذكر</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@700&family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #f8fafc;
+            --nav-bg: #ffffff;
+            --card: #ffffff;
+            --text: #1e293b;
+            --primary: #2d5a27;
+            --accent: #e8f5e9;
+            --shadow: 0 10px 25px rgba(0,0,0,0.05);
+        }
+
+        [data-theme="dark"] {
+            --bg: #0f172a;
+            --nav-bg: #1e293b;
+            --card: #1e293b;
+            --text: #f1f5f9;
+            --accent: #2d5a2733;
+            --shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; user-select: none; transition: all 0.3s ease; }
+
+        body {
+            font-family: 'Cairo', sans-serif; background: var(--bg);
+            margin: 0; min-height: 100vh; color: var(--text);
+            padding-bottom: 40px;
+        }
+
+        /* تأثير الساكورا */
+        .sakura-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
+        .leaf { position: absolute; background: #ffd1dc; border-radius: 100% 0 100% 0; opacity: 0.4; animation: fall linear infinite; }
+        @keyframes fall {
+            0% { transform: translateY(-10vh) rotate(0deg); opacity: 0; }
+            100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
+        }
+
+        /* الناف بار */
+        .navbar {
+            height: 70px; background: var(--nav-bg); display: flex; align-items: center;
+            justify-content: space-between; padding: 0 20px;
+            box-shadow: var(--shadow); position: sticky; top: 0; z-index: 100;
+        }
+        .nav-title { font-weight: 800; font-size: 1.1rem; }
+        .nav-btn { width: 45px; height: 45px; display: grid; place-items: center; cursor: pointer; border-radius: 12px; background: rgba(0,0,0,0.03); }
+
+        .container { padding: 20px; position: relative; z-index: 5; }
+
+        /* العناوين */
+        .section-header {
+            display: flex; align-items: center; gap: 10px;
+            margin: 25px 0 15px; padding-right: 10px;
+            border-right: 4px solid var(--primary);
+        }
+        .section-header h3 { margin: 0; font-size: 1.1rem; font-weight: 800; color: var(--primary); }
+
+        /* بطاقة الذكر */
+        .zkr-card {
+            background: var(--card); border-radius: 20px; padding: 20px;
+            margin-bottom: 15px; box-shadow: var(--shadow);
+            position: relative; overflow: hidden;
+            border: 1px solid rgba(0,0,0,0.02);
+        }
+        .zkr-text {
+            font-family: 'Amiri', serif; font-size: 1.4rem; line-height: 1.8;
+            text-align: center; margin-bottom: 15px; color: var(--text);
+        }
+        
+        /* عداد الذكر */
+        .counter-btn {
+            width: 100%; background: var(--accent); border: none;
+            padding: 12px; border-radius: 12px; color: var(--primary);
+            font-weight: 900; font-size: 1.2rem; cursor: pointer;
+            display: flex; justify-content: center; align-items: center; gap: 10px;
+        }
+        .counter-btn:active { transform: scale(0.98); background: var(--primary); color: #fff; }
+        .counter-btn.done { background: #10b981 !important; color: white !important; opacity: 0.6; }
+
+        /* زر إعادة الضبط العام */
+        .fab-reset {
+            position: fixed; bottom: 20px; left: 20px;
+            width: 55px; height: 55px; background: var(--primary);
+            color: white; border-radius: 50%; display: grid; place-items: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2); cursor: pointer; z-index: 200;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="sakura-container" id="sakura"></div>
+
+    <nav class="navbar">
+        <div class="nav-btn" onclick="toggleTheme()"><i class="fa-solid fa-moon"></i></div>
+        <div class="nav-title">أذكار المسجد والوضوء</div>
+        <div class="nav-btn" onclick="history.back()"><i class="fa-solid fa-chevron-left"></i></div>
+    </nav>
+
+    <div class="container">
+        
+        <div class="section-header">
+            <i class="fa-solid fa-mosque"></i>
+            <h3>عند دخول المسجد</h3>
+        </div>
+        <div class="zkr-card" onclick="tapZkr(this, 1)">
+            <div class="zkr-text">بِسْمِ اللهِ، وَالصَّلَاةُ وَالسَّلَامُ عَلَى رَسُولِ اللهِ، اللَّهُمَّ افْتَحْ لِي أَبْوَابَ رَحْمَتِكَ.</div>
+            <button class="counter-btn"><span>1</span></button>
+        </div>
+
+        <div class="section-header">
+            <i class="fa-solid fa-door-open"></i>
+            <h3>عند الخروج من المسجد</h3>
+        </div>
+        <div class="zkr-card" onclick="tapZkr(this, 1)">
+            <div class="zkr-text">بِسْمِ اللهِ، وَالصَّلَاةُ وَالسَّلَامُ عَلَى رَسُولِ اللهِ، اللَّهُمَّ إِنِّي أَسْأَلُكَ مِنْ فَضْلِكَ.</div>
+            <button class="counter-btn"><span>1</span></button>
+        </div>
+
+        <div class="section-header">
+            <i class="fa-solid fa-faucet-drip"></i>
+            <h3>قبل الوضوء</h3>
+        </div>
+        <div class="zkr-card" onclick="tapZkr(this, 1)">
+            <div class="zkr-text">بِسْمِ اللهِ</div>
+            <button class="counter-btn"><span>1</span></button>
+        </div>
+
+        <div class="section-header">
+            <i class="fa-solid fa-hands-bubbles"></i>
+            <h3>بعد الوضوء</h3>
+        </div>
+        <div class="zkr-card" onclick="tapZkr(this, 1)">
+            <div class="zkr-text">أَشْهَدُ أَنْ لاَ إِلَهَ إِلاَّ اللَّهُ وَحْدَهُ لاَ شَرِيكَ لَهُ وَأَشْهَدُ أَنَّ مُحَمَّداً عَبْدُهُ وَرَسُولُهُ.</div>
+            <button class="counter-btn"><span>1</span></button>
+        </div>
+        <div class="zkr-card" onclick="tapZkr(this, 1)">
+            <div class="zkr-text">اللَّهُمَّ اجْعَلنِي مِنَ التَّوَّابِينَ وَاجْعَلْنِي مِنَ الْمُتَطَهِّرِينَ.</div>
+            <button class="counter-btn"><span>1</span></button>
+        </div>
+
+    </div>
+
+    <div class="fab-reset" onclick="resetAllCounters()">
+        <i class="fa-solid fa-arrows-rotate"></i>
+    </div>
+
+    <script>
+        // نظام العدادات التفاعلي
+        function tapZkr(card, max) {
+            const btn = card.querySelector('.counter-btn span');
+            const fullBtn = card.querySelector('.counter-btn');
+            let current = parseInt(btn.innerText);
+            
+            if (current > 0) {
+                current--;
+                btn.innerText = current;
+                if(navigator.vibrate) navigator.vibrate(40);
+                
+                if (current === 0) {
+                    fullBtn.classList.add('done');
+                    fullBtn.innerHTML = '<i class="fa-solid fa-check"></i> تم القراءة';
+                    card.style.opacity = "0.7";
+                }
+            }
+        }
+
+        function resetAllCounters() {
+            location.reload(); // أسهل طريقة لإعادة العدادات كما كانت
+        }
+
+        // ثيم الألوان
+        function toggleTheme() {
+            const b = document.body;
+            const icon = document.querySelector('.nav-btn i');
+            if(b.getAttribute('data-theme') === 'dark') {
+                b.removeAttribute('data-theme');
+                icon.className = "fa-solid fa-moon";
+            } else {
+                b.setAttribute('data-theme', 'dark');
+                icon.className = "fa-solid fa-sun";
+            }
+        }
+
+        // تأثير الساكورا
+        function initSakura() {
+            const c = document.getElementById('sakura');
+            for(let i=0; i<12; i++) {
+                let l = document.createElement('div');
+                l.className = 'leaf';
+                l.style.left = Math.random() * 100 + '%';
+                l.style.width = l.style.height = (Math.random() * 6 + 5) + 'px';
+                l.style.animationDuration = (Math.random() * 5 + 8) + 's';
+                l.style.animationDelay = (Math.random() * 5) + 's';
+                c.appendChild(l);
+            }
+        }
+
+        document.documentElement.style.webkitTapHighlightColor = 'transparent';
+        initSakura();
+    </script>
+</body>
+</html>
