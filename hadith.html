@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>موسوعة الأحاديث | وذكر</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@600;800&family=Zain:wght@400;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #f8f9fa;
+            --nav-bg: #101828;
+            --card: #ffffff;
+            --text: #1d2939;
+            --gold: #d4af37;
+            --gold-light: #fdf6e3;
+            --accent: #f2f4f7;
+            --shadow: 0 10px 30px rgba(0,0,0,0.05);
+            /* ألوان الرواة الفخمة */
+            --tag-omar: #eff6ff; --text-omar: #1d4ed8;
+            --tag-horira: #ecfdf5; --text-horira: #047857;
+            --tag-anas: #fff7ed; --text-anas: #c2410c;
+        }
+
+        [data-theme="dark"] {
+            --bg: #0b0f1a;
+            --nav-bg: #161b26;
+            --card: #1f2937;
+            --text: #f3f4f6;
+            --gold: #fbbf24;
+            --gold-light: #2d2a1e;
+            --accent: #111827;
+            --shadow: 0 20px 40px rgba(0,0,0,0.4);
+            --tag-omar: #1e3a8a44; --text-omar: #60a5fa;
+            --tag-horira: #064e3b44; --text-horira: #34d399;
+            --tag-anas: #7c2d1244; --text-anas: #fb923c;
+        }
+
+        * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+
+        body {
+            font-family: 'Cairo', sans-serif; background: var(--bg);
+            margin: 0; min-height: 100vh; color: var(--text); padding-bottom: 50px;
+            overflow-x: hidden;
+        }
+
+        /* العلامة المائية الثابتة */
+        .watermark {
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-15deg);
+            font-family: 'Zain', sans-serif; font-size: 15vw; font-weight: 900;
+            color: var(--gold); opacity: 0.05; pointer-events: none; z-index: 0; white-space: nowrap;
+        }
+
+        /* زينة رمضان الأنيميشن */
+        .decor-layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
+        .decor-icon { position: absolute; color: var(--gold); opacity: 0.2; animation: fall linear infinite; }
+        @keyframes fall {
+            0% { transform: translateY(-10vh) rotate(0deg); opacity: 0; }
+            50% { opacity: 0.3; }
+            100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
+        }
+
+        /* الناف بار الفخم */
+        .navbar {
+            height: 75px; background: var(--nav-bg); display: flex; align-items: center;
+            justify-content: space-between; padding: 0 25px; box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            position: sticky; top: 0; z-index: 1000;
+        }
+        .nav-title { font-family: 'Zain', sans-serif; font-size: 2rem; font-weight: 800; color: #fbbf24; letter-spacing: 1px; }
+        .nav-btn { width: 48px; height: 48px; display: grid; place-items: center; cursor: pointer; border-radius: 16px; background: rgba(255,255,255,0.08); color: white; border: 1px solid rgba(255,255,255,0.1); }
+        .nav-btn:hover { background: var(--gold); color: #000; transform: translateY(-3px); }
+
+        .container { padding: 20px; max-width: 650px; margin: auto; position: relative; z-index: 10; }
+
+        /* منطقة البحث المتطورة */
+        .search-area { 
+            background: var(--card); padding: 25px; border-radius: 30px; 
+            box-shadow: var(--shadow); margin-bottom: 30px; 
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            backdrop-filter: blur(10px);
+        }
+        
+        .controls-grid { display: grid; gap: 15px; grid-template-columns: 1fr; }
+        @media (min-width: 480px) { .controls-grid { grid-template-columns: 1fr 2fr; } }
+
+        select, .search-box {
+            width: 100%; padding: 15px 20px; border-radius: 18px; border: 2px solid var(--accent);
+            background: var(--bg); color: var(--text); font-family: 'Cairo'; font-size: 0.95rem; outline: none;
+        }
+        select:focus, .search-box:focus { border-color: var(--gold); box-shadow: 0 0 15px rgba(212, 175, 55, 0.1); }
+
+        /* كروت الأحاديث الفخمة */
+        #hadith-list { display: grid; gap: 20px; }
+        
+        .hadith-card {
+            background: var(--card); padding: 30px; border-radius: 32px;
+            box-shadow: var(--shadow); border: 1px solid rgba(0,0,0,0.02);
+            position: relative; overflow: hidden;
+            transform: translateY(0);
+        }
+        .hadith-card:hover { transform: translateY(-8px); box-shadow: 0 15px 40px rgba(0,0,0,0.1); border-color: var(--gold); }
+
+        .rawi-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+        
+        .rawi-badge {
+            display: inline-flex; align-items: center; gap: 8px; 
+            padding: 8px 18px; border-radius: 14px; font-weight: 800; font-size: 0.85rem;
+        }
+        .omar-bg { background: var(--tag-omar); color: var(--text-omar); }
+        .horira-bg { background: var(--tag-horira); color: var(--text-horira); }
+        .anas-bg { background: var(--tag-anas); color: var(--text-anas); }
+
+        .hadith-main-text {
+            font-family: 'Zain', sans-serif; font-size: 1.8rem; line-height: 1.5;
+            text-align: justify; color: var(--text); margin-bottom: 20px; font-weight: 700;
+        }
+
+        .exp-box {
+            background: var(--accent); padding: 20px; border-radius: 20px;
+            font-size: 1.05rem; color: var(--text); line-height: 1.7; border-right: 5px solid var(--gold);
+            position: relative;
+        }
+        .exp-box::before { content: '\f0eb'; font-family: 'Font Awesome 6 Free'; font-weight: 900; position: absolute; left: 15px; top: 15px; opacity: 0.1; font-size: 1.5rem; }
+
+        .card-actions { display: flex; justify-content: flex-end; margin-top: 25px; }
+        .copy-trigger {
+            background: linear-gradient(135deg, var(--gold), #b8860b); color: #fff; 
+            border: none; padding: 12px 28px; border-radius: 15px; font-size: 1rem; 
+            font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 10px;
+            box-shadow: 0 5px 15px rgba(212, 175, 55, 0.3);
+        }
+        .copy-trigger:hover { transform: scale(1.05); box-shadow: 0 8px 20px rgba(212, 175, 55, 0.4); }
+
+        /* نظام الحالة الفارغة */
+        .empty-results {
+            text-align: center; padding: 60px 20px; background: var(--card); border-radius: 30px;
+            border: 2px dashed var(--gold); display: none;
+            animation: fadeIn 0.5s ease;
+        }
+        .empty-results i { font-size: 4rem; color: var(--gold); margin-bottom: 20px; opacity: 0.5; }
+        .empty-results h3 { font-family: 'Zain', sans-serif; font-size: 1.8rem; margin: 0; }
+        .reset-btn { margin-top: 20px; background: var(--accent); border: none; padding: 10px 25px; border-radius: 12px; cursor: pointer; font-weight: 700; color: var(--gold); }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        #toast-box {
+            position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%);
+            background: var(--nav-bg); color: #fff; padding: 15px 35px;
+            border-radius: 20px; display: none; z-index: 9999; font-weight: 700;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3); border: 1px solid var(--gold);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="watermark">رمضان كريم</div>
+    <div class="decor-layer" id="decorations"></div>
+
+    <nav class="navbar">
+        <div class="nav-btn" onclick="toggleTheme()"><i class="fa-solid fa-moon"></i></div>
+        <div class="nav-title">موسوعة الأحاديث</div>
+        <div class="nav-btn" onclick="history.back()"><i class="fa-solid fa-arrow-left"></i></div>
+    </nav>
+
+    <div class="container">
+        <div class="search-area">
+            <div class="controls-grid">
+                <select id="filterSelect" onchange="performSearch()">
+                    <option value="all">كل الرواة</option>
+                    <option value="عمر">عمر بن الخطاب</option>
+                    <option value="هريرة">أبي هريرة</option>
+                     <option value="عائشة">عائشة رضي الله عنها</option>
+                     
+ <option value="جابر">جابر بن عبد الله</option>
+                    <option value="أنس">أنس بن مالك</option>
+                               <option value="عبد الله">عبد الله بن عمر</option>
+            
+                </select>
+                <input type="text" id="searchInput" class="search-box" placeholder="ابحث عن كلمة بالحديث..." onkeyup="performSearch()">
+            </div>
+        </div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+<div id="hadithHeroSection" class="hero-zone">
+    <div class="bg-deco deco-1"><i class="fa-solid fa-moon"></i></div>
+    <div class="bg-deco deco-2"><i class="fa-solid fa-star"></i></div>
+    <div class="bg-deco deco-3"><i class="fa-solid fa-mosque"></i></div>
+    <div class="bg-deco deco-4"><i class="fa-solid fa-kaaba"></i></div>
+
+    <div class="container">
+        <div class="daily-header">
+            <div class="header-right">
+                <div class="status-dot"></div>
+                <span>الأحاديث النبوية المتجددة</span>
+            </div>
+            <div class="refresh-status">
+                <i class="fa-solid fa-clock-rotate-left"></i>
+                <span id="timerText">30</span>s
+            </div>
+        </div>
+
+        <div id="captureArea" class="capture-box"> 
+            <div id="dailyHadithCard" class="premium-adaptive-card">
+                <div class="card-glass-effect"></div>
+                
+                <div id="rawiBadge" class="adaptive-rawi-tag">
+                    <i class="fa-solid fa-bolt-lightning"></i>
+                    <span id="rawiDisplay">جاري التحميل...</span>
+                </div>
+                
+                <div class="hadith-main-text">
+                    <p id="textDisplay"></p>
+                </div>
+
+                <div class="adaptive-exp-box">
+                    <div class="exp-title">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i>
+                        <span>هداية نبوية</span>
+                    </div>
+                    <p id="expDisplay"></p>
+                </div>
+                
+                <div class="share-footer-brand">
+                    <i class="fa-solid fa-hand-holding-heart"></i>
+                    <span>وذكر | زاد المسلم</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="adaptive-progress">
+            <div id="progressBar" class="fill"></div>
+        </div>
+
+        <div class="action-grid">
+            <button class="btn-modern btn-copy" onclick="shareFullText()">
+                <i class="fa-solid fa-copy"></i>
+                <span>نسخ النص</span>
+            </button>
+            <button class="btn-modern btn-image-save" onclick="downloadHighResImage()">
+                <i class="fa-solid fa-circle-down"></i>
+                <span>حفظ HD</span>
+            </button>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* المتغيرات الذكية للألوان */
+    :root {
+        --hero-bg: radial-gradient(circle at center, #fdfbf7 0%, #f5f0e5 100%);
+        --card-bg: #ffffff;
+        --text-main: #1e293b;
+        --rawi-bg: #eff6ff;
+        --rawi-text: #1d4ed8;
+        --exp-bg: #fdfaf3;
+        --exp-border: #eab308;
+        --btn-secondary: #ffffff;
+        --progress-base: #e2e8f0;
+        --deco-op: 0.1;
+    }
+
+    [data-theme="dark"] {
+        --hero-bg: radial-gradient(circle at center, #0f172a 0%, #020617 100%);
+        --card-bg: #1e293b;
+        --text-main: #f1f5f9;
+        --rawi-bg: rgba(59, 130, 246, 0.15);
+        --rawi-text: #60a5fa;
+        --exp-bg: rgba(251, 191, 36, 0.05);
+        --exp-border: #b45309;
+        --btn-secondary: #334155;
+        --progress-base: #334155;
+        --deco-op: 0.05;
+    }
+
+    .hero-zone {
+        padding: 60px 0;
+        background: var(--hero-bg);
+        position: relative;
+        overflow: hidden;
+        margin: 30px 0;
+        border-radius: 45px;
+        transition: background 0.5s ease;
+    }
+
+    .bg-deco {
+        position: absolute; color: var(--gold); opacity: var(--deco-op);
+        font-size: 2.5rem; z-index: 1; pointer-events: none;
+        animation: floatAnim 8s ease-in-out infinite;
+    }
+    .deco-1 { top: 10%; left: 8%; }
+    .deco-2 { bottom: 12%; right: 10%; animation-delay: 2s; }
+    .deco-3 { top: 45%; right: 5%; font-size: 3.5rem; }
+    .deco-4 { bottom: 20%; left: 5%; animation-delay: 4s; }
+
+    @keyframes floatAnim { 0%, 100% { transform: translateY(0) rotate(0); } 50% { transform: translateY(-30px) rotate(10deg); } }
+
+    .premium-adaptive-card {
+        background: var(--card-bg);
+        border-radius: 40px;
+        padding: 40px;
+        box-shadow: 0 40px 80px rgba(0, 0, 0, 0.1);
+        position: relative;
+        z-index: 2;
+        border: 1px solid rgba(255,255,255,0.05);
+        transition: all 0.5s ease;
+    }
+
+    .adaptive-rawi-tag {
+        display: inline-flex; align-items: center; gap: 10px;
+        background: var(--rawi-bg); color: var(--rawi-text);
+        padding: 12px 24px; border-radius: 20px;
+        font-weight: 800; font-size: 0.95rem; margin-bottom: 30px;
+    }
+
+    .hadith-main-text p {
+        font-family: 'Zain', sans-serif; font-size: 2.1rem;
+        line-height: 1.6; color: var(--text-main); font-weight: 800;
+        margin-bottom: 35px; text-align: center;
+    }
+
+    .adaptive-exp-box {
+        background: var(--exp-bg); border-radius: 28px; padding: 25px;
+        border-right: 6px solid var(--exp-border);
+    }
+
+    .exp-title {
+        display: flex; align-items: center; gap: 10px;
+        color: var(--exp-border); font-weight: 900; margin-bottom: 12px;
+    }
+
+    .adaptive-exp-box p { color: var(--text-main); opacity: 0.9; line-height: 1.8; margin: 0; }
+
+    .share-footer-brand {
+        display: none; /* تظهر في الصورة فقط */
+        text-align: center; margin-top: 30px; color: var(--gold);
+        font-weight: 900; border-top: 2px dashed rgba(0,0,0,0.05); padding-top: 20px;
+        font-size: 1.2rem; gap: 10px; justify-content: center; align-items: center;
+    }
+
+    .adaptive-progress {
+        width: 100%; height: 10px; background: var(--progress-base);
+        border-radius: 20px; margin: 35px 0; overflow: hidden;
+    }
+    .adaptive-progress .fill {
+        width: 0%; height: 100%; background: var(--gold);
+        box-shadow: 0 0 20px rgba(212, 175, 55, 0.4);
+        transition: width 0.1s linear;
+    }
+
+    .action-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .btn-modern {
+        border: none; padding: 18px; border-radius: 22px;
+        display: flex; align-items: center; justify-content: center; gap: 12px;
+        font-family: 'Cairo'; font-weight: 800; cursor: pointer; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    .btn-copy { background: var(--btn-secondary); color: var(--text-main); box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
+    .btn-image-save { background: var(--nav-bg); color: white; }
+    .btn-modern:hover { transform: translateY(-8px); box-shadow: 0 15px 30px rgba(0,0,0,0.1); }
+
+    .daily-header { display: flex; justify-content: space-between; margin-bottom: 25px; align-items: center; }
+    .header-right { display: flex; align-items: center; gap: 12px; font-weight: 900; color: var(--gold); }
+    .status-dot { width: 12px; height: 12px; background: #10b981; border-radius: 50%; box-shadow: 0 0 15px #10b981; animation: blink 2s infinite; }
+    @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+    .magic-fade { animation: magicEffect 0.8s ease; }
+    @keyframes magicEffect {
+        from { opacity: 0; transform: translateY(20px) scale(0.95); filter: blur(10px); }
+        to { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+    }
+</style>
+
+<script>
+    let hadithTimer = 30;
+    let activeHadith = null;
+
+    function getNextHadith() {
+        if(!database || database.length === 0) return;
+        activeHadith = database[Math.floor(Math.random() * database.length)];
+        
+        const card = document.getElementById('dailyHadithCard');
+        card.classList.remove('magic-fade');
+        void card.offsetWidth; 
+        card.classList.add('magic-fade');
+        
+        document.getElementById('rawiDisplay').innerText = "عَنْ " + activeHadith.rawi;
+        document.getElementById('textDisplay').innerText = activeHadith.text;
+        document.getElementById('expDisplay').innerText = activeHadith.exp;
+        
+        hadithTimer = 30;
+    }
+
+    setInterval(() => {
+        hadithTimer -= 0.1;
+        if(hadithTimer <= 0) getNextHadith();
+        document.getElementById('timerText').innerText = Math.ceil(hadithTimer);
+        document.getElementById('progressBar').style.width = ((30-hadithTimer)/30 * 100) + "%";
+    }, 100);
+
+    async function downloadHighResImage() {
+        const area = document.getElementById('captureArea');
+        const footer = area.querySelector('.share-footer-brand');
+        const isDark = document.body.getAttribute('data-theme') === 'dark';
+        
+        footer.style.display = 'flex';
+        
+        const options = {
+            scale: 4,
+            useCORS: true,
+            backgroundColor: isDark ? "#0f172a" : "#f5f0e5",
+            windowWidth: area.scrollWidth,
+            windowHeight: area.scrollHeight
+        };
+
+        try {
+            const canvas = await html2canvas(area, options);
+            const link = document.createElement('a');
+            link.download = `Wazaker-Premium-${Date.now()}.png`;
+            link.href = canvas.toDataURL("image/png", 1.0);
+            link.click();
+        } catch (e) {
+            console.error("Capture Error:", e);
+        } finally {
+            footer.style.display = 'none';
+        }
+    }
+
+    function shareFullText() {
+        const full = `✨ عَنْ ${activeHadith.rawi} ✨\n\n"${activeHadith.text}"\n\n💡 هداية الحديث:\n${activeHadith.exp}\n\nوذكر | أحاديث نبوية`;
+        navigator.clipboard.writeText(full).then(() => {
+            if(window.showToast) showToast(); else alert("تم نسخ النص بنجاح ✨");
+        });
+    }
+
+    window.onload = getNextHadith;
+</script>
+
+
+        <div id="hadith-list"></div>
+
+        <div id="emptyState" class="empty-results">
+            <i class="fa-solid fa-box-open"></i>
+            <h3>لم يتم العثور على نتائج</h3>
+            <p>تأكد من كتابة الكلمات بشكل صحيح أو جرب راوياً آخر</p>
+            <button class="reset-btn" onclick="resetApp()">عرض كل الأحاديث</button>
+        </div>
+    </div>
+
+    <div id="toast-box">تم النسخ بنجاح ✨</div>
+
+    <script>
+        const database = [
+            { 
+                id: 1, 
+                tag: "عمر", 
+                rawi: "عمر بن الخطاب", 
+                text: "إنَّمَا الأَعْمَالُ بِالنِّيَّاتِ، وَإِنَّمَا لِكُلِّ امْرِئٍ مَا نَوَى، فَمَنْ كَانَتْ هِجْرَتُهُ إِلَى اللهِ وَرَسُولِهِ فَهِجْرَتُهُ إِلَى اللهِ وَرَسُولِهِ...", 
+                exp: "بص يا بطل، نيتك هي 'الموتور' اللي بيحرك حياتك. أي حاجة بتعملها، اسأل نفسك: 'أنا بعمل كدة ليه؟'. لو النية لله، مبروك عليك الثواب حتى لو العمل بسيط. إنما لو نيتك منظرة أو مصلحة، فالأجر ضاع. خلي قلبك دايماً 'أبيض' وعلقه بربنا في كل خطوة." 
+            },
+            { 
+                id: 2, 
+                tag: "هريرة", 
+                rawi: "أبي هريرة", 
+                text: "كَلِمَتَانِ خَفِيفَتَانِ عَلَى اللِّسَانِ، ثَقِيلَتَانِ فِي الْمِيزَانِ، حَبِيبَتَانِ إِلَى الرَّحْمَنِ: سُبْحَانَ اللهِ وَبِحَمْدِهِ، سُبْحَانَ اللهِ الْعَظِيمِ.", 
+                exp: "تخيل إنك بكلمتين سهلين جداً مياخدوش منك ثواني، تقدر تملأ ميزان حسناتك جبال! الكلمات دي ربنا بيحبها جداً. فكل ما تفتكر، رددها وأنت ماشي، وأنت بتذاكر، أو وأنت قاعد.. 'استثمر' لسانك في ذكر يحبه الرحمن." 
+            },
+            { 
+                id: 3, 
+                tag: "أنس", 
+                rawi: "أنس بن مالك", 
+                text: "لَا يُؤْمِنُ أَحَدُكُمْ حَتَّى يُحِبَّ لِأَخِيهِ مَا يُحِبُّ لِنَفْسِهِ.", 
+                exp: "الإيمان مش بس صلاة وصوم، الإيمان 'أخلاق'. النبي ﷺ بيعلمنا إن كمال إيمانك مرتبط بحبك للناس. لو شوفت حد ناجح، افرح له زي ما بتفرح لنفسك. لو تمنيت لنفسك رزق، اتمناه لغيرك كمان. تمني الخير للغير هو 'فلتر' بينقي قلبك من الحسد والغل." 
+            },
+            { 
+                id: 4, 
+                tag: "هريرة", 
+                rawi: "أبي هريرة", 
+                text: "مَنْ سَلَكَ طَرِيقًا يَلْتَمِسُ فِيهِ عِلْمًا سَهَّلَ اللهُ لَهُ بِهِ طَرِيقًا إِلَى الْجَنَّةِ.", 
+                exp: "مشوارك للمدرسة، ساعات مذاكرتك، تعبك في فهم معلومة جديدة.. كل ده مش ضايع. ده 'أقصر طريق' بيوديك للجنة. ربنا بيكافئ طالب العلم بتسهيل أمور حياته وفي الآخرة يفتح له أبواب الجنة. اتعب دلوقتي عشان العلم يرفعك في الدنيا والآخرة." 
+            },
+            { 
+                id: 5, 
+                tag: "عمر", 
+                rawi: "عمر بن الخطاب", 
+                text: "عَلَيْكُمْ بِالصِّدْقِ، فَإِنَّ الصِّدْقَ يَهْدِي إِلَى الْبِرِّ، وَإِنَّ الْبِرَّ يَهْدِي إِلَى الْجَنَّةِ.", 
+                exp: "خليك دايماً 'دوغري'. الصدق هو اللي بيبني شخصيتك ويخلي الناس تثق فيك. والأهم من كدة، إن الصدق بيجرك لكل أنواع الخير (البر)، والخير ده هو اللي بياخد بإيدك للجنة. ابعد عن الكذب حتى لو 'هزار'، الصادق عند ربنا ليه مكانة غالية أوي." 
+            },
+            { 
+                id: 6, 
+                tag: "عائشة", 
+                rawi: "عائشة أم المؤمنين", 
+                text: "أَحَبُّ الأَعْمَالِ إِلَى اللهِ أَدْوَمُهَا وَإِنْ قَلَّ.", 
+                exp: "عارف القاعدة اللي بتقول 'قليل مستمر خير من كثير منقطع'؟ هي دي! ربنا مش عايزك ترهق نفسك يوم وتوقف شهر. ابدأ بحاجة بسيطة (زي ركعة وتر أو صفحة قرآن) بس التزم بيها كل يوم. الاستمرار هو اللي بيصنع 'المعجزات' في حياتك وبيخليك قريب من ربنا دايماً." 
+            },
+            { 
+                id: 7, 
+                tag: "هريرة", 
+                rawi: "أبي هريرة", 
+                text: "مَنْ كَانَ يُؤْمِنُ بِاللَّهِ وَالْيَوْمِ الآخِرِ فَلْيَقُلْ خَيْرًا أَوْ لِيَصْمُتْ.", 
+                exp: "لسانك ده 'ميزان'. قبل ما تطلع الكلمة، وزنها في دماغك. هل هي خير؟ هل هتفرح حد؟ لو آه، قولها. لو هتحرج حد أو هي كذب أو غيبة، يبقى 'السكوت ذهب'. الصمت في الوقت الصح عبادة بتجيب لك راحة بال وبتحميك من مشاكل كتير." 
+            },
+            { 
+                id: 8, 
+                tag: "جابر", 
+                rawi: "جابر بن عبد الله", 
+                text: "كُلُّ مَعْرُوفٍ صَدَقَةٌ.", 
+                exp: "الصدقة مش بس فلوس! ابتسامتك في وش صاحبك، إنك تشيل حاجة من الطريق، إنك تساعد حد في معلومة.. كل ده 'صدقة'. متبخلش على نفسك بالثواب، أي فعل خير مهما كان صغير ربنا بيسجله لك صدقة في ميزانك. خليك 'ناشر للخير' فين ما تروح." 
+            },
+            { 
+                id: 9, 
+                tag: "ابن عمر", 
+                rawi: "عبد الله بن عمر", 
+                text: "كُنْ فِي الدُّنْيَا كَأَنَّكَ غَرِيبٌ أَوْ عَابِرُ سَبِيلٍ.", 
+                exp: "الدنيا دي 'محطة ترانزيت' مش هي النهاية. عيش فيها واجتهد وابني مستقبلك، بس خلي قلبك دايماً متعلق ببيتك الحقيقي (الجنة). المسافر مش بيشيل عفش كتير يعطله، خليك خفيف من الذنوب ومستعد دايماً للقاء ربنا بأعمال ترفع راسك." 
+            },
+            { 
+                id: 10, 
+                tag: "هريرة", 
+                rawi: "أبي هريرة", 
+                text: "مَا نَقَصَتْ صَدَقَةٌ مِنْ مَالٍ، وَمَا زَادَ اللَّهُ عَبْدًا بِعَفْوٍ إِلاَّ عِزًّا.", 
+                exp: "لو فاكر إن الفلوس بتقل لما تتصدق، تبقى غلطان! ربنا بيبارك في الباقي ويفتحهالك من وسع. كمان النبي بيعلمنا إن 'التسامح' مش ضعف. لما تعفو عن حد ظلمك وأنت قادر ترد، ربنا بيرفع قدرك ويخليك 'عزيز' في عيون الناس وعظيم عند الله." 
+            },
+            
+            { 
+    id: 11, 
+    tag: "هريرة", 
+    rawi: "أبي هريرة", 
+    text: "اتَّقِ اللَّهَ حَيْثُمَا كُنْتَ، وَأَتْبِعِ السَّيِّئَةَ الْحَسَنَةَ تَمْحُهَا، وَخَالِقِ النَّاسَ بِخُلُقٍ حَسَنٍ.", 
+    exp: "خلاصة التعامل في الحياة! خليك مراقب ربنا في السر والعلن، ولو غلطت في مرة (وكلنا بنغلط) متقفش مكانك، اعمل وراها حسنة فوراً عشان تمسحها. وفي تعاملك مع الناس؟ خليك 'جنتل' وصاحب خلق يخلي الناس تحبك وتدعي لك." 
+},
+{ 
+    id: 12, 
+    tag: "عائشة", 
+    rawi: "عائشة أم المؤمنين", 
+    text: "إِنَّ اللَّهَ رَفِيقٌ يُحِبُّ الرِّفْقَ، وَيُعْطِي عَلَى الرِّفْقِ مَا لا يُعْطِي عَلَى الْعُنْفِ.", 
+    exp: "الشدة والعصبية عمرها ما كانت شطارة. ربنا بيحب الشخص الهادي الرفيق في تعامله. بالكلمة الحلوة والهدوء تقدر تاخد اللي أنت عايزه وتكسب قلوب اللي قدامك، وربنا بيديك أجر على هدوئك ده أكتر بكتير من اللي هتاخده لو اتعصبت." 
+},
+{ 
+    id: 13, 
+    tag: "أنس", 
+    rawi: "أنس بن مالك", 
+    text: "يَسِّرُوا وَلا تُعَسِّرُوا، وَبَشِّرُوا وَلا تُنَفِّرُوا.", 
+    exp: "خليك شخص 'سهل'. لو شفت حد محتاج معلومة بسطها له، لو شفت حد غلطان انصحه بأسلوب يفرحه مش ينفره من الدين أو من الدنيا. خليك دايماً وشك بشوش وروحك حلوة عشان تكون 'بُشرى' لكل اللي يقابلك." 
+},
+{ 
+    id: 14, 
+    tag: "ابن عمر", 
+    rawi: "عبد الله بن عمر", 
+    text: "رِضَا الرَّبِّ فِي رِضَا الْوَالِدِ، وَسَخَطُ الرَّبِّ فِي سَخَطِ الْوَالِدِ.", 
+    exp: "عايز ربنا يفتحها في وشك؟ السر كله في البيت. دعوة واحدة حلوة من أبوك أو أمك تفتح لك أبواب كانت مقفولة، وزعلهم (لا قدر الله) ممكن يقلب الموازين. بر الوالدين مش مجرد واجب، ده 'تذكرة دخول' سريعة للجنة ورضا ربنا." 
+},
+{ 
+    id: 15, 
+    tag: "عمر", 
+    rawi: "عمر بن الخطاب", 
+    text: "لَا يَحِلُّ لِمُسْلِمٍ أَنْ يَهْجُرَ أَخَاهُ فَوْقَ ثَلَاثٍ، يَلْتَقِيَانِ فَيُعْرِضُ هَذَا وَيُعْرِضُ هَذَا، وَخَيْرُهُمَا الَّذِي يَبْدَأُ بِالسَّلَامِ.", 
+    exp: "الزعل بياخد من طاقتنا ومن حسناتنا. مفيش مشكلة تستاهل إنك تخاصم حد أكتر من 3 أيام. النبي ﷺ بيحسمها وبيقول 'خيرهما الذي يبدأ بالسلام'. يعني اللي بيبدأ بالصلح هو اللي شخصيته أقوى وأجره عند ربنا أعظم." 
+},
+{ 
+    id: 16, 
+    tag: "هريرة", 
+    rawi: "أبي هريرة", 
+    text: "الْمُؤْمِنُ الْقَوِيُّ خَيْرٌ وَأَحَبُّ إِلَى اللَّهِ مِنَ الْمُؤْمِنِ الضَّعِيفِ، وَفِي كُلٍّ خَيْرٌ.", 
+    exp: "خليك قوي في كل حاجة! قوي في إيمانك، قوي في دراستك، قوي في صحتك وجسمك. ربنا بيحب المسلم اللي يقدر ينفع نفسه وينفع المجتمع. بس الأهم إنك تستخدم قوتك دي في الخير، وتعرف إن ربنا هو اللي مديك القدرة دي." 
+},
+{ 
+    id: 17, 
+    tag: "أنس", 
+    rawi: "أنس بن مالك", 
+    text: "تَسَحَّرُوا فَإِنَّ فِي السَّحُورِ بَرَكَةً.", 
+    exp: "بما إننا في رمضان، الحديث ده مهم جداً. السحور مش مجرد أكل وخلاص، دي 'بركة' ربنا بيحطها في جسمك عشان تقدر تصوم وتعبد ربنا وتذاكر من غير تعب. متبدأش يومك من غير ما تاخد البركة دي حتى لو بشربة مية." 
+},
+{ 
+    id: 18, 
+    tag: "هريرة", 
+    rawi: "أبي هريرة", 
+    text: "مَنْ لَا يَرْحَمُ لَا يُرْحَمُ.", 
+    exp: "قاعدة كونية بسيطة جداً. عايز رحمة ربنا تنزل عليك في وقت شدتك؟ ارحم أنت اللي حواليك. ارحم الضعيف، ارحم الصغير، ارحم حتى الحيوانات اللي في الشارع. القلب الرحيم بيبقى دايماً قريب من ربنا." 
+},
+{ 
+    id: 19, 
+    tag: "أنس", 
+    rawi: "أنس بن مالك", 
+    text: "الدُّعَاءُ لَا يُرَدُّ بَيْنَ الْأَذَانِ وَالْإِقَامَةِ.", 
+    exp: "عندك أمنية؟ حلم صعب؟ مذاكرة تقيلة؟ استغل الوقت 'الذهبي' ده. الوقت اللي بين الأذان والإقامة ربنا بيفتح فيه أبواب السماء. اطلب اللي أنت عايزه بكل ثقة ويقين إن ربنا هيستجيب لك ويجبر بخاطرك." 
+},
+{ 
+    id: 20, 
+    tag: "هريرة", 
+    rawi: "أبي هريرة", 
+    text: "إِذَا مَاتَ الإِنْسَانُ انْقَطَعَ عَنْهُ عَمَلُهُ إِلاَّ مِنْ ثَلاثَةٍ: صَدَقَةٍ جَارِيَةٍ، أَوْ عِلْمٍ يُنْتَفَعُ بِهِ، أَوْ وَلَدٍ صَالِحٍ يَدْعُو لَهُ.", 
+    exp: "فكر دايماً في 'الأثر' اللي هتسيبه. إنك تعلم حد معلومة (زي الكود اللي بتكتبه ده عشان تنفع الناس)، أو إنك تعمل مشروع خيري، أو حتى إنك تكون ابن صالح. الحاجات دي هي 'رصيدك الحقيقي' اللي هيفضل شغال وبيديك حسنات حتى وأنت مش موجود." 
+},
+{ 
+    id: 21, 
+    tag: "عائشة", 
+    rawi: "عائشة أم المؤمنين", 
+    text: "مَنْ أَحْدَثَ فِي أَمْرِنَا هَذَا مَا لَيْسَ فِيهِ فَهُوَ رَدٌّ.", 
+    exp: "الدين بتاعنا كامل وجميل. النبي ﷺ بيعلمنا نلتزم باللي هو قاله وبس، ونبعد عن أي 'اختراعات' ملهاش أصل. اتباع السنة هو الأمان وهو الطريق اللي يوصلك للحق من غير تشتيت." 
+},
+{ 
+    id: 22, 
+    tag: "ابن عمر", 
+    rawi: "عبد الله بن عمر", 
+    text: "أَعْطُوا الأَجِيرَ أَجْرَهُ قَبْلَ أَنْ يَجِفَّ عَرَقُهُ.", 
+    exp: "دي قمة العدل الإنساني. لو حد اشتغل لك حاجة، أو ساعدك في خدمة، اديله حقه فوراً وبكل تقدير. تأخير الحقوق بيقلل البركة، إنما إنك تكون منصف ده بيخلي ربنا يبارك لك في مالك وفي حياتك." 
+},
+{ 
+    id: 23, 
+    tag: "أنس", 
+    rawi: "أنس بن مالك", 
+    text: "الصَّدَقَةُ تُطْفِئُ الْخَطِيئَةَ كَمَا يُطْفِئُ الْمَاءُ النَّارَ.", 
+    exp: "الذنوب بتبقى عاملة زي النار اللي بتهب في السجل بتاعنا. الصدقة بقى هي 'المطافئ'. أول ما تتصدق، ربنا بيمسح عنك أخطاءك ويريح قلبك. متبخلش ولو بمبلغ بسيط، المهم يكون من قلبك." 
+},
+{ 
+    id: 24, 
+    tag: "هريرة", 
+    rawi: "أبي هريرة", 
+    text: "الْمُسْلِمُ مَنْ سَلِمَ الْمُسْلِمُونَ مِنْ لِسَانِهِ وَيَدِهِ.", 
+    exp: "عايز تعرف أنت مسلم حقيقي ولا لأ؟ بص لتعاملك مع الناس. لو اللي حواليك آمنين من شر لسانك (تريقة أو غيبة) ومن شر إيدك (أذى مادي)، فأنت كدة ماشي صح. الدين معاملة قبل ما يكون أي حاجة تانية." 
+},
+{ 
+    id: 25, 
+    tag: "عمر", 
+    rawi: "عمر بن الخطاب", 
+    text: "لَوْ أَنَّكُمْ تَوَكَّلْتُمْ عَلَى اللَّهِ حَقَّ تَوَكُّلِهِ لَرَزَقَكُمْ كَمَا يَرْزُقُ الطَّيْرَ، تَغْدُو خِمَاصًا وَتَرُوحُ بِطَانًا.", 
+    exp: "التوكل مش معناه قعدة البيت! معناه إنك تسعى وتجتهد (زي الطيور اللي بتطير تدور على أكلها) بس وأنت قلبك مطمن 100% إن الرزق بإيد ربنا. اعمل اللي عليك وسيب النتيجة لرب العالمين وهتلاقيه كرمك كرم فوق خيالك." 
+},
+{ 
+    id: 26, 
+    tag: "هريرة", 
+    rawi: "أبي هريرة", 
+    text: "حَقُّ الْمُسْلِمِ عَلَى الْمُسْلِمِ خَمْسٌ: رَدُّ السَّلَامِ، وَعِيَادَةُ الْمَرِيضِ، وَاتِّبَاعُ الْجَنَائِزِ، وَإِجَابَةُ الدَّعْوَةِ، وَتَشْمِيتُ الْعَاطِسِ.", 
+    exp: "دي 'حقوق الواجب' بيننا كبشر. إننا نسلم على بعض، نزور اللي تعبان، نبارك لبعض في الأفراح، ونقف جنب بعض في الأحزان. الحاجات البسيطة دي هي اللي بتبني مجتمع مترابط وقوي ومتحاب." 
+},
+{ 
+    id: 27, 
+    tag: "أنس", 
+    rawi: "أنس بن مالك", 
+    text: "مَنْ سَرَّهُ أَنْ يُبْسَطَ لَهُ فِي رِزْقِهِ، وَأَنْ يُنْسَأَ لَهُ فِي أَثَرِهِ، فَلْيَصِلْ رَحِمَهُ.", 
+    exp: "عايز رزقك يزيد؟ وعمرك ربنا يبارك فيه؟ السر في 'صلة الرحم'. مكالمة تليفون لعمك، زيارة لجدتك، سؤال على قريبك.. الحاجات دي بتفتح أبواب بركة مش هتصدقها في حياتك وفي شغلك." 
+},
+{ 
+    id: 28, 
+    tag: "عائشة", 
+    rawi: "عائشة أم المؤمنين", 
+    text: "السِّوَاكُ مَطْهَرَةٌ لِلْفَمِ مَرْضَاةٌ لِلرَّبِّ.", 
+    exp: "النظافة الشخصية في ديننا عبادة! إنك تهتم بنظافة سنانك وريحة بوقك دي حاجة ربنا بيحبها وبيرضى عنها. خليك دايماً منظرك جميل وريحتك طيبة لأنك بتمثل دين النظافة والجمال." 
+},
+{ 
+    id: 29, 
+    tag: "هريرة", 
+    rawi: "أبي هريرة", 
+    text: "أَكْمَلُ الْمُؤْمِنِينَ إِيمَانًا أَحْسَنُهُمْ خُلُقًا.", 
+    exp: "عايز توصل لأعلى ليفل في الإيمان؟ اشتغل على أخلاقك. الشخص اللي بيمسك نفسه عند الغضب، اللي مش بيظلم، اللي كلامه حلو.. ده هو الشخص اللي إيمانه كامل فعلاً في نظر النبي ﷺ." 
+},
+{ 
+    id: 30, 
+    tag: "عبد الله", 
+    rawi: "عبد الله بن عمر", 
+    text: "صَلَاةُ الْجَمَاعَةِ تَفْضُلُ صَلَاةَ الْفَذِّ بِسَبْعٍ وَعِشْرِينَ دَرَجَةً.", 
+    exp: "ليه تصلي لوحدك وتاخد حسنة واحدة، لما ممكن تصلي في جماعة وتاخد 27 ضعف؟ الجماعة مش بس ثواب، دي نظام وصحبة صالحة وبتحسسك إنك جزء من كيان كبير وعظيم." 
+}
+
+        ];
+
+        function cleanText(t) {
+            return t.replace(/[أإآ]/g, "ا").replace(/ة/g, "ه").replace(/[\u064B-\u0652]/g, "");
+        }
+
+        function getBadgeClass(tag) {
+            if(tag === 'عمر') return 'omar-bg';
+            if(tag === 'هريرة') return 'horira-bg';
+            if(tag === 'أنس') return 'anas-bg';
+            return '';
+        }
+
+        function renderEngine(data) {
+            const list = document.getElementById('hadith-list');
+            const empty = document.getElementById('emptyState');
+            
+            if(data.length === 0) {
+                list.style.display = 'none';
+                empty.style.display = 'block';
+                return;
+            }
+            
+            empty.style.display = 'none';
+            list.style.display = 'grid';
+            
+            list.innerHTML = data.map((h, i) => `
+                <div class="hadith-card" style="animation: slideUp 0.6s ease forwards ${i * 0.15}s; opacity: 0;">
+                    <div class="rawi-header">
+                        <div class="rawi-badge ${getBadgeClass(h.tag)}">
+                            <i class="fa-solid fa-pen-nib"></i> عَنْ ${h.rawi}
+                        </div>
+                        <i class="fa-solid fa-bookmark" style="color: var(--gold); opacity: 0.3;"></i>
+                    </div>
+                    <div class="hadith-main-text">${h.text}</div>
+                    <div class="exp-box">${h.exp}</div>
+                    <div class="card-actions">
+                        <button class="copy-trigger" onclick="copyAction(${h.id})">
+                            <i class="fa-solid fa-copy"></i> نسخ الحديث
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function performSearch() {
+            const query = cleanText(document.getElementById('searchInput').value.toLowerCase());
+            const filter = document.getElementById('filterSelect').value;
+            
+            const results = database.filter(h => {
+                const matchTag = filter === 'all' || h.tag === filter;
+                const matchQuery = cleanText(h.text + h.rawi).toLowerCase().includes(query);
+                return matchTag && matchQuery;
+            });
+            
+            renderEngine(results);
+        }
+
+        function resetApp() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('filterSelect').value = 'all';
+            renderEngine(database);
+        }
+
+        function copyAction(id) {
+            const h = database.find(x => x.id === id);
+            const fullText = `✨ عَنْ ${h.rawi} ✨\n\n"${h.text}"\n\n💡 المعنى:\n${h.exp}`;
+            navigator.clipboard.writeText(fullText);
+            showToast();
+            if(navigator.vibrate) navigator.vibrate(50);
+        }
+
+        function toggleTheme() {
+            const b = document.body;
+            const icon = document.querySelector('.navbar .fa-solid');
+            const isDark = b.getAttribute('data-theme') === 'dark';
+            b.setAttribute('data-theme', isDark ? 'light' : 'dark');
+            icon.className = isDark ? "fa-solid fa-moon" : "fa-solid fa-sun";
+        }
+
+        function showToast() {
+            const t = document.getElementById('toast-box');
+            t.style.display = 'block';
+            setTimeout(() => t.style.display = 'none', 2500);
+        }
+
+        function initDecor() {
+            const c = document.getElementById('decorations');
+            const icons = ['fa-star', 'fa-moon', 'fa-mosque', 'fa-kaaba'];
+            for(let i=0; i<20; i++) {
+                let icon = document.createElement('i');
+                icon.className = `fa-solid ${icons[Math.floor(Math.random()*icons.length)]} decor-icon`;
+                icon.style.left = Math.random() * 100 + '%';
+                icon.style.fontSize = (Math.random()*15 + 15) + 'px';
+                icon.style.animationDuration = (Math.random()*7 + 10) + 's';
+                icon.style.animationDelay = (Math.random()*5) + 's';
+                c.appendChild(icon);
+            }
+        }
+
+        // تشغيل الموسوعة
+        renderEngine(database);
+        initDecor();
+    </script>
+
+    <style>
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</body>
+</html>
