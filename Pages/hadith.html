@@ -18,8 +18,20 @@
             --shadow: 0 10px 30px rgba(0,0,0,0.05);
             /* ألوان الرواة الفخمة */
             --tag-omar: #eff6ff; --text-omar: #1d4ed8;
+            
+                        --tag-gabr: #ff363613; --text-gabr: #ff4646f5;
+ 
+ --tag-asha: #ee36ff16; --text-asha: #ee36ffc8;
+ 
+ --tag-saod: #eff6ff; --text-saod: #af36ff9b;
+                        
+        --tag-bnomar: #64f2fc24; --text-bnomar: #0fefffc5;
+
+
             --tag-horira: #ecfdf5; --text-horira: #047857;
             --tag-anas: #fff7ed; --text-anas: #c2410c;
+            
+                        --tag-maaz: #ff25d9; --text-maaz: #ff22d8;
         }
 
         [data-theme="dark"] {
@@ -32,8 +44,20 @@
             --accent: #111827;
             --shadow: 0 20px 40px rgba(0,0,0,0.4);
             --tag-omar: #1e3a8a44; --text-omar: #60a5fa;
+            
+               --tag-gabr: #1e3a8a44; --text-gabr: #60a5fa;
+               
+                  --tag-asha: #1e3a8a44; --text-asha: #60a5fa;
+                  
+                                    --tag-bnomar: #1e3a8a44; --text-bnomar: #60a5fa;
+           
+                             --tag-saod: #1e3a8a44; --text-saod: #60a5fa;
+                                               --tag-اسم: #1e3a8a44; --text-اسم: #60a5fa;
+                  
             --tag-horira: #064e3b44; --text-horira: #34d399;
             --tag-anas: #7c2d1244; --text-anas: #fb923c;
+            
+                        --tag-maaz: ##ff25d9; --text-maaz: ##ff25d9;
         }
 
         * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
@@ -106,9 +130,23 @@
             display: inline-flex; align-items: center; gap: 8px; 
             padding: 8px 18px; border-radius: 14px; font-weight: 800; font-size: 0.85rem;
         }
+        
         .omar-bg { background: var(--tag-omar); color: var(--text-omar); }
+   
+           .gabr-bg { background: var(--tag-gabr); color: var(--text-gabr); }
+           
+                      .asha-bg { background: var(--tag-asha); color: var(--text-asha); }
+                      
+                                            .bnomar-bg { background: var(--tag-bnomar); color: var(--text-bnomar); }
+                  
+                                        .saod-bg { background: var(--tag-saod); color: var(--text-saod); }
+                                        
+                      
         .horira-bg { background: var(--tag-horira); color: var(--text-horira); }
         .anas-bg { background: var(--tag-anas); color: var(--text-anas); }
+
+        .maaz-bg { background: var(--tag-maaz); color: var(--text-maaz); }
+
 
         .hadith-main-text {
             font-family: 'Zain', sans-serif; font-size: 1.8rem; line-height: 1.5;
@@ -1314,10 +1352,26 @@
         }
 
         function getBadgeClass(tag) {
+          
             if(tag === 'عمر') return 'omar-bg';
+  
+  if(tag === 'جابر') return 'gabr-bg';
+  
+  if(tag === 'عائشة') return 'asha-bg';
+  
+  
+  if(tag === 'ابن عمر') return 'bnomar-bg';
+  
+  if(tag === 'ابن مسعود') return 'saod-bg';
+  
+  
             if(tag === 'هريرة') return 'horira-bg';
             if(tag === 'أنس') return 'anas-bg';
             return '';
+            
+           if(tag === 'معاذ') return 
+           'maaz-bg';
+return '';
         }
 
         function renderEngine(data) {
