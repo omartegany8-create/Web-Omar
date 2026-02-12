@@ -2,214 +2,307 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>وذكر | موسوعة الآداب الإسلامية</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>وذكر | الآداب النبوية</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@700&family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@700&family=Zain:wght@300;400;700&display=swap" rel="stylesheet">
+    
     <style>
         :root {
-            --bg: #fcfaf5;
-            --card: #ffffff;
-            --text: #2c3e50;
-            --primary: #996515;
-            --gold: #d4af37;
-            --accent: #f4ece0;
-            --shadow: 0 10px 30px rgba(0,0,0,0.05);
+            --bg: #fcfaf6;
+            --text: #2d3436;
+            --card: rgba(255, 255, 255, 0.95);
+            --shadow: rgba(0, 0, 0, 0.04);
+            --primary: #3a5a40;
+            --accent: #4361ee;
+            --toast-bg: #2d3436;
         }
 
         [data-theme="dark"] {
-            --bg: #0f172a;
-            --card: #1e293b;
-            --text: #f1f5f9;
-            --primary: #d4af37;
-            --accent: #334155;
-            --shadow: 0 10px 40px rgba(0,0,0,0.3);
+            --bg: #1a1a1c;
+            --text: #e8e8e8;
+            --card: rgba(30, 30, 32, 0.9);
+            --shadow: rgba(0, 0, 0, 0.4);
+            --primary: #a3b18a;
+            --toast-bg: #3a5a40;
         }
 
-        * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
 
         body {
-            background-color: var(--bg); color: var(--text);
-            font-family: 'Cairo', sans-serif; margin: 0; padding-bottom: 50px;
-            background-image: url('https://www.transparenttextures.com/patterns/arabesque.png');
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: 'Zain', sans-serif;
+            margin: 0;
+            transition: background 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            min-height: 100vh;
+            overflow-x: hidden;
         }
 
-        /* الناف بار */
-        .navbar {
-            height: 70px; background: var(--card); display: flex; align-items: center;
-            justify-content: space-between; padding: 0 20px;
-            box-shadow: var(--shadow); position: sticky; top: 0; z-index: 100;
-        }
-        .nav-title { font-family: 'Amiri', serif; font-weight: 800; font-size: 1.4rem; color: var(--primary); }
-        .nav-btn { width: 45px; height: 45px; display: grid; place-items: center; cursor: pointer; border-radius: 12px; background: var(--accent); color: var(--primary); }
-
-        /* الهيدر */
-        .hero { text-align: center; padding: 40px 20px; position: relative; }
-        .hero h1 { font-family: 'Amiri', serif; font-size: 2.2rem; margin: 0; color: var(--primary); }
-        .hero p { font-size: 0.9rem; opacity: 0.8; margin-top: 10px; }
-
-        /* البحث */
-        .search-area { max-width: 500px; margin: 0 auto 30px; padding: 0 20px; }
-        .search-input {
-            width: 100%; padding: 15px 25px; border-radius: 50px; border: 1px solid var(--gold);
-            background: var(--card); color: var(--text); font-family: 'Cairo'; outline: none;
-            box-shadow: var(--shadow);
-        }
-
-        /* الشبكة */
-        .grid-container {
-            display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-            gap: 15px; padding: 0 20px; max-width: 1000px; margin: 0 auto;
-        }
-
-        .adab-card {
-            background: var(--card); border-radius: 25px; padding: 25px 15px;
-            text-align: center; border: 1px solid rgba(0,0,0,0.03);
-            cursor: pointer; box-shadow: var(--shadow); position: relative;
-        }
-        .adab-card:active { transform: scale(0.95); }
-        .adab-card i {
-            font-size: 2rem; color: var(--gold); margin-bottom: 15px; display: block;
-            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
-        }
-        .adab-card h3 { font-size: 1rem; margin: 0; font-weight: 700; }
-
-        /* نافذة الأدب */
-        .overlay {
+        .ambient-bg {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.6); display: none;
-            justify-content: center; align-items: center; z-index: 2000;
-            backdrop-filter: blur(10px); padding: 20px;
-        }
-        .modal-content {
-            background: var(--card); width: 100%; max-width: 500px;
-            max-height: 85vh; border-radius: 35px; padding: 35px 25px;
-            position: relative; overflow-y: auto; border: 2px solid var(--gold);
-            animation: slideUp 0.4s ease;
-        }
-        @keyframes slideUp { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-
-        .close-circle {
-            position: sticky; top: -10px; float: left; width: 35px; height: 35px;
-            background: var(--accent); color: var(--primary); border-radius: 50%;
-            display: grid; place-items: center; cursor: pointer; z-index: 10;
+            z-index: -1; filter: blur(80px); opacity: 0.12;
+            transition: background 1.5s ease-in-out;
+            will-change: background;
         }
 
-        .modal-title {
-            font-family: 'Amiri', serif; color: var(--primary);
-            text-align: center; font-size: 1.8rem; margin: 10px 0 25px;
-            border-bottom: 2px solid var(--accent); padding-bottom: 15px;
+        .sakura-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
+        .leaf { position: absolute; background-color: #ffcad4; border-radius: 100% 0 100% 0; opacity: 0.15; animation: fall linear infinite; }
+        @keyframes fall { 0% { transform: translateY(-10vh) rotate(0deg); } 100% { transform: translateY(110vh) rotate(360deg); } }
+
+        .nav { position: sticky; top: 0; display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; backdrop-filter: blur(20px); z-index: 1000; border-bottom: 1px solid rgba(0,0,0,0.03); }
+        .btn-icon { width: 45px; height: 45px; display: grid; place-items: center; cursor: pointer; border-radius: 16px; background: var(--card); border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 8px 15px var(--shadow); color: var(--text); transition: 0.3s; }
+
+        .container { max-width: 550px; margin: 0 auto; padding: 20px; position: relative; z-index: 10; }
+
+        .hero-slider-wrapper {
+            background: var(--card);
+            border-radius: 40px;
+            margin-bottom: 35px;
+            box-shadow: 0 20px 40px var(--shadow);
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
         }
 
-        .adab-list { list-style: none; padding: 0; }
-        .adab-list li {
-            padding: 15px; font-size: 1.1rem; line-height: 1.6;
-            background: var(--accent); margin-bottom: 10px; border-radius: 15px;
-            display: flex; align-items: center; gap: 12px;
-        }
-        .adab-list li::before { content: "✦"; color: var(--gold); font-weight: bold; }
+        .progress-bar-container { position: absolute; bottom: 0; left: 0; width: 100%; height: 6px; background: rgba(0,0,0,0.02); }
+        .progress-bar-fill { height: 100%; width: 0%; transition: width 10s linear; border-radius: 0 10px 10px 0; }
 
+        .hero-content { padding: 45px 30px 55px 30px; text-align: center; min-height: 400px; display: flex; flex-direction: column; justify-content: center; }
+        .hero-tag { padding: 8px 20px; border-radius: 14px; font-weight: 700; display: inline-block; margin-bottom: 25px; align-self: center; font-size: 0.95rem; }
+        .hero-hadith { font-family: 'Amiri', serif; font-size: 1.8rem; line-height: 1.6; margin-bottom: 25px; }
+        .hero-explanation { padding: 22px; border-radius: 25px; text-align: right; font-size: 1.1rem; line-height: 1.7; border: 1px solid rgba(0,0,0,0.03); }
+
+        .search-area { background: var(--card); border-radius: 35px; padding: 20px; box-shadow: 0 10px 30px var(--shadow); margin-bottom: 30px; position: relative; z-index: 100; border: 1px solid rgba(255,255,255,0.05); }
+        .select-trigger { background: rgba(0,0,0,0.03); padding: 16px 20px; border-radius: 20px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; font-weight: 700; margin-bottom: 12px; }
+        
+        .select-options { 
+            position: absolute; top: 100%; left: 0; width: 100%; 
+            background: var(--card); border-radius: 25px; 
+            box-shadow: 0 20px 50px rgba(0,0,0,0.2); 
+            display: none; z-index: 999; overflow: hidden;
+            animation: menuAnim 0.3s ease forwards;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        @keyframes menuAnim { from { opacity:0; transform: translateY(-10px); } to { opacity:1; transform: translateY(5px); } }
+        .select-options div { padding: 15px 25px; cursor: pointer; border-bottom: 1px solid rgba(0,0,0,0.02); }
+        .select-options div:hover { background: rgba(0,0,0,0.05); }
+
+        .search-input-wrapper input { width: 100%; padding: 16px 20px; border-radius: 20px; border: none; background: rgba(0,0,0,0.03); font-family: 'Zain'; font-size: 1.1rem; color: var(--text); }
+
+        .card { border-radius: 40px; padding: 30px; margin-bottom: 25px; box-shadow: 0 10px 30px var(--shadow); border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(10px); transition: 0.4s; }
+        .card-title { display: flex; align-items: center; gap: 12px; font-size: 1.4rem; margin-bottom: 15px; }
+        .card-hadith { font-family: 'Amiri', serif; font-size: 1.6rem; text-align: center; padding: 25px; border-radius: 30px; margin: 15px 0; line-height: 1.6; background: rgba(255,255,255,0.05); }
+        .card-exp { font-size: 1.05rem; line-height: 1.6; text-align: justify; opacity: 0.9; }
+        
+        .card-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 25px; }
+        .btn-action { border: none; padding: 15px; border-radius: 22px; font-family: 'Zain'; font-weight: bold; font-size: 1.1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: 0.3s; color: white; }
+
+        #customToast {
+            position: fixed; bottom: -100px; left: 50%; transform: translateX(-50%);
+            background: var(--toast-bg); color: white; padding: 15px 30px;
+            border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            z-index: 9999; transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            font-weight: bold; display: flex; align-items: center; gap: 10px;
+        }
+        #customToast.show { bottom: 40px; }
+
+        .empty-state { text-align: center; padding: 40px 20px; background: var(--card); border-radius: 40px; }
+        .btn-main { background: var(--primary); color: white; border: none; padding: 12px 25px; border-radius: 15px; font-family: 'Zain'; cursor: pointer; margin-top: 15px; }
+
+        .slide-up { animation: slideUp 0.6s cubic-bezier(0.23, 1, 0.32, 1) forwards; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        .fade-out { animation: fadeOut 0.4s ease forwards; }
+        @keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }
     </style>
 </head>
 <body>
 
-    <nav class="navbar">
-        <div class="nav-btn" onclick="toggleTheme()"><i class="fa-solid fa-moon"></i></div>
-        <div class="nav-title">موسوعة الآداب</div>
-        <div class="nav-btn" onclick="history.back()"><i class="fa-solid fa-chevron-left"></i></div>
+    <div class="ambient-bg" id="ambient"></div>
+    <div class="sakura-container" id="sakura"></div>
+
+    <div id="customToast"><i class="fa-solid fa-check-circle"></i> تم النسخ بنجاح ✨</div>
+
+    <nav class="nav">
+        <button class="btn-icon" onclick="toggleTheme()"><i class="fa-solid fa-wand-magic-sparkles" id="themeIcon"></i></button>
+        <div style="font-family:'Amiri'; font-size:1.8rem; color:var(--primary); font-weight:bold;">الآداب الإسلامية</div>
+        <button class="btn-icon" onclick="window.history.back()"><i class="fa-solid fa-arrow-right"></i></button>
     </nav>
 
-    <header class="hero">
-        <h1>الآداب الإسلامية</h1>
-        <p>«إِنَّمَا بُعِثْتُ لِأُتَمِّمَ مَكَارِمَ الْأَخْلَاقِ»</p>
-    </header>
-
-    <div class="search-area">
-        <input type="text" id="searchInput" class="search-input" placeholder="عن ماذا تبحث؟ (مثال: الأكل، النوم...)" onkeyup="filterAdab()">
-    </div>
-
-    <div class="grid-container" id="adabGrid"></div>
-
-    <div class="overlay" id="overlay" onclick="closeModal()">
-        <div class="modal-content" onclick="event.stopPropagation()">
-            <div class="close-circle" onclick="closeModal()"><i class="fa-solid fa-xmark"></i></div>
-            <div id="modalBody"></div>
+    <main class="container">
+        <div class="hero-slider-wrapper slide-up" id="heroWrapper">
+            <div class="hero-content" id="heroContent"></div>
+            <div class="progress-bar-container"><div class="progress-bar-fill" id="pBar"></div></div>
         </div>
-    </div>
+
+        <div class="search-area slide-up" style="animation-delay: 0.1s;">
+            <div class="custom-select">
+                <div class="select-trigger" onclick="toggleSelect()">
+                    <span id="selectedLabel">كل الأبواب النبوية</span>
+                    <i class="fa-solid fa-chevron-down"></i>
+                </div>
+                <div class="select-options" id="selectOptions">
+                    <div onclick="selectCat('all', 'كل الأبواب النبوية')">كل الأبواب النبوية</div>
+                    <div onclick="selectCat('طعام', 'آداب الطعام')">آداب الطعام</div>
+                    <div onclick="selectCat('اجتماع', 'آداب المجلس واللقاء')">آداب المجلس واللقاء</div>
+                    <div onclick="selectCat('عام', 'آداب عامة ونبيلة')">آداب عامة ونبيلة</div>
+                </div>
+            </div>
+            <div class="search-input-wrapper">
+                <input type="text" id="searchInput" placeholder="ابحث عن حديث أو أدب..." onkeyup="filterAdab()">
+            </div>
+        </div>
+
+        <div id="cardsList"></div>
+    </main>
 
     <script>
         const adabData = [
-            { title: "آداب الدعاء", icon: "fa-hands-praying", items: ["الإخلاص لله تعالى", "أن يبدأ بحمد الله والثناء عليه ثم الصلاة على النبي ﷺ", "الجزم في الدعاء واليقين بالإجابة", "الإلحاح في الدعاء وعدم الاستعجال", "حضور القلب في الدعاء"] },
-            { title: "آداب المسجد", icon: "fa-mosque", items: ["الدخول بالرجل اليمنى وقول دعاء الدخول", "صلاة ركعتين تحية المسجد", "تجنب أكل الروائح الكريهة", "عدم رفع الصوت", "المحافظة على النظافة"] },
-            { title: "آداب يوم الجمعة", icon: "fa-moon", items: ["الاغتسال والتطيب", "لبس أحسن الثياب", "التبكير للمسجد", "قراءة سورة الكهف", "كثرة الصلاة على النبي ﷺ"] },
-            { title: "آداب الأكل والشرب", icon: "fa-utensils", items: ["التسمية في أوله", "الأكل باليمين", "الأكل مما يليك", "حمد الله بعد الفراغ", "تجنب النفخ في الإناء"] },
-            { title: "آداب النوم", icon: "fa-bed", items: ["النوم على طهارة", "نفض الفراش", "النوم على الشق الأيمن", "قراءة أذكار النوم وآية الكرسي"] },
-            { title: "آداب السلام", icon: "fa-handshake", items: ["إفشاء السلام على الجميع", "يسلم الصغير على الكبير", "يسلم المار على القاعد", "رد السلام بمثله أو أحسن منه"] },
-            { title: "آداب السفر", icon: "fa-plane-departure", items: ["دعاء السفر", "توديع الأهل", "التكبير عند الصعود والتسبيح عند النزول", "تأميم أمير للرفقة"] },
-            { title: "آداب تلاوة القرآن", icon: "fa-book-quran", items: ["الطهارة (الوضوء)", "الاستعاذة والبسملة", "التدبر في الآيات", "تحسين الصوت بالقراءة"] },
-            { title: "آداب الصدقة", icon: "fa-hand-holding-heart", items: ["إخلاصها لله وحده", "أن تكون من كسب طيب", "عدم المنّ والأذى", "الإسرار بها ما أمكن"] },
-            { title: "آداب الضيافة", icon: "fa-mug-hot", items: ["إكرام الضيف بشاشة وقولاً", "تقديم الطعام دون تكلف", "توديع الضيف إلى باب الدار"] },
-            { title: "آداب اللباس", icon: "fa-shirt", items: ["البدء باليمين عند اللبس", "قول (بسم الله)", "تجنب ملابس الخيلاء", "شكر الله على النعمة"] },
-            { title: "آداب الاستئذان", icon: "fa-door-open", items: ["الاستئذان ثلاثاً", "عدم الوقوف أمام الباب مباشرة", "ذكر الاسم بوضوح", "غض البصر عن داخل البيت"] },
-            { title: "آداب الصحبة", icon: "fa-users", items: ["اختيار الصاحب الصالح", "ستر عيوب الأخ ونصرته", "بذل النصيحة بلطف", "السؤال عنه إذا غاب"] },
-            { title: "آداب العطاس", icon: "fa-face-smile", items: ["قول (الحمد لله) بعد العطس", "تشميت العاطس (يرحمك الله)", "خفض الصوت وتغطية الوجه"] },
-            { title: "آداب المرضى", icon: "fa-heart-pulse", items: ["اختيار الوقت المناسب للزيارة", "الدعاء للمريض بالشفاء", "تذكير المريض بالصبر"] },
-            { title: "آداب الصبر", icon: "fa-anchor", items: ["الصبر عند الصدمة الأولى", "احتساب الأجر", "عدم الشكوى لغير الله", "اليقين بأن الفرج قريب"] }
+            { title: "آداب الطعام", cat: "طعام", icon: "fa-bowl-food", color: "#6b9080", light: "#e8f3ee", hadith: "«يَا غُلَامُ، سَمِّ اللَّهَ، وَكُلْ بِيَمِينِكَ، وَكُلْ مِمَّا يَلِيكَ»", explanation: "هذا الحديث أصلٌ في آداب الأكل؛ حيث يجمع بين ذكر الله للبركة، وتكريم اليمين، ومراعاة أدب الجلوس مع الآخرين." },
+            { title: "آداب السلام", cat: "اجتماع", icon: "fa-handshake", color: "#4361ee", light: "#edf2ff", hadith: "«يُسَلِّمُ الصَّغِيرُ عَلَى الكَبِيرِ، وَالمَارُّ عَلَى القَاعِدِ»", explanation: "دستور نبوي في إشاعة المودة؛ يحفظ للكبير توقيره وللقادم هيبته، مما ينظم العلاقات الاجتماعية برقي." },
+            { title: "آداب الكلام", cat: "عام", icon: "fa-comments", color: "#d4a373", light: "#fefae0", hadith: "«مَنْ كَانَ يُؤْمِنُ بِاللَّهِ وَالْيَوْمِ الْآخِرِ فَلْيَقُلْ خَيْرًا أو لِيَصْمُتْ»", explanation: "يربط الإسلام بين الإيمان وضبط اللسان؛ فالمؤمن الحق يزن قوله بنفع الآخرين، والصمت حكمة حين يغيب الخير." },
+            { title: "آداب عيادة المريض", cat: "عام", icon: "fa-heart-pulse", color: "#e63946", light: "#fdf0f0", hadith: "«لَا بَأْسَ، طَهُورٌ إِنْ شَاءَ اللَّهُ»", explanation: "يرشدنا النبي ﷺ إلى أدب المواساة؛ فعبارة 'طهور' تعني أن المرض تطهير للذنوب، وهي كلمة تبعث التفاؤل في نفس المريض." },
+            { title: "آداب العطاس", cat: "اجتماع", icon: "fa-face-smile-beam", color: "#f4a261", light: "#fef5ed", hadith: "«إِذَا عَطَسَ أَحَدُكُمْ فَلْيَقُلْ: الحَمْدُ لِلَّهِ، وَلْيَقُلْ لَهُ أَخُوهُ: يَرْحَمُكَ اللَّهُ»", explanation: "يعلمنا الإسلام أن العطاس نعمة تستوجب الحمد، وتشميت العاطس هو دعاء بالرحمة يؤلف القلوب بين المسلمين." },
+            { title: "آداب الطريق", cat: "عام", icon: "fa-road", color: "#2a9d8f", light: "#e9f7f6", hadith: "«غَضُّ البَصَرِ، وَكَفُّ الأَذَى، وَرَدُّ السَّلامِ، وَالأَمْرُ بِالمَعْرُوفِ»", explanation: "يضع النبي ﷺ دستوراً للأماكن العامة؛ بضرورة احترام خصوصيات العابرين، وإزالة الأذى المادي والمعنوي عن الطريق." },
+            { title: "آداب الجار", cat: "عام", icon: "fa-house-chimney-user", color: "#e76f51", light: "#fef2f2", hadith: "«مَا زَالَ جِبْرِيلُ يُوصِينِي بِالْجَارِ حَتَّى ظَنَنْتُ أَنَّهُ سَيُوَرِّثُهُ»", explanation: "يبين الحديث المكانة العظيمة للجار؛ فقد تكررت وصايا الوحي بالجار حتى كاد أن يُلحق بالورثة في الحقوق والواجبات." },
+            { title: "آداب النصيحة", cat: "عام", icon: "fa-hand-holding-heart", color: "#7209b7", light: "#f5f3ff", hadith: "«الدِّينُ النَّصِيحَةُ»", explanation: "النصيحة في الإسلام ليست فضيحة، بل هي حب الخير للغير؛ ويشترط فيها الرفق والستر، وهي عماد المجتمع الصالح." },
+            { title: "آداب الغضب", cat: "عام", icon: "fa-face-angry", color: "#bc4749", light: "#fbeeee", hadith: "«لَيْسَ الشَّدِيدُ بِالصُّرَعَةِ، إِنَّمَا الشَّدِيدُ الَّذِي يَمْلِكُ نَفْسَهُ عِنْدَ الغَضَبِ»", explanation: "يعيد النبي ﷺ تعريف القوة؛ فهي ليست في البطش الجسدي، بل في القدرة على التحكم في النفس وقت الانفعال." },
+            { title: "آداب طلب العلم", cat: "عام", icon: "fa-graduation-cap", color: "#0077b6", light: "#e0f2f1", hadith: "«مَنْ سَلَكَ طَرِيقًا يَلْتَمِسُ فِيهِ عِلْمًا، سَهَّلَ اللَّهُ لَهُ بِهِ طَرِيقًا إِلَى الْجَنَّةِ»", explanation: "يرفع هذا الحديث شأن كل متعلم؛ فكل دقيقة تقضيها في المذاكرة هي طريق ممهد للجنة، مما يتطلب الصبر والإخلاص." },
+            { title: "آداب الاستيقاظ", cat: "عام", icon: "fa-sun", color: "#ee9b00", light: "#fff8e1", hadith: "«فَإِنِ اسْتَيْقَظَ فَذَكَرَ اللَّهَ انْحَلَّتْ عُقْدَةٌ»", explanation: "يعلمنا الهدي النبوي أن الانتصار الحقيقي يبدأ بذكر الله عند الاستيقاظ؛ فبذلك تنحل قيود الكسل ويصبح المرء نشيطاً." },
+            { title: "آداب المجلس", cat: "اجتماع", icon: "fa-users", color: "#588157", light: "#edf5ed", hadith: "«لَا يُقِيمُ الرَّجُلُ الرَّجُلَ مِنْ مَقْعَدِهِ ثُمَّ يَجْلِسُ فِيهِ»", explanation: "درس في التواضع والعدل؛ فلا يحق لأحد سلب حق غيره في مكانٍ سبقه إليه، بل الأدب هو التفسح والإكرام." }
         ];
 
-        const grid = document.getElementById('adabGrid');
-        
-        function renderCards(data) {
-            grid.innerHTML = '';
-            data.forEach((adab, index) => {
-                const card = document.createElement('div');
-                card.className = 'adab-card';
-                card.onclick = () => openModal(adab);
-                card.innerHTML = `
-                    <i class="fa-solid ${adab.icon}"></i>
-                    <h3>${adab.title}</h3>
+        let currentHero = 0;
+        let selectedCategory = 'all';
+
+        function runSlider() {
+            const content = document.getElementById('heroContent');
+            const bar = document.getElementById('pBar');
+            const ambient = document.getElementById('ambient');
+            const data = adabData[currentHero];
+
+            content.classList.add('fade-out');
+
+            setTimeout(() => {
+                ambient.style.background = data.color;
+                content.innerHTML = `
+                    <div class="hero-tag" style="background:${data.light}60; color:${data.color}"><i class="fa-solid ${data.icon}"></i> ${data.title}</div>
+                    <div class="hero-hadith" style="color:${data.color}">${data.hadith}</div>
+                    <div class="hero-explanation" style="background: ${data.light}30; border-color:${data.color}20">
+                        <strong style="color:${data.color}">الهدي النبوي:</strong> ${data.explanation}
+                    </div>
                 `;
-                grid.appendChild(card);
-            });
+                content.classList.remove('fade-out');
+                content.classList.add('slide-up');
+
+                bar.style.transition = 'none';
+                bar.style.width = '0%';
+                bar.style.background = data.color;
+                
+                setTimeout(() => {
+                    bar.style.transition = 'width 10s linear';
+                    bar.style.width = '100%';
+                }, 50);
+
+                currentHero = (currentHero + 1) % adabData.length;
+            }, 400);
         }
 
-        function openModal(adab) {
-            const body = document.getElementById('modalBody');
-            body.innerHTML = `
-                <h2 class="modal-title">${adab.title}</h2>
-                <ul class="adab-list">
-                    ${adab.items.map(item => `<li>${item}</li>`).join('')}
-                </ul>
-            `;
-            document.getElementById('overlay').style.display = 'flex';
-            if(navigator.vibrate) navigator.vibrate(15);
+        function clean(text) {
+            return text.replace(/[ًٌٍَُِّْ]/g, "").replace(/[أإآ]/g, "ا").replace(/ة/g, "ه").toLowerCase();
         }
-
-        function closeModal() { document.getElementById('overlay').style.display = 'none'; }
 
         function filterAdab() {
-            const q = document.getElementById('searchInput').value.toLowerCase();
-            const filtered = adabData.filter(item => 
-                item.title.toLowerCase().includes(q) || 
-                item.items.some(i => i.toLowerCase().includes(q))
-            );
-            renderCards(filtered);
+            const query = clean(document.getElementById('searchInput').value);
+            const filtered = adabData.filter(item => {
+                const matchQuery = clean(item.hadith).includes(query) || clean(item.title).includes(query);
+                const matchCat = selectedCategory === 'all' || item.cat === selectedCategory;
+                return matchQuery && matchCat;
+            });
+            render(filtered);
+        }
+
+        function render(data) {
+            const list = document.getElementById('cardsList');
+            if(data.length === 0) {
+                list.innerHTML = `<div class="empty-state slide-up"><h3>لم نعثر على هذا الأدب</h3><p>جرب كلمات أخرى..</p><button class="btn-main" onclick="resetAll()">العودة للرئيسية</button></div>`;
+                return;
+            }
+            list.innerHTML = data.map(item => `
+                <div class="card slide-up" style="background: ${item.light}20; border-left: 5px solid ${item.color}">
+                    <div class="card-title" style="color:${item.color}">
+                        <i class="fa-solid ${item.icon}"></i>
+                        <span>${item.title}</span>
+                    </div>
+                    <div class="card-hadith" style="color:${item.color}">${item.hadith}</div>
+                    <div class="card-exp">${item.explanation}</div>
+                    <div class="card-actions">
+                        <button class="btn-action" style="background:${item.color}" onclick="showToast('${item.hadith}')">
+                            <i class="fa-solid fa-copy"></i> نسخ
+                        </button>
+                        <button class="btn-action" style="background:${item.color}cc" onclick="share('${item.title}', '${item.hadith}')">
+                            <i class="fa-solid fa-share-nodes"></i> مشاركة
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function showToast(text) {
+            navigator.clipboard.writeText(text);
+            const toast = document.getElementById('customToast');
+            toast.classList.add('show');
+            setTimeout(() => { toast.classList.remove('show'); }, 2500);
+        }
+
+        function share(title, text) {
+            if (navigator.share) navigator.share({ title: title, text: text });
+            else showToast("المشاركة غير مدعومة");
+        }
+
+        function toggleSelect() {
+            const opts = document.getElementById('selectOptions');
+            opts.style.display = opts.style.display === 'block' ? 'none' : 'block';
+        }
+
+        function selectCat(cat, label) {
+            selectedCategory = cat;
+            document.getElementById('selectedLabel').innerText = label;
+            document.getElementById('selectOptions').style.display = 'none';
+            filterAdab();
+        }
+
+        function resetAll() {
+            document.getElementById('searchInput').value = '';
+            selectCat('all', 'كل الأبواب النبوية');
         }
 
         function toggleTheme() {
             const b = document.body;
-            const icon = document.querySelector('.navbar .fa-solid');
+            const i = document.getElementById('themeIcon');
             if(b.getAttribute('data-theme') === 'dark') {
                 b.removeAttribute('data-theme');
-                icon.className = "fa-solid fa-moon";
+                i.className = "fa-solid fa-wand-magic-sparkles";
             } else {
                 b.setAttribute('data-theme', 'dark');
-                icon.className = "fa-solid fa-sun";
+                i.className = "fa-solid fa-sun";
             }
         }
 
-        renderCards(adabData);
-        document.documentElement.style.webkitTapHighlightColor = 'transparent';
+        render(adabData);
+        runSlider();
+        setInterval(runSlider, 10000);
+
+        const sCont = document.getElementById('sakura');
+        for(let i=0; i<6; i++) {
+            const l = document.createElement('div');
+            l.className = 'leaf';
+            l.style.left = Math.random() * 100 + 'vw';
+            l.style.width = l.style.height = (Math.random()*10 + 5) + 'px';
+            l.style.animationDuration = (Math.random()*6 + 6) + 's';
+            sCont.appendChild(l);
+        }
     </script>
 </body>
 </html>
