@@ -7,201 +7,101 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --primary: #2e7d32; --bg: #0f172a; --card: #1e293b; --text: #ffffff;
-            --accent: #3b82f6; --danger: #ef4444; --glass: rgba(30, 41, 59, 0.7);
-        }
-        body { font-family: 'Cairo', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding-bottom: 50px; }
-        
-        .navbar {
-            position: fixed; top: 0; left: 0; right: 0; height: 70px;
-            background: var(--glass); backdrop-filter: blur(15px);
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 0 20px; z-index: 1000; border-bottom: 1px solid rgba(255,255,255,0.1);
-        }
-
-        .container { padding: 90px 20px 30px; max-width: 800px; margin: auto; }
-        
-        /* Sections Logic */
-        .section { display: none; animation: fadeIn 0.4s ease; }
+        :root { --primary: #2e7d32; --bg: #0f172a; --card: #1e293b; --text: #ffffff; --accent: #3b82f6; --danger: #ef4444; }
+        body { font-family: 'Cairo', sans-serif; background: var(--bg); color: var(--text); margin: 0; }
+        .navbar { position: fixed; top: 0; width: 100%; height: 70px; background: rgba(30, 41, 59, 0.8); backdrop-filter: blur(10px); display: flex; align-items: center; justify-content: space-between; padding: 0 20px; z-index: 1000; }
+        .container { padding: 90px 20px; max-width: 800px; margin: auto; }
+        .section { display: none; }
         .section.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* Cards */
-        .hero-card { background: linear-gradient(135deg, var(--primary), #1b5e20); padding: 25px; border-radius: 25px; margin-bottom: 20px; }
-        .data-card { background: var(--card); padding: 15px; border-radius: 20px; margin-bottom: 12px; border: 1px solid rgba(255,255,255,0.05); }
-        
-        /* Review UI */
-        .review-admin-card { background: var(--card); padding: 20px; border-radius: 22px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.1); }
-        .rev-header { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
-        .rev-header img { width: 45px; height: 45px; border-radius: 12px; object-fit: cover; }
-        .stars-review { color: #fbbf24; font-size: 14px; }
-        
-        /* Inputs & Tabs */
-        .glass-input { width: 100%; padding: 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; color: white; margin-bottom: 10px; font-family: inherit; }
-        .main-btn { width: 100%; padding: 15px; border: none; border-radius: 15px; background: var(--primary); color: white; font-weight: 700; cursor: pointer; }
-        .badge { padding: 6px 12px; border-radius: 10px; font-size: 12px; cursor: pointer; border: none; color: white; }
-        
-        /* Menu */
-        .bottom-sheet { position: fixed; bottom: -100%; left: 0; right: 0; background: var(--card); border-radius: 30px 30px 0 0; padding: 25px; z-index: 2000; transition: 0.4s; }
-        .bottom-sheet.active { bottom: 0; }
-        .sheet-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); display: none; z-index: 1999; }
-        .menu-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-        .menu-item { background: rgba(255,255,255,0.05); padding: 15px; border-radius: 15px; text-align: center; cursor: pointer; font-size: 13px; }
+        .data-card { background: var(--card); padding: 15px; border-radius: 20px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.05); }
+        .badge { padding: 6px 12px; border-radius: 10px; cursor: pointer; border: none; color: white; font-size: 12px; }
+        .menu-bar { position: fixed; bottom: 0; width: 100%; background: var(--card); display: flex; justify-content: space-around; padding: 15px; border-top: 1px solid rgba(255,255,255,0.1); }
+        .menu-bar i { font-size: 20px; cursor: pointer; opacity: 0.6; }
+        .menu-bar i.active { opacity: 1; color: var(--accent); }
     </style>
 </head>
 <body>
 
-<div class="sheet-overlay" id="overlay" onclick="closeMenu()"></div>
-
 <nav class="navbar">
-    <div style="font-weight: 900; font-size: 1.2rem;">لوحة التحكم 🛠️</div>
-    <div onclick="openMenu()" style="background:var(--primary); padding:10px 15px; border-radius:12px; cursor:pointer;"><i class="fas fa-bars"></i></div>
+    <div style="font-weight: 900;">لوحة تحكم وذكر 🛠️</div>
 </nav>
 
-<div class="bottom-sheet" id="bottomSheet">
-    <div class="menu-grid">
-        <div class="menu-item" onclick="showTab('dashboard')"><i class="fas fa-home"></i><br>الرئيسية</div>
-        <div class="menu-item" onclick="showTab('users')"><i class="fas fa-users"></i><br>الطلاب</div>
-        <div class="menu-item" onclick="showTab('notifs')"><i class="fas fa-bell"></i><br>الإشعارات</div>
-        <div class="menu-item" onclick="showTab('reviews')"><i class="fas fa-star"></i><br>الآراء</div>
-        <div class="menu-item" onclick="location.reload()"><i class="fas fa-sync"></i><br>تحديث</div>
-        <div class="menu-item" onclick="logout()" style="color:var(--danger)"><i class="fas fa-sign-out-alt"></i><br>خروج</div>
-    </div>
-</div>
-
 <div class="container">
-    <section id="dashboardSection" class="section active">
-        <div class="hero-card">
-            <h2>يا هلا يا عمر 👋</h2>
-            <p id="currentDate"></p>
-            <div style="display:flex; gap:10px;">
-                <div style="flex:1; background:rgba(0,0,0,0.2); padding:15px; border-radius:15px; text-align:center;">
-                    <small>الطلاب</small><div id="uCount" style="font-size:22px; font-weight:900;">0</div>
-                </div>
-                <div style="flex:1; background:rgba(0,0,0,0.2); padding:15px; border-radius:15px; text-align:center;">
-                    <small>الإشعارات</small><div id="nCount" style="font-size:22px; font-weight:900;">0</div>
-                </div>
-            </div>
-        </div>
+    <section id="dash" class="section active">
+        <h2>الرئيسية</h2>
+        <div class="data-card">مرحباً يا عمر، لديك <span id="uCount">0</span> طالب.</div>
     </section>
 
-    <section id="usersSection" class="section">
+    <section id="users" class="section">
         <h3>قائمة الطلاب</h3>
         <div id="userListArea"></div>
     </section>
 
-    <section id="notifsSection" class="section">
-        <h3>بث إشعار جديد</h3>
-        <div class="data-card">
-            <select class="glass-input" id="nType">
-                <option value="all">بث للكل</option>
-                <option value="award">جائزة مخصصة</option>
-            </select>
-            <input id="nTitle" class="glass-input" placeholder="العنوان">
-            <textarea id="nMsg" class="glass-input" placeholder="نص الرسالة"></textarea>
-            <button class="main-btn" onclick="sendNotif()">إرسال الآن</button>
-        </div>
-        <div id="notifsList"></div>
-    </section>
-
-    <section id="reviewsSection" class="section">
-        <h3>مراجعة تقييمات التطبيق</h3>
-        <div style="display:flex; gap:10px; margin-bottom:15px;">
-            <button class="badge" id="btnPending" style="background:var(--accent)" onclick="filterReviews('pending')">بانتظار المراجعة</button>
-            <button class="badge" id="btnApproved" style="background:rgba(255,255,255,0.1)" onclick="filterReviews('approved')">تم نشرها</button>
+    <section id="reviews" class="section">
+        <h3>مراجعة الآراء</h3>
+        <div style="margin-bottom:15px; display:flex; gap:10px;">
+            <button class="badge" id="btnP" style="background:var(--accent)" onclick="filterR('pending')">بانتظار المراجعة</button>
+            <button class="badge" id="btnA" style="background:#444" onclick="filterR('approved')">تم النشر</button>
         </div>
         <div id="reviewsReviewList"></div>
     </section>
 </div>
 
+<div class="menu-bar">
+    <i class="fas fa-home active" onclick="showTab('dash', this)"></i>
+    <i class="fas fa-users" onclick="showTab('users', this)"></i>
+    <i class="fas fa-star" onclick="showTab('reviews', this)"></i>
+</div>
+
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, doc, deleteDoc, updateDoc, serverTimestamp, where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getFirestore, collection, onSnapshot, query, orderBy, doc, deleteDoc, updateDoc, where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
     const firebaseConfig = { apiKey: "AIzaSyA4h9MsH0Szht7taowp95WcBr2y6scXe1k", projectId: "omardev-fbfd8" };
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    let currentReviewStatus = 'pending';
+    let currentS = 'pending';
 
-    // القوائم والتبديل
-    window.openMenu = () => { document.getElementById('bottomSheet').classList.add('active'); document.getElementById('overlay').style.display = 'block'; };
-    window.closeMenu = () => { document.getElementById('bottomSheet').classList.remove('active'); document.getElementById('overlay').style.display = 'none'; };
-    window.showTab = (tab) => {
+    window.showTab = (id, el) => {
         document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-        document.getElementById(tab + 'Section').classList.add('active');
-        closeMenu();
-        if(tab === 'reviews') loadReviews();
+        document.querySelectorAll('.menu-bar i').forEach(i => i.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        el.classList.add('active');
+        if(id === 'reviews') loadR();
     };
 
-    // التاريخ
-    document.getElementById('currentDate').innerText = new Date().toLocaleDateString('ar-EG', { weekday: 'long', day: 'numeric', month: 'long' });
-
-    // الطلاب
     onSnapshot(collection(db, "users_azkar"), snap => {
         document.getElementById('uCount').innerText = snap.size;
-        document.getElementById('userListArea').innerHTML = snap.docs.map(d => {
-            const u = d.data();
-            return `<div class="data-card" style="display:flex; justify-content:space-between; align-items:center;">
-                <div style="display:flex; align-items:center; gap:10px;">
-                    <img src="${u.profilePic || 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png'}" style="width:40px; height:40px; border-radius:10px;">
-                    <b>${u.firstName}</b>
-                </div>
-                <button class="badge" style="background:var(--danger)" onclick="deleteUser('${d.id}')">حذف</button>
-            </div>`;
-        }).join('');
+        document.getElementById('userListArea').innerHTML = snap.docs.map(d => `<div class="data-card">${d.data().firstName} <button class="badge" style="background:var(--danger); float:left;" onclick="deleteU('${d.id}')">حذف</button></div>`).join('');
     });
 
-    // الإشعارات
-    window.sendNotif = async () => {
-        const title = document.getElementById('nTitle').value;
-        const msg = document.getElementById('nMsg').value;
-        if(!title || !msg) return alert("املا الخانات يا ميرو 🗿");
-        await addDoc(collection(db, "notifications"), { title, message: msg, timestamp: serverTimestamp() });
-        alert("تم الإرسال ✅");
-        document.getElementById('nTitle').value = ""; document.getElementById('nMsg').value = "";
+    window.filterR = (s) => { 
+        currentS = s; 
+        document.getElementById('btnP').style.background = s === 'pending' ? 'var(--accent)' : '#444';
+        document.getElementById('btnA').style.background = s === 'approved' ? 'var(--primary)' : '#444';
+        loadR(); 
     };
 
-    // --- نظام مراجعة الآراء ---
-    window.filterReviews = (status) => {
-        currentReviewStatus = status;
-        document.getElementById('btnPending').style.background = status === 'pending' ? 'var(--accent)' : 'rgba(255,255,255,0.1)';
-        document.getElementById('btnApproved').style.background = status === 'approved' ? 'var(--primary)' : 'rgba(255,255,255,0.1)';
-        loadReviews();
-    };
-
-    function loadReviews() {
-        const q = query(collection(db, "app_reviews"), where("status", "==", currentReviewStatus), orderBy("date", "desc"));
+    function loadR() {
+        const q = query(collection(db, "app_reviews"), where("status", "==", currentS), orderBy("date", "desc"));
         onSnapshot(q, snap => {
             const area = document.getElementById('reviewsReviewList');
-            if(snap.empty) { area.innerHTML = "<p style='text-align:center; opacity:0.5;'>لا يوجد بيانات هنا.</p>"; return; }
-            
-            area.innerHTML = snap.docs.map(d => {
+            area.innerHTML = snap.empty ? "لا يوجد بيانات" : snap.docs.map(d => {
                 const r = d.data();
-                const stars = Array(5).fill(0).map((_, i) => `<i class="${i < r.stars ? 'fas' : 'far'} fa-star"></i>`).join('');
-                return `
-                <div class="review-admin-card">
-                    <div class="rev-header">
-                        <img src="${r.userPic}">
-                        <div><b>${r.userName}</b><div class="stars-review">${stars}</div></div>
-                    </div>
-                    <p style="font-size:14px; opacity:0.8;">${r.comment}</p>
-                    <div style="display:flex; gap:10px; margin-top:10px;">
-                        ${r.status === 'pending' ? `<button class="badge" style="background:var(--primary)" onclick="approveReview('${d.id}')">✅ نشر</button>` : ''}
-                        <button class="badge" style="background:var(--danger)" onclick="deleteReview('${d.id}')">❌ حذف</button>
-                    </div>
+                return `<div class="data-card">
+                    <b>${r.userName} (${r.stars} ⭐)</b><p>${r.comment}</p>
+                    <button class="badge" style="background:var(--primary)" onclick="approveR('${d.id}')">موافقة</button>
+                    <button class="badge" style="background:var(--danger)" onclick="deleteR('${d.id}')">حذف</button>
                 </div>`;
             }).join('');
         });
     }
 
-    window.approveReview = async (id) => { await updateDoc(doc(db, "app_reviews", id), { status: 'approved' }); };
-    window.deleteReview = async (id) => { if(confirm("حذف نهائي؟")) await deleteDoc(doc(db, "app_reviews", id)); };
-    window.deleteUser = async (id) => { if(confirm("حذف الطالب؟")) await deleteDoc(doc(db, "users_azkar", id)); };
-    window.logout = () => { window.location.href = "login.html"; };
+    window.approveR = async (id) => { await updateDoc(doc(db, "app_reviews", id), { status: 'approved' }); };
+    window.deleteR = async (id) => { if(confirm("حذف؟")) await deleteDoc(doc(db, "app_reviews", id)); };
+    window.deleteU = async (id) => { if(confirm("حذف الطالب؟")) await deleteDoc(doc(db, "users_azkar", id)); };
 
-    loadReviews(); // تحميل مبدئي
 </script>
 </body>
 </html>
