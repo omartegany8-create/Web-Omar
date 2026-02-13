@@ -137,6 +137,8 @@
 
 <div class="container">
     <section id="dashboardSection" class="section active">
+        <div class="container">
+    <section id="dashboardSection" class="section active">
         <div class="hero-card">
             <h1 style="margin: 0;">أهلاً يا عمر 🌿</h1>
             <p id="currentDate"></p>
@@ -145,6 +147,44 @@
                 <div class="s-box"><strong>الإشعارات</strong><div id="nCount" style="font-size: 24px; font-weight: 900;">0</div></div>
             </div>
         </div>
+    </section>
+
+    <section id="notifsSection" class="section">
+        <h2>بث الإشعارات</h2>
+        <div style="background: var(--card); padding: 20px; border-radius: 25px; margin-bottom: 30px;">
+            <label>نوع البث:</label>
+            <select class="glass-input" id="nType" onchange="toggleTargeting()">
+                <option value="all">بث عام (للكل)</option>
+                <option value="award">جائزة مخصصة (خاص)</option>
+                <option value="system">تنبيه نظام (إداري)</option>
+            </select>
+            <div id="targeting" style="display:none; padding:15px; background:rgba(255,255,255,0.05); border-radius:15px; margin-bottom:15px;">
+                <p style="margin-top:0;">🎯 مستهدف: <b id="targetName">لم يتم التحديد</b></p>
+            </div>
+            <input id="nTitle" class="glass-input" placeholder="عنوان الإشعار">
+            <textarea id="nMsg" class="glass-input" rows="4" placeholder="اكتب محتوى الرسالة..."></textarea>
+            <button class="main-btn" onclick="sendNotif()">بث الآن</button>
+        </div>
+        <div id="notifsList"></div>
+    </section>
+
+    <section id="reviewsSection" class="section">
+        <h2>مراجعة التقييمات</h2>
+        <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+            <button class="badge badge-all" onclick="filterReviews('pending')">بإنتظار التأكيد ⏳</button>
+            <button class="badge" style="background:var(--primary)" onclick="filterReviews('approved')">الآراء المنشورة ✅</button>
+        </div>
+        <div id="reviewsReviewList"></div>
+    </section>
+
+    <section id="usersSection" class="section">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h2>قائمة الطلاب</h2>
+        </div>
+        <div id="userListArea"></div>
+    </section>
+</div>
+
     </section>
 
     <section id="notifsSection" class="section">
