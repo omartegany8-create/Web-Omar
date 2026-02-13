@@ -91,6 +91,19 @@
         /* Lock Toggle */
         .lock-btn { background: var(--danger) !important; margin-top: 10px; }
         .lock-active { background: #fbbf24 !important; }
+        
+                /* قسم مراجعة الآراء الجديد */
+        .review-admin-card {
+            background: var(--card); padding: 18px; border-radius: 22px;
+            margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.05);
+        }
+        .review-admin-header { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+        .review-admin-header img { width: 45px; height: 45px; border-radius: 12px; }
+        .stars-review { color: #fbbf24; font-size: 14px; margin-bottom: 8px; }
+        .comment-text { font-size: 14px; color: #94a3b8; line-height: 1.6; margin: 0; }
+        .action-approve { background: var(--primary) !important; }
+        .action-reject { background: var(--danger) !important; }
+
     </style>
 </head>
 <body>
@@ -114,7 +127,9 @@
         <div class="menu-item" onclick="showTab('dashboard')"><i class="fas fa-th-large"></i>الرئيسية</div>
         <div class="menu-item" onclick="showTab('notifs')"><i class="fas fa-bell"></i>الإشعارات</div>
         <div class="menu-item" onclick="showTab('users')"><i class="fas fa-users"></i>الطلاب</div>
-        <div class="menu-item" onclick="togglePlatform()"><i class="fas fa-power-off"></i><span id="lockText">إيقاف المنصة</span></div>
+        
+        <div class="menu-item" onclick="showTab('reviews')"><i class="fas fa-star"></i>مراجعة الآراء</div>
+
         <div class="menu-item" onclick="location.reload()"><i class="fas fa-sync"></i>تحديث</div>
         <div class="menu-item" onclick="logout()" style="color:var(--danger)"><i class="fas fa-sign-out-alt"></i>خروج</div>
     </div>
@@ -157,6 +172,13 @@
     </section>
 
     <section id="usersSection" class="section">
+          <section id="reviewsSection" class="section">
+        <h2>مراجعة التقييمات والآراء</h2>
+        <p style="opacity:0.6; margin-bottom:20px;">الآراء التي توافق عليها ستظهر فوراً في صفحة المساعدة.</p>
+        <div id="reviewsReviewList">
+            </div>
+    </section>
+
         <div style="display: flex; justify-content: space-between; align-items: center;">
             <h2>قائمة الطلاب</h2>
             <input type="text" id="userSearch" placeholder="بحث سريع..." oninput="searchUsers()" style="width:150px; padding:8px; border-radius:10px; border:none;">
@@ -302,6 +324,58 @@ window.sendNotif = async () => {
     window.deleteUser = async (id) => { if(confirm("حذف؟")) await deleteDoc(doc(db, "users_azkar", id)); };
     window.deleteNotif = async (id) => { if(confirm("حذف؟")) await deleteDoc(doc(db, "notifications", id)); };
     window.logout = () => { localStorage.removeItem('isAdmin'); window.location.href = "login.html"; };
+    
+        // --- نظام مراجعة الآراء ---
+    onSnapshot(query(collection(db, "app_reviews"), orderBy("date", "desc")), snap => {
+        const listArea = document.getElementById('reviewsReviewList');
+        if (snap.empty) {
+            listArea.innerHTML = `<p style="text-align:center; opacity:0.5;">لا توجد تقييمات جديدة للمراجعة.</p>`;
+            return;
+        }
+
+        listArea.innerHTML = snap.docs.map(d => {
+            const rev = d.data();
+            // عرض النجوم بناءً على الرقم
+            const starsHtml = Array(5).fill(0).map((_, i) => 
+                `<i class="${i < rev.stars ? 'fas' : 'far'} fa-star"></i>`
+            ).join('');
+
+            return `
+                <div class="review-admin-card">
+                    <div class="review-admin-header">
+                        <img src="${rev.userPic}">
+                        <div style="flex:1">
+                            <b style="font-size:15px;">${rev.userName}</b>
+                            <div class="stars-review">${starsHtml}</div>
+                        </div>
+                        <span style="font-size:10px; opacity:0.5;">${new Date(rev.date).toLocaleDateString('ar-EG')}</span>
+                    </div>
+                    <p class="comment-text">${rev.comment}</p>
+                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:15px;">
+                        <button class="badge action-approve" onclick="approveReview('${d.id}')">✅ نشر الآن</button>
+                        <button class="badge action-reject" onclick="deleteReview('${d.id}')">❌ حذف نهائي</button>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    });
+
+    // دالة الموافقة: تغير الحالة لـ "Approved" أو تنقلها لمكان مخصص
+    window.approveReview = async (id) => {
+        try {
+            const ref = doc(db, "app_reviews", id);
+            await updateDoc(ref, { status: 'approved' });
+            alert("تم نشر التقييم بنجاح! 🚀");
+        } catch (e) { alert("خطأ في النشر"); }
+    };
+
+    // دالة الحذف
+    window.deleteReview = async (id) => {
+        if(confirm("هل أنت متأكد من حذف هذا التقييم؟")) {
+            await deleteDoc(doc(db, "app_reviews", id));
+        }
+    };
+
 </script>
 </body>
 </html>
