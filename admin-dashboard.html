@@ -18,6 +18,136 @@
         .menu-bar { position: fixed; bottom: 0; width: 100%; background: var(--card); display: flex; justify-content: space-around; padding: 15px; border-top: 1px solid rgba(255,255,255,0.1); }
         .menu-bar i { font-size: 20px; cursor: pointer; opacity: 0.6; }
         .menu-bar i.active { opacity: 1; color: var(--accent); }
+  <style>
+    /* تصميم مشابه للصورة اللي بعتها يا عمر */
+    .review-google-style {
+        background: transparent;
+        padding: 15px 0;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+        margin-bottom: 10px;
+    }
+    .rev-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 8px;
+    }
+    .user-info-box {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+    .user-info-box img {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%; /* دائرية زي الصورة */
+        background: #334155;
+    }
+    .user-name-text {
+        font-weight: 600;
+        font-size: 1.1rem;
+        color: #ffffff;
+    }
+    .stars-date-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 10px;
+    }
+    .google-stars {
+        color: #8ab4f8; /* لون النجوم في الصورة الثانية */
+        font-size: 0.8rem;
+        display: flex;
+        gap: 2px;
+    }
+    .rev-date-text {
+        font-size: 0.8rem;
+        color: #9ca3af;
+    }
+    .rev-content-text {
+        font-size: 0.95rem;
+        line-height: 1.5;
+        color: #e5e7eb;
+        margin: 10px 0;
+    }
+    .admin-actions {
+        display: flex;
+        gap: 8px;
+        margin-top: 10px;
+    }
+    .btn-approve { background: #3b82f6; color: white; border: none; padding: 5px 15px; border-radius: 20px; font-size: 0.8rem; cursor: pointer; }
+    .btn-delete { background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid #ef4444; padding: 5px 15px; border-radius: 20px; font-size: 0.8rem; cursor: pointer; }
+</style>
+
+<script type="module">
+    // ... نفس إعدادات Firebase السابقة ...
+
+    function loadR() {
+        // تأكد أن اسم الـ Collection هو "app_reviews" كما في صفحة المساعدة
+        const q = query(collection(db, "app_reviews"), where("status", "==", currentS), orderBy("date", "desc"));
+        
+        onSnapshot(q, (snap) => {
+            const area = document.getElementById('reviewsReviewList');
+            if (snap.empty) {
+                area.innerHTML = `
+                    <div style="text-align:center; padding:50px; opacity:0.5;">
+                        <i class="fas fa-comment-slash" style="font-size:3rem; margin-bottom:15px;"></i>
+                        <p>مفيش آراء حالياً يا عمر في قسم ${currentS === 'pending' ? 'المراجعة' : 'النشر'}</p>
+                    </div>`;
+                return;
+            }
+
+            area.innerHTML = snap.docs.map(d => {
+                const r = d.data();
+                // تحويل التاريخ لشكل 5/3/25 زي الصورة
+                const dateObj = new Date(r.date);
+                const formattedDate = `${dateObj.getDate()}/${dateObj.getMonth()+1}/${dateObj.getFullYear().toString().slice(-2)}`;
+                
+                const starsHtml = Array(5).fill(0).map((_, i) => 
+                    `<i class="${i < r.stars ? 'fas' : 'far'} fa-star"></i>`
+                ).join('');
+
+                return `
+                <div class="review-google-style">
+                    <div class="rev-top">
+                        <div class="user-info-box">
+                            <img src="${r.userPic || 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png'}">
+                            <span class="user-name-text">${r.userName}</span>
+                        </div>
+                        <i class="fas fa-ellipsis-v" style="color:#9ca3af; font-size:0.9rem;"></i>
+                    </div>
+                    
+                    <div class="stars-date-row">
+                        <div class="google-stars">${starsHtml}</div>
+                        <span class="rev-date-text">${formattedDate}</span>
+                    </div>
+
+                    <p class="rev-content-text">${r.comment}</p>
+
+                    <div class="admin-actions">
+                        ${r.status === 'pending' ? `<button class="btn-approve" onclick="approveR('${d.id}')">موافقة ونشر</button>` : ''}
+                        <button class="btn-delete" onclick="deleteR('${d.id}')">حذف</button>
+                    </div>
+                </div>`;
+            }).join('');
+        });
+    }
+    
+    // تأكد من تعريف الدوال في الـ window عشان الـ onclick يشتغل
+    window.approveR = async (id) => {
+        try {
+            await updateDoc(doc(db, "app_reviews", id), { status: 'approved' });
+        } catch(e) { alert("حدث خطأ في الموافقة"); }
+    };
+
+    window.deleteR = async (id) => {
+        if(confirm("متأكد إنك عايز تحذف التقييم ده؟")) {
+            await deleteDoc(doc(db, "app_reviews", id));
+        }
+    };
+</script>
+
+  
     </style>
 </head>
 <body>
