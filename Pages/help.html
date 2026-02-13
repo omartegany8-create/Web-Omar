@@ -387,24 +387,73 @@ function updateStars(val) {
     });
 }
 
-// وظيفة إرسال التقييم للـ Firebase
 async function submitReview() {
     const text = document.getElementById('reviewText').value;
-    if(!text) return alert("من فضلك اكتب تعليقك");
+    if(!text || text.trim() === "") return alert("من فضلك اكتب تعليقك أولاً");
 
     const user = auth.currentUser;
     if(user) {
-        await setDoc(doc(db, "app_reviews", user.uid), {
-            userName: document.getElementById('reviewUserName').innerText,
-            userPic: document.getElementById('reviewUserImg').src,
-            stars: currentStars,
-            comment: text,
-            date: new Date().toISOString()
-        });
-        document.getElementById('reviewText').value = "";
-        alert("شكراً لتقييمك يا بطل! ✨");
+        try {
+            await setDoc(doc(db, "app_reviews", user.uid), {
+                userName: document.getElementById('reviewUserName').innerText,
+                userPic: document.getElementById('reviewUserImg').src,
+                stars: parseInt(currentStars),
+                comment: text,
+                status: "pending", // الحالة الافتراضية: قيد الانتظار
+                date: new Date().toISOString()
+            });
+            document.getElementById('reviewText').value = "";
+            alert("تم إرسال تقييمك للمراجعة يا بطل، هيظهر للكل أول ما الإدارة توافق عليه! ✨");
+        } catch (e) {
+            console.error(e);
+            alert("عذراً، حدث خطأ أثناء الإرسال.");
+        }
+    } else {
+        alert("يجب تسجيل الدخول أولاً.");
     }
 }
+// استيراد الـ where ضروري هنا
+import { query, collection, where, onSnapshot, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+// كود عرض التقييمات المقبولة فقط
+const q = query(
+    collection(db, "app_reviews"), 
+    where("status", "==", "approved") // فلترة: هات بس المقبول
+);
+
+onSnapshot(q, (snap) => {
+    const list = document.getElementById('reviewsList');
+    list.innerHTML = ""; // مسح القائمة القديمة
+
+    if (snap.empty) {
+        list.innerHTML = "<p style='text-align:center; opacity:0.5; font-size:0.8rem;'>لا توجد تقييمات منشورة بعد.</p>";
+        return;
+    }
+
+    snap.forEach((d) => {
+        const rev = d.data();
+        const starsHtml = Array(5).fill(0).map((_, i) => 
+            `<i class="${i < rev.stars ? 'fa-solid' : 'fa-regular'} fa-star"></i>`
+        ).join('');
+
+        list.innerHTML += `
+            <div class="review-card">
+                <div class="review-header">
+                    <div class="review-user-info">
+                        <img src="${rev.userPic}">
+                        <div>
+                            <b>${rev.userName}</b>
+                            <div style="color: #fbbf24; font-size: 0.7rem;">${starsHtml}</div>
+                        </div>
+                    </div>
+                    <span class="review-date">${new Date(rev.date).toLocaleDateString('ar-EG')}</span>
+                </div>
+                <p class="review-comment">${rev.comment}</p>
+            </div>
+        `;
+    });
+});
+
 
 </script>
     <script>
