@@ -353,156 +353,85 @@
         </div>
     </div>
 
-<script>
-  // استيراد بيانات المستخدم من الـ Firebase (تأكد من وجود استيراد auth و db في صفحتك)
-import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-import { doc, getDoc, setDoc, collection, query, orderBy, limit, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getFirestore, doc, getDoc, setDoc, collection, query, orderBy, onSnapshot, where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-let currentStars = 5;
+    // إعدادات Firebase (تأكد أنها نفس بياناتك)
+    const firebaseConfig = { apiKey: "AIzaSyA4h9MsH0Szht7taowp95WcBr2y6scXe1k", projectId: "omardev-fbfd8" };
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
 
-// سحب بيانات البروفايل للتقييم
-onAuthStateChanged(auth, async (user) => {
-    if (user) {
-        const snap = await getDoc(doc(db, "users_azkar", user.uid));
-        if (snap.exists()) {
-            const data = snap.data();
-            document.getElementById('reviewUserName').innerText = data.firstName + ' ' + data.lastName;
-            document.getElementById('reviewUserImg').src = data.profilePic || 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png';
+    let currentStars = 5;
+
+    // سحب بيانات البروفايل للتقييم
+    onAuthStateChanged(auth, async (user) => {
+        if (user) {
+            const snap = await getDoc(doc(db, "users_azkar", user.uid));
+            if (snap.exists()) {
+                const data = snap.data();
+                document.getElementById('reviewUserName').innerText = data.firstName + ' ' + data.lastName;
+                document.getElementById('reviewUserImg').src = data.profilePic || (data.gender === 'أنثى' ? 'https://cdn-icons-png.flaticon.com/512/6997/6997662.png' : 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png');
+            }
         }
-    }
-});
-
-// نظام اختيار النجوم
-document.querySelectorAll('#starInput i').forEach(star => {
-    star.addEventListener('click', function() {
-        currentStars = this.getAttribute('data-v');
-        updateStars(currentStars);
     });
-});
 
-function updateStars(val) {
-    document.querySelectorAll('#starInput i').forEach(s => {
-        s.classList.toggle('fa-solid', s.getAttribute('data-v') <= val);
-        s.classList.toggle('fa-regular', s.getAttribute('data-v') > val);
+    // نظام النجوم
+    window.updateStars = (val) => {
+        currentStars = val;
+        document.querySelectorAll('#starInput i').forEach(s => {
+            s.className = s.getAttribute('data-v') <= val ? 'fa-solid fa-star' : 'fa-regular fa-star';
+        });
+    };
+
+    document.querySelectorAll('#starInput i').forEach(star => {
+        star.onclick = () => updateStars(star.getAttribute('data-v'));
     });
-}
 
-async function submitReview() {
-    const text = document.getElementById('reviewText').value;
-    if(!text || text.trim() === "") return alert("من فضلك اكتب تعليقك أولاً");
+    // وظيفة الإرسال
+    window.submitReview = async () => {
+        const text = document.getElementById('reviewText').value.trim();
+        if(!text) return alert("اكتب تعليقك أولاً");
+        
+        const user = auth.currentUser;
+        if(!user) return alert("سجل دخولك أولاً");
 
-    const user = auth.currentUser;
-    if(user) {
         try {
             await setDoc(doc(db, "app_reviews", user.uid), {
                 userName: document.getElementById('reviewUserName').innerText,
                 userPic: document.getElementById('reviewUserImg').src,
                 stars: parseInt(currentStars),
                 comment: text,
-                status: "pending", // الحالة الافتراضية: قيد الانتظار
+                status: "pending",
                 date: new Date().toISOString()
             });
             document.getElementById('reviewText').value = "";
-            alert("تم إرسال تقييمك للمراجعة يا بطل، هيظهر للكل أول ما الإدارة توافق عليه! ✨");
-        } catch (e) {
-            console.error(e);
-            alert("عذراً، حدث خطأ أثناء الإرسال.");
-        }
-    } else {
-        alert("يجب تسجيل الدخول أولاً.");
-    }
-}
-// استيراد الـ where ضروري هنا
-import { query, collection, where, onSnapshot, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+            alert("وصل يا عمر! التقييم تحت المراجعة حالياً ✅");
+        } catch (e) { alert("حدث خطأ في الاتصال"); }
+    };
 
-// كود عرض التقييمات المقبولة فقط
-const q = query(
-    collection(db, "app_reviews"), 
-    where("status", "==", "approved") // فلترة: هات بس المقبول
-);
-
-onSnapshot(q, (snap) => {
-    const list = document.getElementById('reviewsList');
-    list.innerHTML = ""; // مسح القائمة القديمة
-
-    if (snap.empty) {
-        list.innerHTML = "<p style='text-align:center; opacity:0.5; font-size:0.8rem;'>لا توجد تقييمات منشورة بعد.</p>";
-        return;
-    }
-
-    snap.forEach((d) => {
-        const rev = d.data();
-        const starsHtml = Array(5).fill(0).map((_, i) => 
-            `<i class="${i < rev.stars ? 'fa-solid' : 'fa-regular'} fa-star"></i>`
-        ).join('');
-
-        list.innerHTML += `
-            <div class="review-card">
-                <div class="review-header">
-                    <div class="review-user-info">
-                        <img src="${rev.userPic}">
-                        <div>
-                            <b>${rev.userName}</b>
-                            <div style="color: #fbbf24; font-size: 0.7rem;">${starsHtml}</div>
-                        </div>
+    // عرض التقييمات المقبولة فقط
+    const q = query(collection(db, "app_reviews"), where("status", "==", "approved"), orderBy("date", "desc"));
+    onSnapshot(q, (snap) => {
+        const list = document.getElementById('reviewsList');
+        list.innerHTML = snap.empty ? "<p style='text-align:center; opacity:0.5;'>لا توجد تقييمات منشورة بعد.</p>" : "";
+        snap.forEach(d => {
+            const rev = d.data();
+            const stars = Array(5).fill(0).map((_, i) => `<i class="${i < rev.stars ? 'fa-solid' : 'fa-regular'} fa-star"></i>`).join('');
+            list.innerHTML += `
+                <div class="review-card">
+                    <div class="review-header">
+                        <div class="review-user-info"><img src="${rev.userPic}"><div><b>${rev.userName}</b><div style="color:#fbbf24;font-size:0.7rem;">${stars}</div></div></div>
+                        <span class="review-date">${new Date(rev.date).toLocaleDateString('ar-EG')}</span>
                     </div>
-                    <span class="review-date">${new Date(rev.date).toLocaleDateString('ar-EG')}</span>
-                </div>
-                <p class="review-comment">${rev.comment}</p>
-            </div>
-        `;
+                    <p class="review-comment">${rev.comment}</p>
+                </div>`;
+        });
     });
-});
-
-
 </script>
-    <script>
-        // دالة المشاركة الأصلية
-        async function shareApp() {
-            const shareData = {
-                title: 'تطبيق وذكر',
-                text: 'أفضل رفيق للأذكار بتصميم عصري.. جربه الآن!',
-                url: window.location.href
-            };
 
-            try {
-                if (navigator.share) {
-                    await navigator.share(shareData);
-                } else {
-                    //Fallback لو المتصفح مش بيدعم الـ Share API
-                    navigator.clipboard.writeText(window.location.href);
-                    showToast();
-                }
-            } catch (err) {
-                console.log('Error sharing:', err);
-            }
-        }
-
-        function showToast() {
-            const t = document.getElementById('toast');
-            t.style.display = 'block';
-            setTimeout(() => t.style.display = 'none', 3000);
-        }
-
-        function toggleTheme() {
-            const b = document.body;
-            const icon = document.getElementById('theme-icon');
-            const isDark = b.getAttribute('data-theme') === 'dark';
-            
-            b.setAttribute('data-theme', isDark ? 'light' : 'dark');
-            icon.className = isDark ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
-            
-            if(navigator.vibrate) navigator.vibrate(50);
-        }
-
-        // أنيميشن العداد
-        setInterval(() => {
-            const el = document.getElementById('user-count');
-            let current = parseInt(el.innerText);
-            let next = current + (Math.random() > 0.5 ? 1 : -1);
-            if (next < 10) next = 10;
-            el.innerText = next;
-        }, 4000);
-    </script>
+    
 </body>
 </html>
