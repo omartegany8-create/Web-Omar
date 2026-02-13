@@ -173,11 +173,18 @@
 
     <section id="usersSection" class="section">
           <section id="reviewsSection" class="section">
-        <h2>مراجعة التقييمات والآراء</h2>
-        <p style="opacity:0.6; margin-bottom:20px;">الآراء التي توافق عليها ستظهر فوراً في صفحة المساعدة.</p>
-        <div id="reviewsReviewList">
-            </div>
-    </section>
+    <h2>مراجعة التقييمات</h2>
+    
+    <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+        <button class="badge badge-all" onclick="filterReviews('pending')">بإنتظار التأكيد ⏳</button>
+        <button class="badge" style="background:var(--primary)" onclick="filterReviews('approved')">الآراء المنشورة ✅</button>
+    </div>
+
+    <div id="reviewsReviewList">
+        <p style="text-align:center; opacity:0.5;">جاري تحميل البيانات...</p>
+    </div>
+</section>
+
 
         <div style="display: flex; justify-content: space-between; align-items: center;">
             <h2>قائمة الطلاب</h2>
@@ -189,7 +196,7 @@
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, doc, deleteDoc, updateDoc, serverTimestamp, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, doc, deleteDoc, updateDoc, serverTimestamp, getDoc, setDoc, where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
     const firebaseConfig = { apiKey: "AIzaSyA4h9MsH0Szht7taowp95WcBr2y6scXe1k", projectId: "omardev-fbfd8" };
     const app = initializeApp(firebaseConfig);
@@ -197,20 +204,22 @@
 
     let usersData = [];
     let selectedId = "all";
+    let currentFilter = 'pending'; // الفلتر الافتراضي
 
-    // Menu Logic
+    // --- المنطق الأساسي للقائمة ---
     window.openMenu = () => { document.getElementById('bottomSheet').classList.add('active'); document.getElementById('overlay').style.display = 'block'; };
     window.closeMenu = () => { document.getElementById('bottomSheet').classList.remove('active'); document.getElementById('overlay').style.display = 'none'; };
     window.showTab = (tab) => {
         document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-        document.getElementById(tab + 'Section').classList.add('active');
+        const target = document.getElementById(tab + 'Section');
+        if(target) target.classList.add('active');
         closeMenu();
     };
 
-    // Date
+    // التاريخ
     document.getElementById('currentDate').innerText = new Date().toLocaleDateString('ar-EG', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
 
-    // Platform Lock System
+    // --- إيقاف/تشغيل المنصة ---
     window.togglePlatform = async () => {
         const statusDoc = doc(db, "settings", "platformStatus");
         const snap = await getDoc(statusDoc);
@@ -219,12 +228,14 @@
     };
 
     onSnapshot(doc(db, "settings", "platformStatus"), (doc) => {
-        const isLocked = doc.exists() ? doc.data().isLocked : false;
-        const btn = document.getElementById('lockText');
-        btn.innerText = isLocked ? "تشغيل المنصة" : "إيقاف المنصة";
+        if(doc.exists()){
+            const isLocked = doc.data().isLocked;
+            const btn = document.getElementById('lockText');
+            if(btn) btn.innerText = isLocked ? "تشغيل المنصة" : "إيقاف المنصة";
+        }
     });
 
-    // Users & Search
+    // --- إدارة الطلاب ---
     onSnapshot(collection(db, "users_azkar"), snap => {
         usersData = snap.docs.map(d => ({id: d.id, ...d.data()}));
         document.getElementById('uCount').innerText = snap.size;
@@ -250,132 +261,103 @@
     window.pickUser = (id, name) => {
         selectedId = id;
         document.getElementById('targetName').innerText = name;
-        toggleTargeting();
+        document.getElementById('nType').value = 'award';
+        document.getElementById('targeting').style.display = 'block';
         showTab('notifs');
     };
 
-    window.toggleTargeting = () => {
+    // --- الإشعارات ---
+    window.sendNotif = async () => {
+        const title = document.getElementById('nTitle').value.trim();
+        const msg = document.getElementById('nMsg').value.trim();
         const type = document.getElementById('nType').value;
-        document.getElementById('targeting').style.display = (type === 'award') ? 'block' : 'none';
-        if(type !== 'award') selectedId = "all";
+
+        if (!title || !msg) return alert("الخانات فارغة يا عمر! 🗿");
+
+        try {
+            await addDoc(collection(db, "notifications"), { 
+                title, message: msg, type, userId: selectedId, timestamp: serverTimestamp() 
+            });
+            alert("تم البث بنجاح ✅");
+            document.getElementById('nTitle').value = "";
+            document.getElementById('nMsg').value = "";
+        } catch (e) { alert("خطأ في الإرسال"); }
     };
 
-    // Notifications List
     onSnapshot(query(collection(db, "notifications"), orderBy("timestamp", "desc")), snap => {
         document.getElementById('nCount').innerText = snap.size;
         const list = document.getElementById('notifsList');
         list.innerHTML = snap.docs.map(d => {
             const n = d.data();
-            return `
-                <div class="data-card">
-                    <div>
-                        <span class="badge badge-${n.type === 'all'?'all': n.type==='award'?'award':'sys'}">${n.type}</span>
-                        <b style="margin-right:10px;">${n.title}</b>
-                    </div>
-                    <i class="fas fa-trash" style="color:var(--danger); cursor:pointer;" onclick="deleteNotif('${d.id}')"></i>
-                </div>
-            `;
+            return `<div class="data-card">
+                <div><span class="badge badge-all">${n.type}</span> <b style="margin-right:10px;">${n.title}</b></div>
+                <i class="fas fa-trash" style="color:var(--danger); cursor:pointer;" onclick="deleteNotif('${d.id}')"></i>
+            </div>`;
         }).join('');
     });
 
-window.sendNotif = async () => {
-    // 1. جلب القيم من المدخلات
-    const titleInput = document.getElementById('nTitle');
-    const msgInput = document.getElementById('nMsg');
-    const typeInput = document.getElementById('nType');
-
-    const title = titleInput.value.trim();
-    const msg = msgInput.value.trim();
-    const type = typeInput.value;
-
-    // 2. التأكد من أن الخانات ليست فارغة
-    if (!title || !msg) {
-        return alert("يا عمر، الخانات فاضية! املاها الأول 🗿");
-    }
-
-    try {
-        // 3. إرسال الإشعار لقاعدة البيانات
-        // ملاحظة: selectedId هيكون "all" لو مخصصتش حد، وهيكون "ID الطالب" لو ضغطت تحديد
-        await addDoc(collection(db, "notifications"), { 
-            title: title, 
-            message: msg, 
-            type: type, 
-            userId: selectedId, 
-            timestamp: serverTimestamp() 
-        });
-
-        alert("تم البث بنجاح ✅");
-
-        // 4. تنظيف الخانات بعد النجاح
-        titleInput.value = "";
-        msgInput.value = "";
-        
-        // 5. إعادة تصفير الاختيار (عشان الإشعار اللي جاي ميروحش لنفس الشخص بالخطأ)
-        if (selectedId !== "all") {
-            clearTarget(); // استدعاء دالة المسح اللي عملناها فوق في الكود
-        }
-
-    } catch (error) {
-        console.error("Error sending notification:", error);
-        alert("حصلت مشكلة في الاتصال، جرب تاني يا بطل.");
-    }
-};
-
-    window.deleteUser = async (id) => { if(confirm("حذف؟")) await deleteDoc(doc(db, "users_azkar", id)); };
-    window.deleteNotif = async (id) => { if(confirm("حذف؟")) await deleteDoc(doc(db, "notifications", id)); };
-    window.logout = () => { localStorage.removeItem('isAdmin'); window.location.href = "login.html"; };
-    
-        // --- نظام مراجعة الآراء ---
-    onSnapshot(query(collection(db, "app_reviews"), orderBy("date", "desc")), snap => {
-        const listArea = document.getElementById('reviewsReviewList');
-        if (snap.empty) {
-            listArea.innerHTML = `<p style="text-align:center; opacity:0.5;">لا توجد تقييمات جديدة للمراجعة.</p>`;
-            return;
-        }
-
-        listArea.innerHTML = snap.docs.map(d => {
-            const rev = d.data();
-            // عرض النجوم بناءً على الرقم
-            const starsHtml = Array(5).fill(0).map((_, i) => 
-                `<i class="${i < rev.stars ? 'fas' : 'far'} fa-star"></i>`
-            ).join('');
-
-            return `
-                <div class="review-admin-card">
-                    <div class="review-admin-header">
-                        <img src="${rev.userPic}">
-                        <div style="flex:1">
-                            <b style="font-size:15px;">${rev.userName}</b>
-                            <div class="stars-review">${starsHtml}</div>
-                        </div>
-                        <span style="font-size:10px; opacity:0.5;">${new Date(rev.date).toLocaleDateString('ar-EG')}</span>
-                    </div>
-                    <p class="comment-text">${rev.comment}</p>
-                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:15px;">
-                        <button class="badge action-approve" onclick="approveReview('${d.id}')">✅ نشر الآن</button>
-                        <button class="badge action-reject" onclick="deleteReview('${d.id}')">❌ حذف نهائي</button>
-                    </div>
-                </div>
-            `;
-        }).join('');
-    });
-
-    // دالة الموافقة: تغير الحالة لـ "Approved" أو تنقلها لمكان مخصص
-    window.approveReview = async (id) => {
-        try {
-            const ref = doc(db, "app_reviews", id);
-            await updateDoc(ref, { status: 'approved' });
-            alert("تم نشر التقييم بنجاح! 🚀");
-        } catch (e) { alert("خطأ في النشر"); }
+    // --- 🔥 نظام مراجعة الآراء (النسخة النهائية والمصلحة) 🔥 ---
+    window.filterReviews = (status) => {
+        currentFilter = status;
+        loadReviews();
     };
 
-    // دالة الحذف
+    function loadReviews() {
+        // الفلترة بناءً على الحالة (pending أو approved)
+        const q = query(collection(db, "app_reviews"), where("status", "==", currentFilter), orderBy("date", "desc"));
+        
+        onSnapshot(q, snap => {
+            const listArea = document.getElementById('reviewsReviewList');
+            if (snap.empty) {
+                listArea.innerHTML = `<p style="text-align:center; opacity:0.5; padding:20px; background:var(--card); border-radius:20px;">لا يوجد آراء ${currentFilter === 'pending' ? 'بانتظار المراجعة' : 'منشورة'} حالياً.</p>`;
+                return;
+            }
+
+            listArea.innerHTML = snap.docs.map(d => {
+                const rev = d.data();
+                const starsHtml = Array(5).fill(0).map((_, i) => `<i class="${i < rev.stars ? 'fas' : 'far'} fa-star"></i>`).join('');
+                return `
+                    <div class="review-admin-card">
+                        <div class="review-admin-header">
+                            <img src="${rev.userPic}">
+                            <div style="flex:1"><b>${rev.userName}</b><div class="stars-review">${starsHtml}</div></div>
+                            <span style="font-size:10px; opacity:0.5;">${new Date(rev.date).toLocaleDateString('ar-EG')}</span>
+                        </div>
+                        <p class="comment-text">${rev.comment}</p>
+                        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:15px;">
+                            ${rev.status === 'pending' ? 
+                                `<button class="badge action-approve" onclick="approveReview('${d.id}')">✅ نشر الآن</button>` : 
+                                `<button class="badge" style="background:var(--accent)" disabled>تم النشر</button>`
+                            }
+                            <button class="badge action-reject" onclick="deleteReview('${d.id}')">❌ حذف نهائي</button>
+                        </div>
+                    </div>`;
+            }).join('');
+        });
+    }
+
+    window.approveReview = async (id) => {
+        try {
+            await updateDoc(doc(db, "app_reviews", id), { status: 'approved' });
+            alert("تم النشر بنجاح! 🚀");
+        } catch (e) { alert("خطأ في التحديث"); }
+    };
+
     window.deleteReview = async (id) => {
-        if(confirm("هل أنت متأكد من حذف هذا التقييم؟")) {
+        if(confirm("هل أنت متأكد من حذف هذا الرأي تماماً؟")) {
             await deleteDoc(doc(db, "app_reviews", id));
         }
     };
 
+    // --- وظائف عامة ---
+    window.deleteUser = async (id) => { if(confirm("حذف الطالب؟")) await deleteDoc(doc(db, "users_azkar", id)); };
+    window.deleteNotif = async (id) => { if(confirm("حذف الإشعار؟")) await deleteDoc(doc(db, "notifications", id)); };
+    window.logout = () => { localStorage.removeItem('isAdmin'); window.location.href = "login.html"; };
+
+    // تشغيل تحميل الآراء لأول مرة
+    loadReviews();
+
 </script>
+
 </body>
 </html>
