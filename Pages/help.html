@@ -8,428 +8,65 @@
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg: #f8fafc;
-            --card: #ffffff;
-            --text: #0f172a;
-            --primary: #2563eb;
-            --secondary: #64748b;
-            --border: #e2e8f0;
-            --shadow: 0 10px 30px rgba(0,0,0,0.05);
-            --glass: rgba(255, 255, 255, 0.8);
+            --bg: #f8fafc; --card: #ffffff; --text: #0f172a; --primary: #2563eb;
+            --secondary: #64748b; --border: #e2e8f0; --shadow: 0 10px 30px rgba(0,0,0,0.05);
         }
-
         [data-theme="dark"] {
-            --bg: #020617;
-            --card: #0f172a;
-            --text: #f8fafc;
-            --primary: #3b82f6;
-            --secondary: #94a3b8;
-            --border: #1e293b;
-            --shadow: 0 10px 40px rgba(0,0,0,0.4);
-            --glass: rgba(15, 23, 42, 0.8);
+            --bg: #020617; --card: #0f172a; --text: #f8fafc; --primary: #3b82f6;
+            --secondary: #94a3b8; --border: #1e293b; --shadow: 0 10px 40px rgba(0,0,0,0.4);
         }
-
-        * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-
-        body {
-            font-family: 'Cairo', sans-serif; background: var(--bg); color: var(--text);
-            margin: 0; padding: 20px 15px 120px; min-height: 100vh;
-        }
-
-        /* Navbar المطور */
-        .navbar {
-            display: flex; justify-content: space-between; align-items: center;
-            margin-bottom: 30px; padding: 10px;
-        }
-        .logo { font-weight: 900; font-size: 1.6rem; color: var(--primary); letter-spacing: -1px; }
-
-        .btn-icon {
-            width: 48px; height: 48px; background: var(--card); border-radius: 16px;
-            display: grid; place-items: center; cursor: pointer; border: 1px solid var(--border);
-            box-shadow: var(--shadow); color: var(--primary);
-        }
-
-        /* كارت الإحصائيات (Glassmorphism) */
-        .stat-card {
-            background: linear-gradient(135deg, var(--primary), #1d4ed8);
-            color: white; border-radius: 30px; padding: 30px;
-            margin-bottom: 25px; position: relative; overflow: hidden;
-            box-shadow: 0 20px 40px rgba(37, 99, 235, 0.2);
-        }
-        .stat-card::before {
-            content: ''; position: absolute; top: -50px; left: -50px;
-            width: 150px; height: 150px; background: rgba(255,255,255,0.1); border-radius: 50%;
-        }
-
-        .stat-val { font-size: 3rem; font-weight: 900; line-height: 1; margin-bottom: 5px; }
-        .stat-label { font-weight: 600; opacity: 0.8; font-size: 0.95rem; }
-
-        /* كارت التقدم اليومي (الفكرة الجديدة) */
-        .progress-card {
-            background: var(--card); border-radius: 25px; padding: 20px;
-            margin-bottom: 20px; border: 1px solid var(--border); box-shadow: var(--shadow);
-        }
-        .prog-header { display: flex; justify-content: space-between; margin-bottom: 12px; font-weight: 700; font-size: 0.9rem; }
-        .prog-bar { height: 8px; background: var(--bg); border-radius: 10px; overflow: hidden; }
-        .prog-fill { height: 100%; background: var(--primary); width: 65%; border-radius: 10px; }
-
-        /* كروت الأقسام */
-        .card {
-            background: var(--card); border-radius: 25px; padding: 25px;
-            margin-bottom: 20px; border: 1px solid var(--border); box-shadow: var(--shadow);
-        }
-        .card-header { display: flex; align-items: center; gap: 12px; margin-bottom: 15px; }
-        .card-header i { font-size: 1.2rem; color: var(--primary); }
-        .card-header h3 { margin: 0; font-size: 1.1rem; font-weight: 800; }
-        
-        .card-p { font-size: 0.9rem; line-height: 1.7; color: var(--secondary); margin: 0; }
-
-        /* Roadmap */
-        .roadmap-list { display: flex; flex-direction: column; gap: 12px; }
-        .roadmap-item {
-            display: flex; align-items: center; gap: 12px; padding: 12px;
-            background: var(--bg); border-radius: 15px; font-size: 0.9rem; font-weight: 600;
-        }
-        .status-tag { margin-right: auto; font-size: 0.7rem; padding: 4px 12px; border-radius: 20px; background: var(--border); color: var(--secondary); }
-
-        /* Actions */
-        .actions-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .btn-action {
-            background: var(--card); padding: 20px; border-radius: 22px;
-            text-align: center; border: 1px solid var(--border); cursor: pointer;
-            text-decoration: none; color: var(--text);
-        }
-        .btn-action i { display: block; font-size: 1.5rem; color: var(--primary); margin-bottom: 10px; }
-        .btn-action span { font-weight: 700; font-size: 0.9rem; }
-
-        #toast {
-            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
-            background: #0f172a; color: #fff; padding: 12px 25px;
-            border-radius: 50px; font-size: 0.9rem; display: none; z-index: 2000;
-        }
-        
-        /* قسم التقييمات الجديد */
-.reviews-section {
-    margin-top: 30px;
-}
-
-.review-input-card {
-    background: var(--card);
-    border-radius: 25px;
-    padding: 20px;
-    margin-bottom: 20px;
-    border: 1px solid var(--border);
-    box-shadow: var(--shadow);
-}
-
-.user-meta {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 15px;
-}
-
-.user-meta img {
-    width: 45px;
-    height: 45px;
-    border-radius: 12px;
-    object-fit: cover;
-}
-
-.user-meta b {
-    font-size: 0.9rem;
-    color: var(--text);
-}
-
-/* نظام النجوم */
-.star-rating {
-    display: flex;
-    gap: 5px;
-    margin-bottom: 15px;
-    color: #fbbf24; /* لون ذهبي */
-    font-size: 1.2rem;
-}
-
-.star-rating i {
-    cursor: pointer;
-    transition: 0.2s;
-}
-
-.star-rating i:hover {
-    transform: scale(1.2);
-}
-
-.review-textarea {
-    width: 100%;
-    border: 1px solid var(--border);
-    background: var(--bg);
-    border-radius: 15px;
-    padding: 12px;
-    font-family: 'Cairo';
-    font-size: 0.85rem;
-    color: var(--text);
-    resize: none;
-    margin-bottom: 15px;
-}
-
-.btn-submit-review {
-    width: 100%;
-    background: var(--primary);
-    color: white;
-    border: none;
-    padding: 12px;
-    border-radius: 15px;
-    font-family: 'Cairo';
-    font-weight: 700;
-    cursor: pointer;
-}
-
-/* كروت التقييمات المعروضة */
-.review-card {
-    background: var(--card);
-    border-radius: 20px;
-    padding: 15px;
-    margin-bottom: 15px;
-    border: 1px solid var(--border);
-}
-
-.review-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 10px;
-}
-
-.review-user-info {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.review-user-info img {
-    width: 35px;
-    height: 35px;
-    border-radius: 10px;
-}
-
-.review-user-info b {
-    font-size: 0.8rem;
-}
-
-.review-date {
-    font-size: 0.7rem;
-    color: var(--secondary);
-}
-
-.review-comment {
-    font-size: 0.85rem;
-    line-height: 1.6;
-    color: var(--secondary);
-    margin: 0;
-}
-
+        * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; transition: 0.3s; }
+        body { font-family: 'Cairo', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 20px 15px 120px; }
+        .navbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        .logo { font-weight: 900; font-size: 1.6rem; color: var(--primary); }
+        .stat-card { background: linear-gradient(135deg, var(--primary), #1d4ed8); color: white; border-radius: 30px; padding: 30px; margin-bottom: 25px; box-shadow: 0 20px 40px rgba(37, 99, 235, 0.2); }
+        .card { background: var(--card); border-radius: 25px; padding: 25px; margin-bottom: 20px; border: 1px solid var(--border); box-shadow: var(--shadow); }
+        .star-rating { display: flex; gap: 5px; margin-bottom: 15px; color: #fbbf24; font-size: 1.2rem; }
+        .star-rating i { cursor: pointer; }
+        .review-textarea { width: 100%; border: 1px solid var(--border); background: var(--bg); border-radius: 15px; padding: 12px; font-family: 'Cairo'; color: var(--text); resize: none; margin-bottom: 15px; }
+        .btn-submit-review { width: 100%; background: var(--primary); color: white; border: none; padding: 12px; border-radius: 15px; font-weight: 700; cursor: pointer; }
+        .review-card { background: var(--card); border-radius: 20px; padding: 15px; margin-bottom: 15px; border: 1px solid var(--border); }
+        .review-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .review-user-info { display: flex; align-items: center; gap: 10px; }
+        .review-user-info img { width: 35px; height: 35px; border-radius: 10px; }
     </style>
 </head>
 <body data-theme="dark">
 
     <nav class="navbar">
         <div class="logo">وذكر</div>
-        <div class="btn-icon" onclick="toggleTheme()">
-            <i class="fa-solid fa-moon" id="theme-icon"></i>
-        </div>
+        <div style="cursor:pointer;" onclick="document.body.dataset.theme = document.body.dataset.theme === 'dark' ? 'light' : 'dark'"><i class="fa-solid fa-circle-half-stroke"></i></div>
     </nav>
 
     <div class="stat-card">
-        <div class="stat-val" id="user-count">21</div>
-        <div class="stat-label">مستخدم نشط الآن</div>
-    </div>
-
-    <div class="progress-card">
-        <div class="prog-header">
-            <span>وردك اليومي</span>
-            <span style="color: var(--primary)">65%</span>
-        </div>
-        <div class="prog-bar">
-            <div class="prog-fill"></div>
-        </div>
+        <div style="font-size: 3rem; font-weight: 900;">21</div>
+        <div style="opacity: 0.8;">مستخدم نشط الآن</div>
     </div>
 
     <div class="card">
-        <div class="card-header">
-            <i class="fa-solid fa-seedling"></i>
-            <h3>عن مشروع وذكر</h3>
-        </div>
-        <p class="card-p">
-            عملنا "وذكر" عشان يكون أذكى وأبسط رفيق ليك. هدفنا نحول الموبايل من أداة تشتيت لأداة تعينك على ذكر الله بتصميم جميل وهادئ.
-        </p>
+        <h3>عن مشروع وذكر</h3>
+        <p style="font-size: 0.9rem; color: var(--secondary);">هدفنا نحول الموبايل من أداة تشتيت لأداة تعينك على ذكر الله.</p>
     </div>
 
     <div class="card">
-        <div class="card-header">
-            <i class="fa-solid fa-wand-magic-sparkles"></i>
-            <h3>التحديثات القادمة</h3>
+        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 15px;">
+            <img id="reviewUserImg" src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" style="width:45px; border-radius:12px;">
+            <b id="reviewUserName">جاري التحميل...</b>
         </div>
-        <div class="roadmap-list">
-            <div class="roadmap-item">
-                <i class="fa-solid fa-clock"></i> <span>المؤذن الذكي</span>
-                <span class="status-tag">قيد التنفيذ</span>
-            </div>
-            
-                        <div class="roadmap-item">
-                <i class="fa-solid fa-clock"></i> <span>تحديثات رمضان</span>
-                <span class="status-tag">قيد التنفيذ</span>
-            </div>
-            
-                      <div class="roadmap-item">
-                <i class="fa-solid fa-clock"></i> <span>القرآن الكريم</span>
-                <span class="status-tag">قيد التنفيذ</span>
-            </div>
-            
-                        <div class="roadmap-item">
-                <i class="fa-solid fa-clock"></i> <span>الإبتهالات الدينية</span>
-                <span class="status-tag">قيد التنفيذ</span>
-            </div>
-            
-            <div class="roadmap-item">
-                <i class="fa-solid fa-shield-heart"></i> <span>تحديات الأذكار</span>
-                <span class="status-tag">قريباً</span>
-            </div>
+        <div class="star-rating" id="starInput">
+            <i class="fa-solid fa-star" data-v="1"></i>
+            <i class="fa-solid fa-star" data-v="2"></i>
+            <i class="fa-solid fa-star" data-v="3"></i>
+            <i class="fa-solid fa-star" data-v="4"></i>
+            <i class="fa-solid fa-star" data-v="5"></i>
         </div>
+        <textarea class="review-textarea" id="reviewText" rows="3" placeholder="رأيك يهمنا يا بطل..."></textarea>
+        <button class="btn-submit-review" onclick="submitReview()">إرسال التقييم</button>
     </div>
 
-    <div class="actions-row">
-        <a href="https://wa.me/201158601817" class="btn-action">
-            <i class="fa-brands fa-whatsapp"></i>
-            <span>دعم مباشر</span>
-        </a>
-        <div class="btn-action" onclick="shareApp()">
-            <i class="fa-solid fa-share-nodes"></i>
-            <span>مشاركة الخير</span>
-        </div>
-    </div>
+    <h3 style="margin: 25px 10px 15px;">آراء الذاكرين</h3>
+    <div id="reviewsList"></div>
 
-    <div id="toast">تم نسخ الرابط بنجاح</div>
-
-    <div class="reviews-section">
-        <div class="card-header" style="padding-right: 10px;">
-            <i class="fa-solid fa-star-half-stroke"></i>
-            <h3>آراء الذاكرين</h3>
-        </div>
-
-        <div class="review-input-card">
-            <div class="user-meta">
-                <img id="reviewUserImg" src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="User">
-                <div flex-column>
-                    <b id="reviewUserName">جاري التحميل...</b>
-                    <div class="star-rating" id="starInput">
-                        <i class="fa-solid fa-star" data-v="1"></i>
-                        <i class="fa-solid fa-star" data-v="2"></i>
-                        <i class="fa-solid fa-star" data-v="3"></i>
-                        <i class="fa-solid fa-star" data-v="4"></i>
-                        <i class="fa-solid fa-star" data-v="5"></i>
-                    </div>
-                </div>
-            </div>
-            <textarea class="review-textarea" id="reviewText" rows="3" placeholder="اكتب رأيك في التطبيق بكل صراحة..."></textarea>
-            <button class="btn-submit-review" onclick="submitReview()">إرسال التقييم</button>
-        </div>
-
-        <div id="reviewsList">
-            <div class="review-card">
-                <div class="review-header">
-                    <div class="review-user-info">
-                        <img src="https://cdn-icons-png.flaticon.com/512/4140/4140048.png">
-                        <div>
-                            <b>محمد أحمد</b>
-                            <div style="color: #fbbf24; font-size: 0.7rem;">
-                                <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
-                            </div>
-                        </div>
-                    </div>
-                    <span class="review-date">منذ يومين</span>
-                </div>
-                <p class="review-comment">تطبيق رائع جداً ومريح للعين، جزاكم الله خيراً على هذا المجهود.</p>
-                
-<script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getFirestore, doc, getDoc, setDoc, collection, query, orderBy, onSnapshot, where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-
-    // إعدادات Firebase (تأكد أنها نفس بياناتك)
-    const firebaseConfig = { apiKey: "AIzaSyA4h9MsH0Szht7taowp95WcBr2y6scXe1k", projectId: "omardev-fbfd8" };
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-    const auth = getAuth(app);
-
-    let currentStars = 5;
-
-    // سحب بيانات البروفايل للتقييم
-    onAuthStateChanged(auth, async (user) => {
-        if (user) {
-            const snap = await getDoc(doc(db, "users_azkar", user.uid));
-            if (snap.exists()) {
-                const data = snap.data();
-                document.getElementById('reviewUserName').innerText = data.firstName + ' ' + data.lastName;
-                document.getElementById('reviewUserImg').src = data.profilePic || (data.gender === 'أنثى' ? 'https://cdn-icons-png.flaticon.com/512/6997/6997662.png' : 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png');
-            }
-        }
-    });
-
-    // نظام النجوم
-    window.updateStars = (val) => {
-        currentStars = val;
-        document.querySelectorAll('#starInput i').forEach(s => {
-            s.className = s.getAttribute('data-v') <= val ? 'fa-solid fa-star' : 'fa-regular fa-star';
-        });
-    };
-
-    document.querySelectorAll('#starInput i').forEach(star => {
-        star.onclick = () => updateStars(star.getAttribute('data-v'));
-    });
-
-    // وظيفة الإرسال
-    window.submitReview = async () => {
-        const text = document.getElementById('reviewText').value.trim();
-        if(!text) return alert("اكتب تعليقك أولاً");
-        
-        const user = auth.currentUser;
-        if(!user) return alert("سجل دخولك أولاً");
-
-        try {
-            await setDoc(doc(db, "app_reviews", user.uid), {
-                userName: document.getElementById('reviewUserName').innerText,
-                userPic: document.getElementById('reviewUserImg').src,
-                stars: parseInt(currentStars),
-                comment: text,
-                status: "pending",
-                date: new Date().toISOString()
-            });
-            document.getElementById('reviewText').value = "";
-            alert("وصل يا عمر! التقييم تحت المراجعة حالياً ✅");
-        } catch (e) { alert("حدث خطأ في الاتصال"); }
-    };
-
-    // عرض التقييمات المقبولة فقط
-    const q = query(collection(db, "app_reviews"), where("status", "==", "approved"), orderBy("date", "desc"));
-    onSnapshot(q, (snap) => {
-        const list = document.getElementById('reviewsList');
-        list.innerHTML = snap.empty ? "<p style='text-align:center; opacity:0.5;'>لا توجد تقييمات منشورة بعد.</p>" : "";
-        snap.forEach(d => {
-            const rev = d.data();
-            const stars = Array(5).fill(0).map((_, i) => `<i class="${i < rev.stars ? 'fa-solid' : 'fa-regular'} fa-star"></i>`).join('');
-            list.innerHTML += `
-                <div class="review-card">
-                    <div class="review-header">
-                        <div class="review-user-info"><img src="${rev.userPic}"><div><b>${rev.userName}</b><div style="color:#fbbf24;font-size:0.7rem;">${stars}</div></div></div>
-                        <span class="review-date">${new Date(rev.date).toLocaleDateString('ar-EG')}</span>
-                    </div>
-                    <p class="review-comment">${rev.comment}</p>
-                </div>`;
-        });
-    });
-</script>            </div>
-        </div>
-    </div>
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getFirestore, doc, getDoc, setDoc, collection, query, orderBy, onSnapshot, where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
@@ -442,19 +79,17 @@
 
     let currentStars = 5;
 
-    // جلب بيانات المستخدم
     onAuthStateChanged(auth, async (user) => {
         if (user) {
             const snap = await getDoc(doc(db, "users_azkar", user.uid));
             if (snap.exists()) {
-                const data = snap.data();
-                document.getElementById('reviewUserName').innerText = data.firstName + ' ' + data.lastName;
-                document.getElementById('reviewUserImg').src = data.profilePic || (data.gender === 'أنثى' ? 'https://cdn-icons-png.flaticon.com/512/6997/6997662.png' : 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png');
+                const d = snap.data();
+                document.getElementById('reviewUserName').innerText = d.firstName + ' ' + d.lastName;
+                document.getElementById('reviewUserImg').src = d.profilePic || (d.gender === 'أنثى' ? 'https://cdn-icons-png.flaticon.com/512/6997/6997662.png' : 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png');
             }
         }
     });
 
-    // نظام النجوم (تم إصلاحه ليعمل مع الويندوز)
     window.updateStars = (val) => {
         currentStars = val;
         document.querySelectorAll('#starInput i').forEach(s => {
@@ -462,19 +97,13 @@
         });
     };
 
-    document.querySelectorAll('#starInput i').forEach(star => {
-        star.onclick = () => window.updateStars(star.getAttribute('data-v'));
-    });
+    document.querySelectorAll('#starInput i').forEach(s => s.onclick = () => window.updateStars(s.getAttribute('data-v')));
 
-    // وظيفة الإرسال
     window.submitReview = async () => {
         const text = document.getElementById('reviewText').value.trim();
-        if(!text) return alert("اكتب تعليقك أولاً");
-        const user = auth.currentUser;
-        if(!user) return alert("سجل دخولك أولاً");
-
+        if(!text || !auth.currentUser) return alert("تأكد من كتابة النص وتسجيل الدخول");
         try {
-            await setDoc(doc(db, "app_reviews", user.uid), {
+            await setDoc(doc(db, "app_reviews", auth.currentUser.uid), {
                 userName: document.getElementById('reviewUserName').innerText,
                 userPic: document.getElementById('reviewUserImg').src,
                 stars: parseInt(currentStars),
@@ -483,30 +112,24 @@
                 date: new Date().toISOString()
             });
             document.getElementById('reviewText').value = "";
-            alert("وصل يا عمر! التقييم تحت المراجعة حالياً ✅");
-        } catch (e) { alert("حدث خطأ في الاتصال"); }
+            alert("وصل يا بطل! التقييم تحت المراجعة ✅");
+        } catch (e) { alert("حدث خطأ"); }
     };
 
-    // عرض التقييمات المقبولة
     const q = query(collection(db, "app_reviews"), where("status", "==", "approved"), orderBy("date", "desc"));
     onSnapshot(q, (snap) => {
         const list = document.getElementById('reviewsList');
-        list.innerHTML = snap.empty ? "<p style='text-align:center; opacity:0.5;'>لا توجد تقييمات منشورة بعد.</p>" : "";
+        list.innerHTML = snap.empty ? "<p>لا توجد تقييمات منشورة.</p>" : "";
         snap.forEach(d => {
-            const rev = d.data();
-            const stars = Array(5).fill(0).map((_, i) => `<i class="${i < rev.stars ? 'fa-solid' : 'fa-regular'} fa-star"></i>`).join('');
-            list.innerHTML += `
-                <div class="review-card">
-                    <div class="review-header">
-                        <div class="review-user-info"><img src="${rev.userPic}"><div><b>${rev.userName}</b><div style="color:#fbbf24;font-size:0.7rem;">${stars}</div></div></div>
-                        <span class="review-date">${new Date(rev.date).toLocaleDateString('ar-EG')}</span>
-                    </div>
-                    <p class="review-comment">${rev.comment}</p>
-                </div>`;
+            const r = d.data();
+            const stars = Array(5).fill(0).map((_, i) => `<i class="${i < r.stars ? 'fa-solid' : 'fa-regular'} fa-star"></i>`).join('');
+            list.innerHTML += `<div class="review-card">
+                <div class="review-header"><div class="review-user-info"><img src="${r.userPic}"><b>${r.userName}</b></div></div>
+                <div style="color:#fbbf24; font-size:0.7rem; margin-bottom:5px;">${stars}</div>
+                <p style="margin:0; font-size:0.85rem; color:var(--secondary);">${r.comment}</p>
+            </div>`;
         });
     });
 </script>
-
-    
 </body>
 </html>
