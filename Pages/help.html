@@ -107,6 +107,127 @@
             background: #0f172a; color: #fff; padding: 12px 25px;
             border-radius: 50px; font-size: 0.9rem; display: none; z-index: 2000;
         }
+        
+        /* قسم التقييمات الجديد */
+.reviews-section {
+    margin-top: 30px;
+}
+
+.review-input-card {
+    background: var(--card);
+    border-radius: 25px;
+    padding: 20px;
+    margin-bottom: 20px;
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+}
+
+.user-meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 15px;
+}
+
+.user-meta img {
+    width: 45px;
+    height: 45px;
+    border-radius: 12px;
+    object-fit: cover;
+}
+
+.user-meta b {
+    font-size: 0.9rem;
+    color: var(--text);
+}
+
+/* نظام النجوم */
+.star-rating {
+    display: flex;
+    gap: 5px;
+    margin-bottom: 15px;
+    color: #fbbf24; /* لون ذهبي */
+    font-size: 1.2rem;
+}
+
+.star-rating i {
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.star-rating i:hover {
+    transform: scale(1.2);
+}
+
+.review-textarea {
+    width: 100%;
+    border: 1px solid var(--border);
+    background: var(--bg);
+    border-radius: 15px;
+    padding: 12px;
+    font-family: 'Cairo';
+    font-size: 0.85rem;
+    color: var(--text);
+    resize: none;
+    margin-bottom: 15px;
+}
+
+.btn-submit-review {
+    width: 100%;
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 15px;
+    font-family: 'Cairo';
+    font-weight: 700;
+    cursor: pointer;
+}
+
+/* كروت التقييمات المعروضة */
+.review-card {
+    background: var(--card);
+    border-radius: 20px;
+    padding: 15px;
+    margin-bottom: 15px;
+    border: 1px solid var(--border);
+}
+
+.review-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 10px;
+}
+
+.review-user-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.review-user-info img {
+    width: 35px;
+    height: 35px;
+    border-radius: 10px;
+}
+
+.review-user-info b {
+    font-size: 0.8rem;
+}
+
+.review-date {
+    font-size: 0.7rem;
+    color: var(--secondary);
+}
+
+.review-comment {
+    font-size: 0.85rem;
+    line-height: 1.6;
+    color: var(--secondary);
+    margin: 0;
+}
+
     </style>
 </head>
 <body data-theme="dark">
@@ -187,8 +308,105 @@
         </div>
     </div>
 
-    <div id="toast">تم نسخ الرابط بنجاح 📋</div>
+    <div id="toast">تم نسخ الرابط بنجاح</div>
 
+    <div class="reviews-section">
+        <div class="card-header" style="padding-right: 10px;">
+            <i class="fa-solid fa-star-half-stroke"></i>
+            <h3>آراء الذاكرين</h3>
+        </div>
+
+        <div class="review-input-card">
+            <div class="user-meta">
+                <img id="reviewUserImg" src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="User">
+                <div flex-column>
+                    <b id="reviewUserName">جاري التحميل...</b>
+                    <div class="star-rating" id="starInput">
+                        <i class="fa-solid fa-star" data-v="1"></i>
+                        <i class="fa-solid fa-star" data-v="2"></i>
+                        <i class="fa-solid fa-star" data-v="3"></i>
+                        <i class="fa-solid fa-star" data-v="4"></i>
+                        <i class="fa-solid fa-star" data-v="5"></i>
+                    </div>
+                </div>
+            </div>
+            <textarea class="review-textarea" id="reviewText" rows="3" placeholder="اكتب رأيك في التطبيق بكل صراحة..."></textarea>
+            <button class="btn-submit-review" onclick="submitReview()">إرسال التقييم</button>
+        </div>
+
+        <div id="reviewsList">
+            <div class="review-card">
+                <div class="review-header">
+                    <div class="review-user-info">
+                        <img src="https://cdn-icons-png.flaticon.com/512/4140/4140048.png">
+                        <div>
+                            <b>محمد أحمد</b>
+                            <div style="color: #fbbf24; font-size: 0.7rem;">
+                                <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <span class="review-date">منذ يومين</span>
+                </div>
+                <p class="review-comment">تطبيق رائع جداً ومريح للعين، جزاكم الله خيراً على هذا المجهود.</p>
+            </div>
+        </div>
+    </div>
+
+<script>
+  // استيراد بيانات المستخدم من الـ Firebase (تأكد من وجود استيراد auth و db في صفحتك)
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { doc, getDoc, setDoc, collection, query, orderBy, limit, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+let currentStars = 5;
+
+// سحب بيانات البروفايل للتقييم
+onAuthStateChanged(auth, async (user) => {
+    if (user) {
+        const snap = await getDoc(doc(db, "users_azkar", user.uid));
+        if (snap.exists()) {
+            const data = snap.data();
+            document.getElementById('reviewUserName').innerText = data.firstName + ' ' + data.lastName;
+            document.getElementById('reviewUserImg').src = data.profilePic || 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png';
+        }
+    }
+});
+
+// نظام اختيار النجوم
+document.querySelectorAll('#starInput i').forEach(star => {
+    star.addEventListener('click', function() {
+        currentStars = this.getAttribute('data-v');
+        updateStars(currentStars);
+    });
+});
+
+function updateStars(val) {
+    document.querySelectorAll('#starInput i').forEach(s => {
+        s.classList.toggle('fa-solid', s.getAttribute('data-v') <= val);
+        s.classList.toggle('fa-regular', s.getAttribute('data-v') > val);
+    });
+}
+
+// وظيفة إرسال التقييم للـ Firebase
+async function submitReview() {
+    const text = document.getElementById('reviewText').value;
+    if(!text) return alert("من فضلك اكتب تعليقك");
+
+    const user = auth.currentUser;
+    if(user) {
+        await setDoc(doc(db, "app_reviews", user.uid), {
+            userName: document.getElementById('reviewUserName').innerText,
+            userPic: document.getElementById('reviewUserImg').src,
+            stars: currentStars,
+            comment: text,
+            date: new Date().toISOString()
+        });
+        document.getElementById('reviewText').value = "";
+        alert("شكراً لتقييمك يا بطل! ✨");
+    }
+}
+
+</script>
     <script>
         // دالة المشاركة الأصلية
         async function shareApp() {
