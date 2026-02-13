@@ -2,154 +2,224 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>المساعدة  | وذكر</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>وذكر | المساعدة</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-pink: #ffb7c5;
-            --bg-color: #fff5f7;
-            --card-bg: #ffffff;
-            --text-main: #4a3438;
-            --nav-bg: #ffffff;
-            --whatsapp-green: #25d366;
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --text: #0f172a;
+            --primary: #2563eb;
+            --secondary: #64748b;
+            --border: #e2e8f0;
+            --shadow: 0 10px 30px rgba(0,0,0,0.05);
+            --glass: rgba(255, 255, 255, 0.8);
         }
 
-        .dark-mode {
-            --bg-color: #121212;
-            --card-bg: #1e1e1e;
-            --text-main: #e0e0e0;
-            --nav-bg: #181818;
-            --primary-pink: #ff8fa3;
+        [data-theme="dark"] {
+            --bg: #020617;
+            --card: #0f172a;
+            --text: #f8fafc;
+            --primary: #3b82f6;
+            --secondary: #94a3b8;
+            --border: #1e293b;
+            --shadow: 0 10px 40px rgba(0,0,0,0.4);
+            --glass: rgba(15, 23, 42, 0.8);
         }
+
+        * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            margin: 0;
-            padding-top: 80px;
-            overflow-x: hidden;
-            transition: background 0.4s ease;
+            font-family: 'Cairo', sans-serif; background: var(--bg); color: var(--text);
+            margin: 0; padding: 20px 15px 120px; min-height: 100vh;
         }
 
-        /* Navbar */
+        /* Navbar المطور */
         .navbar {
-            position: fixed;
-            top: 0; width: 100%; height: 65px;
-            background: var(--nav-bg);
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 0 20px; box-sizing: border-box;
-            box-shadow: 0 2px 15px rgba(0,0,0,0.1); z-index: 1000;
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 30px; padding: 10px;
+        }
+        .logo { font-weight: 900; font-size: 1.6rem; color: var(--primary); letter-spacing: -1px; }
+
+        .btn-icon {
+            width: 48px; height: 48px; background: var(--card); border-radius: 16px;
+            display: grid; place-items: center; cursor: pointer; border: 1px solid var(--border);
+            box-shadow: var(--shadow); color: var(--primary);
         }
 
-        .navbar i { font-size: 22px; cursor: pointer; color: var(--primary-pink); }
-        .navbar .title { font-weight: bold; font-size: 1.3rem; }
+        /* كارت الإحصائيات (Glassmorphism) */
+        .stat-card {
+            background: linear-gradient(135deg, var(--primary), #1d4ed8);
+            color: white; border-radius: 30px; padding: 30px;
+            margin-bottom: 25px; position: relative; overflow: hidden;
+            box-shadow: 0 20px 40px rgba(37, 99, 235, 0.2);
+        }
+        .stat-card::before {
+            content: ''; position: absolute; top: -50px; left: -50px;
+            width: 150px; height: 150px; background: rgba(255,255,255,0.1); border-radius: 50%;
+        }
 
-        /* Container & Cards */
-        .container { max-width: 500px; margin: auto; padding: 20px; position: relative; z-index: 10; }
+        .stat-val { font-size: 3rem; font-weight: 900; line-height: 1; margin-bottom: 5px; }
+        .stat-label { font-weight: 600; opacity: 0.8; font-size: 0.95rem; }
+
+        /* كارت التقدم اليومي (الفكرة الجديدة) */
+        .progress-card {
+            background: var(--card); border-radius: 25px; padding: 20px;
+            margin-bottom: 20px; border: 1px solid var(--border); box-shadow: var(--shadow);
+        }
+        .prog-header { display: flex; justify-content: space-between; margin-bottom: 12px; font-weight: 700; font-size: 0.9rem; }
+        .prog-bar { height: 8px; background: var(--bg); border-radius: 10px; overflow: hidden; }
+        .prog-fill { height: 100%; background: var(--primary); width: 65%; border-radius: 10px; }
+
+        /* كروت الأقسام */
+        .card {
+            background: var(--card); border-radius: 25px; padding: 25px;
+            margin-bottom: 20px; border: 1px solid var(--border); box-shadow: var(--shadow);
+        }
+        .card-header { display: flex; align-items: center; gap: 12px; margin-bottom: 15px; }
+        .card-header i { font-size: 1.2rem; color: var(--primary); }
+        .card-header h3 { margin: 0; font-size: 1.1rem; font-weight: 800; }
         
-        .help-card {
-            background: var(--card-bg);
-            border-radius: 15px; padding: 20px; margin-bottom: 20px;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
-            border: 1px solid rgba(255, 183, 197, 0.3);
+        .card-p { font-size: 0.9rem; line-height: 1.7; color: var(--secondary); margin: 0; }
+
+        /* Roadmap */
+        .roadmap-list { display: flex; flex-direction: column; gap: 12px; }
+        .roadmap-item {
+            display: flex; align-items: center; gap: 12px; padding: 12px;
+            background: var(--bg); border-radius: 15px; font-size: 0.9rem; font-weight: 600;
         }
+        .status-tag { margin-right: auto; font-size: 0.7rem; padding: 4px 12px; border-radius: 20px; background: var(--border); color: var(--secondary); }
 
-        .help-card h3 { color: var(--primary-pink); margin-top: 0; }
-
-        /* WhatsApp Button */
-        .whatsapp-btn {
-            display: flex; align-items: center; justify-content: center;
-            background: var(--whatsapp-green); color: white;
-            padding: 15px; border-radius: 12px; text-decoration: none;
-            font-weight: bold; font-size: 1.1rem; gap: 10px;
-            box-shadow: 0 5px 15px rgba(37, 211, 102, 0.3);
-            transition: transform 0.2s;
+        /* Actions */
+        .actions-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .btn-action {
+            background: var(--card); padding: 20px; border-radius: 22px;
+            text-align: center; border: 1px solid var(--border); cursor: pointer;
+            text-decoration: none; color: var(--text);
         }
-        .whatsapp-btn:hover { transform: scale(1.02); }
+        .btn-action i { display: block; font-size: 1.5rem; color: var(--primary); margin-bottom: 10px; }
+        .btn-action span { font-weight: 700; font-size: 0.9rem; }
 
-        /* Sakura Animation Styles */
-        .sakura {
-            position: fixed; top: -10%;
-            background: linear-gradient(120deg, #ffb7c5, #ffdae0);
-            border-radius: 100% 0% 100% 0% / 100% 0% 100% 0%;
-            pointer-events: none; z-index: 1;
-            animation: fall linear infinite;
-        }
-
-        @keyframes fall {
-            0% { transform: translateY(0vh) rotate(0deg); opacity: 1; }
-            100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
+        #toast {
+            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+            background: #0f172a; color: #fff; padding: 12px 25px;
+            border-radius: 50px; font-size: 0.9rem; display: none; z-index: 2000;
         }
     </style>
 </head>
-<body>
+<body data-theme="dark">
 
     <nav class="navbar">
-        <i class="fa-solid fa-chevron-left" onclick="history.back()"></i>
-        <div class="title">المساعدة</div>
-        <i class="fa-solid fa-moon" id="theme-btn" onclick="toggleDarkMode()"></i>
+        <div class="logo">وذكر</div>
+        <div class="btn-icon" onclick="toggleTheme()">
+            <i class="fa-solid fa-moon" id="theme-icon"></i>
+        </div>
     </nav>
 
-    <div class="container">
-        <div class="help-card">
-            <h3><i class="fa-solid fa-circle-info"></i> عن التطبيق</h3>
-            <p>أهلاً بك يا صديقي، هذا التطبيق صُمم لمساعدتك في الوصول للأذكار بسهولة مع تجربة بصرية مريحة.</p>
-        </div>
+    <div class="stat-card">
+        <div class="stat-val" id="user-count">21</div>
+        <div class="stat-label">مستخدم نشط الآن</div>
+    </div>
 
-        <div class="help-card">
-            <h3><i class="fa-solid fa-comments"></i> هل تحتاج لمساعدة؟</h3>
-            <p>يمكنك التواصل معي للاستفسارات أو الإقتراحات لتحسن تجربتك.</p>
-            <br>
-            <a href="https://wa.me/201158601817" class="whatsapp-btn" target="_blank">
-                <i class="fa-brands fa-whatsapp"></i> تواصل معي 
-            </a>
+    <div class="progress-card">
+        <div class="prog-header">
+            <span>وردك اليومي</span>
+            <span style="color: var(--primary)">65%</span>
+        </div>
+        <div class="prog-bar">
+            <div class="prog-fill"></div>
         </div>
     </div>
 
+    <div class="card">
+        <div class="card-header">
+            <i class="fa-solid fa-seedling"></i>
+            <h3>عن مشروع وذكر</h3>
+        </div>
+        <p class="card-p">
+            عملنا "وذكر" عشان يكون أذكى وأبسط رفيق ليك. هدفنا نحول الموبايل من أداة تشتيت لأداة تعينك على ذكر الله بتصميم جميل وهادئ.
+        </p>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <i class="fa-solid fa-wand-magic-sparkles"></i>
+            <h3>خارطة الطريق</h3>
+        </div>
+        <div class="roadmap-list">
+            <div class="roadmap-item">
+                <i class="fa-solid fa-clock"></i> <span>المؤذن الذكي</span>
+                <span class="status-tag">قيد التنفيذ</span>
+            </div>
+            <div class="roadmap-item">
+                <i class="fa-solid fa-shield-heart"></i> <span>تحديات الأذكار</span>
+                <span class="status-tag">قريباً</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="actions-row">
+        <a href="https://wa.me/201158601817" class="btn-action">
+            <i class="fa-brands fa-whatsapp"></i>
+            <span>دعم مباشر</span>
+        </a>
+        <div class="btn-action" onclick="shareApp()">
+            <i class="fa-solid fa-share-nodes"></i>
+            <span>مشاركة الخير</span>
+        </div>
+    </div>
+
+    <div id="toast">تم نسخ الرابط بنجاح 📋</div>
+
     <script>
-        // --- Sakura Falling Effect ---
-        function createSakura() {
-            const leaf = document.createElement('div');
-            leaf.classList.add('sakura');
-            
-            // إعدادات عشوائية للأوراق
-            const size = Math.random() * 10 + 10 + 'px';
-            leaf.style.width = size;
-            leaf.style.height = size;
-            leaf.style.left = Math.random() * 100 + 'vw';
-            leaf.style.animationDuration = Math.random() * 3 + 2 + 's'; // سرعة السقوط
-            leaf.style.opacity = Math.random();
-            
-            document.body.appendChild(leaf);
+        // دالة المشاركة الأصلية
+        async function shareApp() {
+            const shareData = {
+                title: 'تطبيق وذكر',
+                text: 'أفضل رفيق للأذكار بتصميم عصري.. جربه الآن!',
+                url: window.location.href
+            };
 
-            // حذف الورقة بعد انتهاء الأنميشن
-            setTimeout(() => { leaf.remove(); }, 5000);
-        }
-
-        // إنشاء ورقة كل 300 مللي ثانية
-        setInterval(createSakura, 300);
-
-        // --- Dark Mode Logic ---
-        function toggleDarkMode() {
-            const body = document.body;
-            const icon = document.getElementById('theme-btn');
-            body.classList.toggle('dark-mode');
-            
-            if (body.classList.contains('dark-mode')) {
-                icon.classList.replace('fa-moon', 'fa-sun');
-                localStorage.setItem('theme', 'dark');
-            } else {
-                icon.classList.replace('fa-sun', 'fa-moon');
-                localStorage.setItem('theme', 'light');
+            try {
+                if (navigator.share) {
+                    await navigator.share(shareData);
+                } else {
+                    //Fallback لو المتصفح مش بيدعم الـ Share API
+                    navigator.clipboard.writeText(window.location.href);
+                    showToast();
+                }
+            } catch (err) {
+                console.log('Error sharing:', err);
             }
         }
 
-        if (localStorage.getItem('theme') === 'dark') {
-            document.body.classList.add('dark-mode');
-            document.getElementById('theme-btn').classList.replace('fa-moon', 'fa-sun');
+        function showToast() {
+            const t = document.getElementById('toast');
+            t.style.display = 'block';
+            setTimeout(() => t.style.display = 'none', 3000);
         }
+
+        function toggleTheme() {
+            const b = document.body;
+            const icon = document.getElementById('theme-icon');
+            const isDark = b.getAttribute('data-theme') === 'dark';
+            
+            b.setAttribute('data-theme', isDark ? 'light' : 'dark');
+            icon.className = isDark ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+            
+            if(navigator.vibrate) navigator.vibrate(50);
+        }
+
+        // أنيميشن العداد
+        setInterval(() => {
+            const el = document.getElementById('user-count');
+            let current = parseInt(el.innerText);
+            let next = current + (Math.random() > 0.5 ? 1 : -1);
+            if (next < 10) next = 10;
+            el.innerText = next;
+        }, 4000);
     </script>
 </body>
 </html>
