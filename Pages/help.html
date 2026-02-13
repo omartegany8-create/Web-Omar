@@ -430,15 +430,11 @@
 </script>            </div>
         </div>
     </div>
-
-وده؟؟
-
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getFirestore, doc, getDoc, setDoc, collection, query, orderBy, onSnapshot, where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-    // إعدادات Firebase (تأكد أنها نفس بياناتك)
     const firebaseConfig = { apiKey: "AIzaSyA4h9MsH0Szht7taowp95WcBr2y6scXe1k", projectId: "omardev-fbfd8" };
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
@@ -446,7 +442,7 @@
 
     let currentStars = 5;
 
-    // سحب بيانات البروفايل للتقييم
+    // جلب بيانات المستخدم
     onAuthStateChanged(auth, async (user) => {
         if (user) {
             const snap = await getDoc(doc(db, "users_azkar", user.uid));
@@ -458,7 +454,7 @@
         }
     });
 
-    // نظام النجوم
+    // نظام النجوم (تم إصلاحه ليعمل مع الويندوز)
     window.updateStars = (val) => {
         currentStars = val;
         document.querySelectorAll('#starInput i').forEach(s => {
@@ -467,14 +463,13 @@
     };
 
     document.querySelectorAll('#starInput i').forEach(star => {
-        star.onclick = () => updateStars(star.getAttribute('data-v'));
+        star.onclick = () => window.updateStars(star.getAttribute('data-v'));
     });
 
     // وظيفة الإرسال
     window.submitReview = async () => {
         const text = document.getElementById('reviewText').value.trim();
         if(!text) return alert("اكتب تعليقك أولاً");
-        
         const user = auth.currentUser;
         if(!user) return alert("سجل دخولك أولاً");
 
@@ -492,7 +487,7 @@
         } catch (e) { alert("حدث خطأ في الاتصال"); }
     };
 
-    // عرض التقييمات المقبولة فقط
+    // عرض التقييمات المقبولة
     const q = query(collection(db, "app_reviews"), where("status", "==", "approved"), orderBy("date", "desc"));
     onSnapshot(q, (snap) => {
         const list = document.getElementById('reviewsList');
@@ -511,6 +506,7 @@
         });
     });
 </script>
+
     
 </body>
 </html>
