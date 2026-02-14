@@ -42,30 +42,24 @@
 
           <span id="pure-hijri-date">...</span>
 <script>
-    (function() {
-        // دالة مخصصة للهجري فقط
-        function getHijriDate() {
-            const today = new Date();
-            
-            // إعدادات التقويم الهجري (أم القرى) - أرقام عربية وأسماء شهور
-            const hijriConfig = new Intl.DateTimeFormat('ar-SA-u-ca-islamic-uma-nu-arab', {
-                day: 'numeric',
-                month: 'long',
-                year: 'numeric'
-            });
+    function renderHijriOnly() {
+        const today = new Date();
+        
+        // دي أهم حتة: بنقول للمتصفح استعمل التقويم الإسلامي (islamic-uma)
+        const hijriFormatter = new Intl.DateTimeFormat('ar-SA-u-ca-islamic-uma-nu-arab', {
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric'
+        });
 
-            // تحويل وعرض التاريخ
-            const hijriString = hijriConfig.format(today);
-            
-            const displayElement = document.getElementById('pure-hijri-date');
-            if (displayElement) {
-                displayElement.innerText = hijriString;
-            }
-        }
+        const hijriDate = hijriFormatter.format(today);
+        
+        // بنحطه في الـ ID بتاعك
+        document.getElementById('pure-hijri-date').innerText = hijriDate;
+    }
 
-        // تشغيل فوري
-        getHijriDate();
-    })();
+    // تشغيل
+    renderHijriOnly();
 </script>
 
             <div class="ticker-item ramadan-part">
