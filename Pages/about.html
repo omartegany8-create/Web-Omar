@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>وذكر | عن الموقع</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;600;700&family=Reem+Kufi:wght@700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-deep: #050810;
+            --accent: #e2b07e; 
+            --accent-light: #f3d5b5;
+            --text-main: #ffffff;
+            --text-dim: rgba(255, 255, 255, 0.6);
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        
+        body {
+            font-family: 'IBM Plex Sans Arabic', sans-serif;
+            background-color: var(--bg-deep);
+            color: var(--text-main);
+            overflow-x: hidden;
+            line-height: 1.8;
+        }
+
+        /* خلفية متحركة احترافية */
+        .bg-animate {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            background: radial-gradient(circle at 0% 0%, #161f36 0%, transparent 40%),
+                        radial-gradient(circle at 100% 100%, #1a1a2e 0%, transparent 40%);
+            filter: blur(80px);
+        }
+
+        /* --- الهيرو --- */
+        .hero {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            padding: 20px;
+        }
+
+        .hero-content {
+            text-align: center;
+            z-index: 5;
+            max-width: 1000px;
+        }
+
+        .hero-title {
+            font-family: 'Reem Kufi', sans-serif;
+            font-size: clamp(4rem, 15vw, 8.5rem);
+            font-weight: 700;
+            line-height: 1.1;
+            background: linear-gradient(180deg, #fff 30%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 20px 30px rgba(0,0,0,0.5));
+            margin-bottom: 20px;
+        }
+
+        .hero-sub {
+            font-size: clamp(1.1rem, 4vw, 1.8rem);
+            color: var(--text-dim);
+            font-weight: 400;
+            margin-bottom: 50px;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* الأزرار المروقة */
+        .btns { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; }
+
+        .btn {
+            padding: 16px 45px;
+            border-radius: 16px;
+            font-weight: 700;
+            text-decoration: none;
+            transition: 0.5s cubic-bezier(0.2, 1, 0.3, 1);
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, var(--accent), var(--accent-light));
+            color: #050810;
+            box-shadow: 0 15px 35px rgba(226, 176, 126, 0.25);
+        }
+
+        .btn-secondary {
+            border: 1px solid var(--glass-border);
+            color: #fff;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+        }
+
+        .btn:hover { transform: translateY(-8px); filter: brightness(1.1); box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
+
+        /* --- الكروت الذكية --- */
+        .section { padding: 120px 5%; max-width: 1400px; margin: 0 auto; }
+        .sec-header { text-align: center; margin-bottom: 80px; }
+        .sec-header h2 { font-family: 'Reem Kufi', sans-serif; font-size: 3rem; color: var(--accent); margin-bottom: 15px; }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 35px;
+        }
+
+        .card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            padding: 50px 30px;
+            border-radius: 32px;
+            transition: 0.5s;
+            text-align: center;
+            backdrop-filter: blur(15px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(135deg, transparent, rgba(226, 176, 126, 0.05));
+            pointer-events: none;
+        }
+
+        .card:hover { border-color: var(--accent); transform: scale(1.03); background: rgba(255,255,255,0.06); }
+        .card i { font-size: 3rem; color: var(--accent); margin-bottom: 30px; text-shadow: 0 0 20px rgba(226, 176, 126, 0.3); }
+        .card h3 { font-size: 1.7rem; margin-bottom: 15px; font-weight: 700; }
+
+        /* --- صندوق المطور (الروقان كله هنا) --- */
+        .dev-box {
+            background: linear-gradient(145deg, rgba(255,255,255,0.05), rgba(255,255,255,0.01));
+            border: 1px solid var(--glass-border);
+            border-radius: 40px;
+            padding: 80px 40px;
+            text-align: center;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 40px 100px rgba(0,0,0,0.3);
+        }
+
+        .dev-img-container {
+            position: relative;
+            width: 160px; height: 160px;
+            margin: 0 auto 30px;
+        }
+
+        .dev-img {
+            width: 100%; height: 100%;
+            border-radius: 50%;
+            border: 3px solid var(--accent);
+            object-fit: cover;
+            position: relative;
+            z-index: 2;
+        }
+
+        .dev-img-container::after {
+            content: '';
+            position: absolute;
+            inset: -10px;
+            border: 2px dashed var(--accent);
+            border-radius: 50%;
+            animation: rotate 10s linear infinite;
+        }
+
+        @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+        /* --- الفوتر --- */
+        footer {
+            padding: 100px 20px;
+            text-align: center;
+            background: #03060c;
+            border-top: 1px solid var(--glass-border);
+        }
+
+        .down-arrow {
+            position: absolute;
+            bottom: 40px;
+            animation: bounce 2s infinite;
+            color: var(--accent);
+            font-size: 1.8rem;
+        }
+
+        @keyframes bounce { 0%, 20%, 50%, 80%, 100% {transform: translateY(0);} 40% {transform: translateY(-10px);} 60% {transform: translateY(-5px);} }
+
+        @media (max-width: 768px) {
+            .hero-title { font-size: 4.5rem; }
+            .section { padding: 80px 20px; }
+            .btn { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-animate"></div>
+
+    <section class="hero">
+        <div class="hero-content">
+            <h1 class="hero-title" data-aos="zoom-out">وَذَكِّرْ</h1>
+            <p class="hero-sub" data-aos="fade-up" data-aos-delay="200">
+                { فَإِنَّ الذِّكْرَىٰ تَنفَعُ الْمُؤْمِنِينَ }
+            </p>
+            
+            <div class="btns" data-aos="fade-up" data-aos-delay="400">
+                <a href="index.html" class="btn btn-primary"><i class="fa-solid fa-play"></i> ابدأ الآن</a>
+                <a href="#about" class="btn btn-secondary"><i class="fa-solid fa-compass"></i> استكشف المزايا</a>
+            </div>
+        </div>
+        <div class="down-arrow"><i class="fa-solid fa-chevron-down"></i></div>
+    </section>
+
+    <section class="section" id="about">
+        <div class="sec-header" data-aos="fade-up">
+            <h2>تحديثات 2026</h2>
+            <p style="color: var(--text-dim); font-size: 1.2rem;">نقلة نوعية في واجهة المستخدم لتلائم جلال الكلمات</p>
+        </div>
+
+        <div class="grid">
+            <div class="card" data-aos="fade-up">
+                <i class="fa-solid fa-wand-sparkles"></i>
+                <h3>جماليات هادئة</h3>
+                <p>نظام ألوان "Zen" المصمم ليريح الأعصاب ويجعلك تتدبر الأذكار بعمق أكبر.</p>
+            </div>
+            <div class="card" data-aos="fade-up" data-aos-delay="100">
+                <i class="fa-solid fa-gauge-high"></i>
+                <h3>استجابة لحظية</h3>
+                <p>تم تحسين المحرك البرمجي ليعمل في أجزاء من الثانية حتى على الأجهزة الضعيفة.</p>
+            </div>
+            <div class="card" data-aos="fade-up" data-aos-delay="200">
+                <i class="fa-solid fa-gem"></i>
+                <h3>تجربة ملكية</h3>
+                <p>كل زاوية في "وذكر" تعبر عن اهتمامنا بالتفاصيل، لتليق بمستخدمينا المميزين.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="dev-box" data-aos="zoom-in">
+            <div class="dev-img-container">
+                <img src="https://cdn-icons-png.flaticon.com/512/6840/6840478.png" alt="Omar Tegany" class="dev-img">
+            </div>
+            <h3 style="font-size: 2.5rem; margin-bottom: 10px;">Omar Tegany</h3>
+            <p style="color: var(--accent); letter-spacing: 5px; font-weight: 700; margin-bottom: 25px;">THE ARCHITECT</p>
+            <p style="max-width: 800px; margin: 0 auto; color: var(--text-dim); font-size: 1.2rem; line-height: 2;">
+                طالب في الثانوية العامة، مُغرم بتطويع التكنولوجيا لخدمة الروح. "وذكر" ليس مجرد موقع، بل هو رؤيتي الشخصية لكيفية دمج الفن البرمجي بالقيم الإسلامية.
+            </p>
+            <div style="margin-top: 40px;">
+                <a href="https://wa.me/201158601817" class="btn btn-primary" style="display: inline-flex;">تواصل معي الآن</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="sec-header">
+            <h2>الأسئلة الأكثر شيوعاً</h2>
+        </div>
+        <div style="max-width: 850px; margin: 0 auto;">
+            <details style="border: 1px solid var(--glass-border); padding: 25px; border-radius: 24px; margin-bottom: 20px; background: var(--glass-bg); transition: 0.3s;">
+                <summary style="cursor: pointer; font-weight: 700; font-size: 1.2rem; color: var(--accent);">هل هناك نية لإطلاق تطبيق موبايل؟</summary>
+                <p style="margin-top: 15px; color: var(--text-dim);">وذكر مصمم كـ PWA، مما يعني أنه يمكنك تثبيته كأيقونة على هاتفك وسيعمل كتطبيق كامل المواصفات.</p>
+            </details>
+            <details style="border: 1px solid var(--glass-border); padding: 25px; border-radius: 24px; margin-bottom: 20px; background: var(--glass-bg);">
+                <summary style="cursor: pointer; font-weight: 700; font-size: 1.2rem; color: var(--accent);">ماذا عن الخصوصية؟</summary>
+                <p style="margin-top: 15px; color: var(--text-dim);">خصوصيتك هي أولويتنا؛ لا يتم جمع أي بيانات شخصية، وجميع أذكارك المفضلة تُحفظ على جهازك الخاص فقط.</p>
+            </details>
+        </div>
+    </section>
+
+    <footer>
+        <h2 style="font-family: 'Reem Kufi'; color: var(--accent); font-size: 3rem; margin-bottom: 15px;">وذكر</h2>
+        <p style="color: var(--text-dim); font-size: 1.1rem;">الإتقان هو لغتنا، والذكر هو غايتنا</p>
+        <div style="margin: 40px 0; display: flex; justify-content: center; gap: 30px;">
+            <a href="#" style="color: #fff; opacity: 0.6; transition: 0.3s;" onmouseover="this.style.color='#e2b07e'" onmouseout="this.style.color='#fff'"><i class="fa-brands fa-instagram fa-2xl"></i></a>
+            <a href="#" style="color: #fff; opacity: 0.6; transition: 0.3s;" onmouseover="this.style.color='#e2b07e'" onmouseout="this.style.color='#fff'"><i class="fa-brands fa-github fa-2xl"></i></a>
+        </div>
+        <p style="color: var(--text-dim); font-size: 0.9rem; border-top: 1px solid var(--glass-border); padding-top: 30px;">
+            Made with ❤️ Omar Tegany || © 2026
+        </p>
+    </footer>
+
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({
+            duration: 1500,
+            once: true,
+            offset: 100,
+            easing: 'ease-out-back'
+        });
+    </script>
+</body>
+</html>
