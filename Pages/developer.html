@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Omar Tegany | The Ultimate Identity</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;800&family=Readex+Pro:wght@200;400;700&display=swap" rel="stylesheet">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #8b5cf6;
+            --secondary: #d946ef;
+            --accent: #0ea5e9;
+            --bg: #050811;
+            --card-bg: rgba(15, 23, 42, 0.4);
+            --border: rgba(255, 255, 255, 0.08);
+            --text: #ffffff;
+        }
+
+        /* --- الحماية المطلقة --- */
+        * {
+            margin: 0; padding: 0; box-sizing: border-box;
+            user-select: none !important;
+            -webkit-user-drag: none !important;
+            -webkit-tap-highlight-color: transparent !important;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Readex Pro', sans-serif;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* --- خلفية النجوم المتحركة --- */
+        #particles-js {
+            position: fixed; width: 100%; height: 100%;
+            z-index: -1; background: radial-gradient(circle at center, #0f172a 0%, #050811 100%);
+        }
+
+        .glow-cursor {
+            position: fixed; width: 300px; height: 300px;
+            background: radial-gradient(circle, rgba(139, 92, 246, 0.15) 0%, transparent 70%);
+            border-radius: 50%; pointer-events: none; z-index: 0;
+            transform: translate(-50%, -50%); transition: 0.1s;
+        }
+
+        .container {
+            max-width: 1200px; margin: 0 auto; padding: 80px 20px;
+            position: relative; z-index: 10;
+        }
+
+        /* --- Hero Section --- */
+        .hero {
+            text-align: center; margin-bottom: 100px;
+            transform-style: preserve-3d;
+        }
+
+        .profile-box {
+            position: relative; width: 200px; height: 200px;
+            margin: 0 auto 40px; transform: translateZ(50px);
+        }
+
+        .profile-img {
+            width: 100%; height: 100%; border-radius: 40px;
+            object-fit: cover; border: 2px solid var(--border);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(2deg); }
+        }
+
+        .hero h1 {
+            font-size: 4.5rem; font-weight: 800; line-height: 1;
+            background: linear-gradient(to bottom, #fff, var(--primary), var(--secondary));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 30px rgba(139, 92, 246, 0.3));
+        }
+
+        /* --- Bento Grid --- */
+        .bento-grid {
+            display: grid; grid-template-columns: repeat(6, 1fr);
+            gap: 25px; grid-auto-rows: minmax(180px, auto);
+        }
+
+        .card {
+            background: var(--card-bg);
+            backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+            border: 1px solid var(--border); border-radius: 40px;
+            padding: 40px; transition: 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+            position: relative; overflow: hidden;
+            display: flex; flex-direction: column; justify-content: center;
+        }
+
+        .card:hover {
+            transform: scale(1.03) translateY(-10px) rotateX(5deg) rotateY(-5deg);
+            border-color: var(--primary);
+            box-shadow: 0 40px 80px rgba(0,0,0,0.6), inset 0 0 20px rgba(139, 92, 246, 0.2);
+        }
+
+        .card i { font-size: 2.5rem; margin-bottom: 20px; color: var(--primary); }
+
+        /* Grid Spans */
+        .span-4 { grid-column: span 4; }
+        .span-2 { grid-column: span 2; }
+        .span-3 { grid-column: span 3; }
+        .row-2 { grid-row: span 2; }
+
+        /* --- Skill Progress --- */
+        .skill-row { margin-bottom: 20px; width: 100%; }
+        .skill-info { display: flex; justify-content: space-between; margin-bottom: 8px; font-weight: 600; }
+        .progress-bar { height: 10px; background: rgba(255,255,255,0.05); border-radius: 10px; overflow: hidden; }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, var(--primary), var(--secondary)); border-radius: 10px; }
+
+        /* --- Social Section --- */
+        .social-container {
+            display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; width: 100%;
+        }
+
+        .social-link {
+            aspect-ratio: 1; border-radius: 25px; display: flex;
+            align-items: center; justify-content: center; font-size: 1.8rem;
+            color: white; text-decoration: none; border: 1px solid var(--border);
+            transition: 0.4s; background: rgba(255,255,255,0.02);
+        }
+        .social-link:hover { transform: translateY(-10px); background: var(--primary); color: white; border-color: transparent; }
+
+        /* --- Footer --- */
+        footer {
+            margin-top: 120px; text-align: center; padding-bottom: 50px;
+            opacity: 0.5; font-size: 0.8rem; letter-spacing: 5px;
+        }
+
+        @media (max-width: 1000px) {
+            .bento-grid { grid-template-columns: 1fr; }
+            .span-4, .span-2, .span-3 { grid-column: span 1; }
+            .hero h1 { font-size: 2.8rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="particles-js"></div>
+    <div class="glow-cursor" id="cursor"></div>
+
+    <div class="container">
+        
+        <header class="hero" data-aos="zoom-out" data-aos-duration="1500">
+            <div class="profile-box">
+                <img src="pages/omar.png" class="profile-img" alt="Omar" onerror="this.src='https://ui-avatars.com/api/?name=Omar&size=200&background=8b5cf6&color=fff'">
+            </div>
+            <div style="background: rgba(139, 92, 246, 0.15); display: inline-block; padding: 8px 25px; border-radius: 100px; color: var(--primary); font-weight: bold; border: 1px solid var(--primary); margin-bottom: 20px;">
+                VIP DEVELOPER PORTFOLIO
+            </div>
+            <h1>Omar Tegany</h1>
+            <p style="font-size: 1.2rem; opacity: 0.6; margin-top: 20px;">مبرمج  | طالب ثانوية عامة | صانع تجارب ذاتية</p>
+        </header>
+
+        <div class="bento-grid">
+            
+            <div class="card span-4" data-aos="fade-right">
+                <i class="fa-solid fa-terminal"></i>
+                <h2>من أنا؟</h2>
+                <p style="font-size: 1.1rem; opacity: 0.8; margin-top: 15px; line-height: 1.8;">
+    <p>بحب التكنولوجيا وبحاول أبني لنفسي مكان في المستقبل. ببساطة، أنا شخص بيعشق التفاصيل والبرمجة وبيحب يطور من نفسه كل يوم.</p>
+            </div>
+
+            
+
+            <div class="card span-3 row-2" data-aos="fade-up">
+                <i class="fa-solid fa-code"></i>
+                <h2 style="margin-bottom: 30px;">لغات البرمجة</h2>
+                
+                <div class="skill-row">
+                    <div class="skill-info"><span>Python</span><span>85%</span></div>
+                    <div class="progress-bar"><div class="progress-fill" style="width: 85%;"></div></div>
+                </div>
+                <div class="skill-row">
+                    <div class="skill-info"><span>JavaScript</span><span>88%</span></div>
+                    <div class="progress-bar"><div class="progress-fill" style="width: 88%;"></div></div>
+                </div>
+                <div class="skill-row">
+                    <div class="skill-info"><span>HTML/CSS</span><span>98%</span></div>
+                    <div class="progress-bar"><div class="progress-fill" style="width: 98%;"></div></div>
+                </div>
+                <div class="skill-row">
+                    <div class="skill-info"><span>SQL</span><span>80%</span></div>
+                    <div class="progress-bar"><div class="progress-fill" style="width: 80%;"></div></div>
+                </div>
+            </div>
+
+            <div class="card span-3" data-aos="fade-up" data-aos-delay="200">
+                <i class="fa-solid fa-rocket"></i>
+                <h2>أهم المشاريع</h2>
+                <ul style="list-style: none; margin-top: 15px;">
+                    <li style="padding: 10px 0; border-bottom: 1px solid var(--border);">🚀 Vip Identity System v4.0</li>
+                    <li style="padding: 10px 0; border-bottom: 1px solid var(--border);">🤖 AI Study Assistant</li>
+                    <li style="padding: 10px 0;">💻 Modern Dev Dashboard</li>
+                </ul>
+            </div>
+
+            <div class="card span-3" data-aos="fade-up" data-aos-delay="300">
+                <i class="fa-solid fa-envelopes-bulk"></i>
+                <h2 style="margin-bottom: 20px;">تواصل اجتماعي</h2>
+                <div class="social-container">
+                    <a href="https://www.facebook.com/share/17CfSaS1Xs/" class="social-link"><i class="fa-brands fa-facebook-f"></i></a>
+                    <a href="https://www.tiktok.com/@omar_tegany?_r=1&_t=ZS-93tyGLgpbwD" class="social-link"><i class="fa-brands fa-tiktok"></i></a>
+                    <a href="https://github.com/omartegany8-create" class="social-link"><i class="fa-brands fa-github"></i></a>
+                    <a href="https://wa.me/201158601817" class="social-link"><i class="fa-brands fa-whatsapp"></i></a>
+                </div>
+            </div>
+
+        </div>
+
+        <footer>
+            ALL RIGHTS RESERVED &copy; 2026 OMAR TEGANY
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({ duration: 1000, once: false });
+
+        // --- Particles Config ---
+        particlesJS("particles-js", {
+            "particles": {
+                "number": { "value": 80, "density": { "enable": true, "value_area": 800 } },
+                "color": { "value": "#ffffff" },
+                "shape": { "type": "circle" },
+                "opacity": { "value": 0.5, "random": true },
+                "size": { "value": 3, "random": true },
+                "line_linked": { "enable": true, "distance": 150, "color": "#8b5cf6", "opacity": 0.4, "width": 1 },
+                "move": { "enable": true, "speed": 2, "direction": "none", "random": true, "straight": false, "out_mode": "out" }
+            },
+            "interactivity": {
+                "events": { "onhover": { "enable": true, "mode": "grab" }, "onclick": { "enable": true, "mode": "push" } }
+            }
+        });
+
+        // --- Custom Cursor ---
+        const cursor = document.getElementById('cursor');
+        document.addEventListener('mousemove', e => {
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
+        });
+
+        // --- Clock ---
+        function updateClock() {
+            const now = new Date();
+            document.getElementById('clock').innerText = now.getHours().toString().padStart(2, '0') + ":" + now.getMinutes().toString().padStart(2, '0');
+        }
+        setInterval(updateClock, 1000); updateClock();
+
+        // --- Security ---
+        document.addEventListener('contextmenu', e => e.preventDefault());
+        document.onkeydown = (e) => {
+            if (e.keyCode == 123 || (e.ctrlKey && e.shiftKey && (e.keyCode == 73 || e.keyCode == 74))) return false;
+        };
+    </script>
+</body>
+</html>
