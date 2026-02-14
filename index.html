@@ -40,34 +40,32 @@
 
             <span class="diamond-sep">◆</span>
 
-          <span id="hijri-date-only">جاري تحميل التاريخ الهجري...</span>
-
+          <span id="pure-hijri-date">...</span>
 <script>
-    function showHijriDate() {
-        // 1. الحصول على تاريخ اليوم
-        const today = new Date();
+    (function() {
+        // دالة مخصصة للهجري فقط
+        function getHijriDate() {
+            const today = new Date();
+            
+            // إعدادات التقويم الهجري (أم القرى) - أرقام عربية وأسماء شهور
+            const hijriConfig = new Intl.DateTimeFormat('ar-SA-u-ca-islamic-uma-nu-arab', {
+                day: 'numeric',
+                month: 'long',
+                year: 'numeric'
+            });
 
-        // 2. إعدادات التاريخ الهجري (اللغة العربية + التقويم الهجري)
-        const options = {
-            day: 'numeric',
-            month: 'long',
-            year: 'numeric'
-        };
-
-        // 3. تحويل التاريخ باستخدام Intl.DateTimeFormat
-        // 'ar-SA-u-ca-islamic-uma-nu-arab' تضمن أرقاماً عربية وأسماء شهور هجرية دقيقة
-        const formatter = new Intl.DateTimeFormat('ar-SA-u-ca-islamic-uma-nu-arab', options);
-        const hijriDate = formatter.format(today);
-
-        // 4. وضع التاريخ في الـ HTML
-        const element = document.getElementById('hijri-date-only');
-        if (element) {
-            element.innerText = hijriDate;
+            // تحويل وعرض التاريخ
+            const hijriString = hijriConfig.format(today);
+            
+            const displayElement = document.getElementById('pure-hijri-date');
+            if (displayElement) {
+                displayElement.innerText = hijriString;
+            }
         }
-    }
 
-    // تشغيل الدالة بمجرد تحميل الصفحة
-    window.addEventListener('load', showHijriDate);
+        // تشغيل فوري
+        getHijriDate();
+    })();
 </script>
 
             <div class="ticker-item ramadan-part">
