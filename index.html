@@ -37,15 +37,39 @@
                 <i class="fa-regular fa-calendar-check"></i>
                 <span id="live-full-date">جاري ضبط التقويم...</span>
             </div>
-<span class="diamond-sep">◆</span>
-<div class="ticker-item hijri-part">
-    <i class="fa-solid fa-kaaba"></i>
-    <span id="live-hijri-date">جاري التحميل...</span>
-</div>
 
             <span class="diamond-sep">◆</span>
 
-          
+          <span id="hijri-date-only">جاري تحميل التاريخ الهجري...</span>
+
+<script>
+    function showHijriDate() {
+        // 1. الحصول على تاريخ اليوم
+        const today = new Date();
+
+        // 2. إعدادات التاريخ الهجري (اللغة العربية + التقويم الهجري)
+        const options = {
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric'
+        };
+
+        // 3. تحويل التاريخ باستخدام Intl.DateTimeFormat
+        // 'ar-SA-u-ca-islamic-uma-nu-arab' تضمن أرقاماً عربية وأسماء شهور هجرية دقيقة
+        const formatter = new Intl.DateTimeFormat('ar-SA-u-ca-islamic-uma-nu-arab', options);
+        const hijriDate = formatter.format(today);
+
+        // 4. وضع التاريخ في الـ HTML
+        const element = document.getElementById('hijri-date-only');
+        if (element) {
+            element.innerText = hijriDate;
+        }
+    }
+
+    // تشغيل الدالة بمجرد تحميل الصفحة
+    window.addEventListener('load', showHijriDate);
+</script>
+
             <div class="ticker-item ramadan-part">
                 <i class="fa-solid fa-moon"></i>
                 <span id="ramadan-countdown">جاري التحميل ...</span>
@@ -59,27 +83,63 @@
         import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         function renderDateTime() {
-    const dateNow = new Date();
+            const dateNow = new Date();
 
-    // 1. التاريخ الميلادي
-    const mOption = { day: 'numeric', month: 'long', year: 'numeric' };
-    const gregDate = dateNow.toLocaleDateString('ar-EG', mOption);
+            // 1. التاريخ الميلادي
+            const mOption = { day: 'numeric', month: 'long', year: 'numeric' };
+            const gregDate = dateNow.toLocaleDateString('ar-EG', mOption);
 
-    // 2. التاريخ الهجري (المنطق موجود أصلاً في كودك)
-    const hOption = { day: 'numeric', month: 'long', year: 'numeric' }; // ضفنا التنسيق هنا
-    const hijriFormatter = new Intl.DateTimeFormat('ar-SA-u-ca-islamic-uma-nu-arab', hOption);
-    const hijriDate = hijriFormatter.format(dateNow);
+            // 2. التاريخ الهجري (ضبط المصدر ليعطي نتائج دقيقة)
+            const hOption = {};
+            // استخدام 'ar-SA-u-ca-islamic-uma' مع فرض الأرقام العربية
+            const hijriFormatter = new Intl.DateTimeFormat('ar-SA-u-ca-islamic-uma-nu-arab', hOption);
+            const hijriDate = hijriFormatter.format(dateNow);
 
-    // التعديل هنا:
-    const dateTarget = document.getElementById('live-full-date');
-    const hijriTarget = document.getElementById('live-hijri-date');
+            const dateTarget = document.getElementById('live-full-date');
+            if (dateTarget) {
+                dateTarget.innerText = `${gregDate}  م  `;
+            }
 
-    if (dateTarget) dateTarget.innerText = `${gregDate} م`;
-    if (hijriTarget) hijriTarget.innerText = `${hijriDate} هـ`;
+// 3. حساب الأيام المتبقية أو ترتيب أيام رمضان
+function calculateRamadan() {
+    const today = new Date();
+    // بداية رمضان فلكياً 18 فبراير 2026
+    const ramadanStart = new Date(2026, 1, 18);
+    // نهاية رمضان تقريباً 19 مارس 2026 (لتبديل الحالة بعد الشهر)
+    const ramadanEnd = new Date(2026, 2, 20);
 
-    calculateRamadan();
+    const diffTime = ramadanStart - today;
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+    const ramadanDisplay = document.getElementById('ramadan-countdown');
+    if (!ramadanDisplay) return;
+
+    if (diffDays > 0) {
+        // إدارة لغوية: يوم، يومان، أيام
+        let dayText = "يوم";
+        if (diffDays >= 3 && diffDays <= 10) {
+            dayText = "أيام";
+        } else if (diffDays === 2) {
+            ramadanDisplay.innerText = `متبقي يومان على رمضان 🌙`;
+            return;
+        } else if (diffDays === 1) {
+            ramadanDisplay.innerText = `غداً أول أيام رمضان 🌙`;
+            return;
+        }
+        ramadanDisplay.innerText = `متبقي ${diffDays.toLocaleString('ar-EG')} ${dayText} على رمضان`;
+
+    } else if (today >= ramadanStart && today <= ramadanEnd) {
+        // حساب اليوم الحالي في رمضان
+        const currentRamadanDay = Math.floor((today - ramadanStart) / (1000 * 60 * 60 * 24)) + 1;
+        ramadanDisplay.innerText = `${currentRamadanDay.toLocaleString('ar-EG')} رمضان 🌙`;
+        
+    } else {
+        ramadanDisplay.innerText = `تقبل الله منا ومنكم صالح الأعمال 🌙`;
+    }
 }
 
+            calculateRamadan();
+        }
 
         // استدعاء الدالة عند تحميل الصفحة
         renderDateTime();
