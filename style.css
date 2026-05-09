@@ -1,0 +1,1907 @@
+@import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap');
+/* ================= 🛡️ حماية الصور من السحب والتحديد ================= */
+img {
+    /* يمنع سحب الصورة بالماوس أو اللمس */
+    -webkit-user-drag: none;
+    -khtml-user-drag: none;
+    -moz-user-drag: none;
+    -o-user-drag: none;
+    user-drag: none;
+    /* يمنع تحديد الصورة كأنها نص */
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    
+    /* بيمنع القائمة اللي بتظهر في الموبايل لما تضغط ضغطة مطولة على الصورة */
+    -webkit-touch-callout: none;
+}
+:root {
+    --bg-gradient: linear-gradient(135deg, #090c15, #141124, #0b1a28);
+    --glass-bg: rgba(255, 255, 255, 0.05);
+    --glass-border: rgba(255, 255, 255, 0.08);
+    --primary: #00e5ff;
+    --primary-glow: rgba(0, 229, 255, 0.4);
+    --accent: #a200ff;
+    --text-main: #ffffff;
+    --text-muted: #8b9bb4;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Tajawal', sans-serif; -webkit-tap-highlight-color: transparent; }
+
+body { background: var(--bg-gradient); color: var(--text-main); min-height: 100vh; overflow-x: hidden; padding-bottom: 140px; }
+
+/* ================= Animations ================= */
+@keyframes fadeInSlideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes popIn { 0% { transform: scale(0.9); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+
+.view-section { display: none; animation: fadeInSlideUp 0.4s ease-out; }
+.view-section.active { display: block; }
+
+
+/* ================= Sections & Cards ================= */
+.section { margin-top: 30px; padding-left: 20px; }
+.section-header { display: flex; justify-content: space-between; align-items: center; padding-right: 20px; margin-bottom: 15px; }
+.section-title { font-size: 19px; font-weight: 800; margin-bottom: 20px; margin-right: 20px; }
+.see-all-btn { background: var(--glass-bg); padding: 6px 12px; border-radius: 20px; font-size: 12px; color: var(--primary); border: 1px solid var(--primary-glow); cursor: pointer; transition: 0.3s; }
+.see-all-btn:active { transform: scale(0.95); }
+
+.cards-scroll { display: flex; gap: 15px; overflow-x: auto; padding: 0 20px 20px 0; scrollbar-width: none; }
+.cards-scroll::-webkit-scrollbar { display: none; }
+.card { min-width: 150px; border-radius: 24px; padding: 20px; color: #fff; position: relative; overflow: hidden; cursor: pointer; transition: 0.3s; box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
+.card:active { transform: scale(0.95); }
+.card-1 { background: linear-gradient(135deg, #11998e, #38ef7d); }
+.card-2 { background: linear-gradient(135deg, #11998e, #38ef7d); }
+.card-3 { background: linear-gradient(135deg, #11998e, #38ef7d); }
+.card-icon { font-size: 40px; margin-bottom: 15px; opacity: 0.8; }
+.card-title { font-size: 16px; font-weight: 800; margin-bottom: 4px; }
+.card-subtitle { font-size: 12px; opacity: 0.8; }
+
+
+
+/* ================= Track Lists ================= */
+/* ================= تصميم كروت القائمة الرئيسية ================= */
+.track-item { 
+    display: flex; 
+    align-items: center; 
+    padding: 12px; 
+    border-radius: 16px; 
+    margin-bottom: 12px; 
+    background: var(--glass-bg); /* ده الافتراضي والـ JS هيحط لون الشيخ فوقه */
+    border: 1px solid var(--glass-border); 
+    cursor: pointer; 
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); 
+    overflow: hidden; /* عشان التدرج ميبقاش طالع بره الحواف */
+}
+
+/* التأثير وقت اللمس */
+.track-item:active { 
+    transform: scale(0.97); 
+    background: rgba(255, 255, 255, 0.1) !important; /* !important ضرورية هنا */
+}
+
+/* تصميم السورة اللي شغالة حالياً */
+.track-item.playing-active { 
+    border-color: var(--primary) !important; 
+    background: rgba(0, 229, 255, 0.08) !important; 
+    box-shadow: 0 0 15px rgba(0, 229, 255, 0.15); /* توهج خفيف بلون التطبيق */
+}
+
+.track-item.playing-active .track-name { 
+    color: var(--primary) !important; 
+}
+
+
+.track-img { width: 50px; height: 50px; border-radius: 12px; background: linear-gradient(135deg, var(--accent), var(--primary)); margin-left: 15px; display: flex; justify-content: center; align-items: center; color: #fff; font-size: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
+.track-info { flex: 1; overflow: hidden; }
+.track-name { font-size: 15px; font-weight: 700; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.track-artist { font-size: 12px; color: var(--text-muted); }
+.track-options { padding: 10px; color: var(--text-muted); font-size: 18px; }
+
+/* ================= Playlists Grid ================= */
+.playlists-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 0 20px 20px 0; }
+.pl-box { background: var(--glass-bg); padding: 25px 15px; border-radius: 24px; border: 1px solid var(--glass-border); text-align: center; cursor: pointer; transition: 0.3s; }
+.pl-box:active { transform: scale(0.95); }
+.pl-box i.icon { font-size: 35px; background: linear-gradient(135deg, #00e5ff, #a200ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 12px; display: inline-block; }
+.pl-box h3 { font-size: 15px; font-weight: 800; margin-bottom: 5px; }
+.pl-box p { font-size: 12px; color: var(--text-muted); }
+
+/* ================= Mini Player ================= */
+.glass-player { position: fixed; bottom: 85px; left: 15px; right: 15px; background: rgba(20, 17, 36, 0.85); backdrop-filter: blur(20px); border-radius: 20px; border: 1px solid var(--glass-border); padding: 12px 15px; display: flex; align-items: center; justify-content: space-between; z-index: 900; box-shadow: 0 10px 40px rgba(0,0,0,0.6); cursor: pointer; transition: 0.3s; }
+
+.player-info { display: flex; align-items: center; gap: 12px; flex: 1; overflow: hidden; pointer-events: none; }
+.player-img { width: 44px; height: 44px; border-radius: 12px; background: linear-gradient(135deg, var(--primary), var(--accent)); display: flex; justify-content: center; align-items: center; color: #fff; font-size: 18px; box-shadow: 0 4px 10px rgba(0,0,0,0.3);}
+.player-text { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.player-text h4 { font-size: 14px; font-weight: 800; margin-bottom: 2px; }
+.player-text p { font-size: 12px; color: var(--text-muted); }
+.player-controls { display: flex; align-items: center; gap: 15px; color: var(--text-main); }
+.control-btn { font-size: 20px; color: var(--text-muted); }
+.play-btn-circle { width: 40px; height: 40px; border-radius: 50%; background: var(--primary); color: #000; display: flex; justify-content: center; align-items: center; font-size: 18px; }
+/* تظبيط علامة الـ Play في النص بالظبط */
+.play-btn-circle .fa-play { padding-left: 3px; } 
+.play-btn-circle .fa-pause { padding-left: 0; }
+.player-progress { position: absolute; bottom: 0; left: 20px; right: 20px; height: 4px; background: rgba(255,255,255,0.1); border-radius: 20px; overflow: hidden; }
+.progress-current { width: 0%; height: 100%; background: var(--primary); pointer-events: none; }
+
+/* ================= Full Player ================= */
+
+
+.full-player-overlay { position: fixed; inset: 0; background: #0f0c29; background: linear-gradient(to bottom, #1e1332, #050b14); z-index: 3000; transform: translateY(100%); transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1); display: flex; flex-direction: column; padding: 20px; padding-top: max(40px, env(safe-area-inset-top)); }
+
+.full-player-overlay.active { transform: translateY(0); }
+
+
+.fp-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; }
+.fp-header i { font-size: 24px; padding: 5px; cursor: pointer; }
+.fp-header-text { text-align: center; }
+.fp-playing-from { font-size: 15px; color: var(--text-muted); letter-spacing: 1px; display: block; margin-bottom: 4px;}
+.fp-playlist-name { font-size: 17px; font-weight: 800; display: block;}
+.fp-artwork-container { flex: 1; display: flex; justify-content: center; align-items: center; padding: 0 20px; margin-bottom: 30px; }
+.fp-cover { width: 100%; aspect-ratio: 1/1; max-width: 350px; border-radius: 30px; background: linear-gradient(135deg, var(--primary), var(--accent)); display: flex; justify-content: center; align-items: center; font-size: 100px; color: #fff; box-shadow: 0 30px 60px rgba(0,0,0,0.6); }
+.fp-info-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; padding: 0 10px; }
+.fp-text h2 { font-size: 26px; font-weight: 900; margin-bottom: 6px; }
+.fp-text p { font-size: 16px; color: var(--text-muted); }
+.fp-actions i { font-size: 26px; margin-right: 20px; cursor: pointer; }
+.fp-progress-container { margin-bottom: 40px; padding: 0 10px; }
+.fp-progress-bar { width: 100%; height: 6px; background: rgba(255,255,255,0.1); border-radius: 4px; position: relative; cursor: pointer; }
+.fp-progress-current { height: 100%; width: 0%; background: var(--primary); border-radius: 4px; pointer-events: none; position: relative; box-shadow: 0 0 10px var(--primary-glow);}
+.fp-progress-handle { width: 14px; height: 14px; background: #fff; border-radius: 50%; position: absolute; left: -7px; top: 50%; transform: translateY(-50%); box-shadow: 0 0 10px rgba(0,0,0,0.5); }
+.fp-time-row { display: flex; justify-content: space-between; font-size: 13px; color: var(--text-muted); margin-top: 15px; font-weight: 600; }
+.fp-main-controls { display: flex; justify-content: space-between; align-items: center; padding: 0 15px; margin-bottom: 20px;}
+.fp-secondary-btn { font-size: 22px; color: var(--text-muted); cursor: pointer; }
+.fp-secondary-btn.active { color: var(--primary); }
+.fp-nav-btn { font-size: 40px; cursor: pointer; }
+.fp-play-btn-wrapper { width: 60px; height: 60px; border-radius: 50%; background: var(--primary); color: #000; display: flex; justify-content: center; align-items: center; font-size: 32px; cursor: pointer;  }
+.fp-play-btn-wrapper .fa-play { padding-left: 4px; }
+.fp-play-btn-wrapper .fa-pause { padding-left: 0; }
+
+/* ================= Bottom Nav ================= */
+.bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(9, 12, 21, 0.95); backdrop-filter: blur(15px); display: flex; justify-content: space-around; align-items: center; padding: 15px 0 calc(15px + env(safe-area-inset-bottom)); border-top: 1px solid var(--glass-border); z-index: 999; }
+.nav-item { display: flex; flex-direction: column; align-items: center; gap: 6px; color: var(--text-muted); font-size: 11px; font-weight: 700; text-decoration: none; transition: 0.3s; }
+.nav-item i { font-size: 24px; transition: 0.3s; }
+.nav-item.active { color: var(--primary); }
+.nav-item.active i { transform: translateY(-4px); }
+
+/* ================= Bottom Sheets ================= */
+.bottom-sheet-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(5px); opacity: 0; visibility: hidden; transition: 0.3s ease; z-index: 4000; display: flex; align-items: flex-end; }
+.bottom-sheet-overlay.active { opacity: 1; visibility: visible; }
+.bottom-sheet { width: 100%; background: #1a1728; border-radius: 30px 30px 0 0; padding: 25px 20px; transform: translateY(100%); transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1); max-height: 85vh; overflow-y: auto; border-top: 1px solid var(--glass-border); }
+.bottom-sheet.sheet-tall { height: 75vh; }
+.bottom-sheet-overlay.active .bottom-sheet { transform: translateY(0); }
+.sheet-handle { width: 45px; height: 5px; background: rgba(255,255,255,0.2); border-radius: 5px; margin: 0 auto 25px; }
+.sheet-header-info { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid var(--glass-border); }
+.sheet-track-img { width: 55px; height: 55px; border-radius: 14px; background: linear-gradient(135deg, var(--primary), var(--accent)); color: #fff; display: flex; justify-content: center; align-items: center; font-size: 24px; }
+.sheet-header-info h3 { font-size: 17px; font-weight: 800; }
+.sheet-header-info p { font-size: 13px; color: var(--text-muted); }
+.sheet-title { font-size: 19px; font-weight: 800; text-align: center; margin-bottom: 25px; }
+.sheet-action { display: flex; align-items: center; gap: 15px; padding: 15px; border-radius: 14px; font-size: 16px; font-weight: 700; cursor: pointer; transition: 0.2s; background: var(--glass-bg); margin-bottom: 10px; border: 1px solid transparent;}
+.sheet-action i { font-size: 22px; width: 30px; text-align: center; }
+.sheet-action:active { transform: scale(0.98); }
+.sheet-action.highlight { color: var(--primary); border-color: var(--primary-glow); background: rgba(0, 229, 255, 0.05); }
+
+/* ================= Custom Modals & Toasts ================= */
+.custom-modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(8px); display: flex; justify-content: center; align-items: center; opacity: 0; visibility: hidden; transition: 0.3s; z-index: 5000; }
+.custom-modal-overlay.active { opacity: 1; visibility: visible; }
+.custom-modal { background: #1a1728; width: 90%; max-width: 350px; border-radius: 24px; padding: 25px; text-align: center; border: 1px solid var(--glass-border); transform: scale(0.9); transition: 0.3s; }
+.custom-modal-overlay.active .custom-modal { transform: scale(1); }
+.custom-modal h3 { font-size: 20px; font-weight: 800; margin-bottom: 10px; }
+.custom-modal p { font-size: 14px; color: var(--text-muted); margin-bottom: 20px; }
+.custom-modal input { width: 100%; background: rgba(0,0,0,0.4); border: 1px solid var(--glass-border); padding: 15px; border-radius: 14px; color: #fff; font-size: 16px; outline: none; margin-bottom: 20px; text-align: center; }
+.custom-modal input:focus { border-color: var(--primary); }
+.modal-actions { display: flex; gap: 10px; }
+.modal-actions button { flex: 1; padding: 14px; border-radius: 14px; font-size: 16px; font-weight: 800; cursor: pointer; border: none; transition: 0.2s; }
+.cancel-btn { background: var(--glass-bg); color: #fff; border: 1px solid var(--glass-border); }
+.save-btn { background: var(--primary); color: #000; }
+.modal-actions button:active { transform: scale(0.95); }
+
+.toast-container { position: fixed; bottom: 100px; left: 20px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; align-items: center; pointer-events: none; }
+.toast { background: rgba(20, 17, 36, 0.95); backdrop-filter: blur(10px); color: #fff; padding: 14px 24px; border-radius: 30px; font-size: 14px; font-weight: 700; box-shadow: 0 10px 25px rgba(0,0,0,0.5); border: 1px solid var(--primary-glow); animation: popIn 0.3s ease forwards, fadeOutToast 0.3s ease 2.7s forwards; display: flex; align-items: center; gap: 10px; }
+.toast i { color: var(--primary); font-size: 18px; }
+@keyframes fadeOutToast { from { opacity: 1; transform: scale(1); } to { opacity: 0; transform: scale(0.9); } }
+
+/* ================= تصميم شاشة البحث (Premium UI) ================= */
+
+/* الهيدر العلوي لشاشة البحث */
+.search-header-container {
+    padding: 30px 20px 20px;
+    background: rgba(9, 12, 21, 0.85);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    border-bottom: 1px solid var(--glass-border);
+}
+
+.search-main-title {
+    font-size: 28px;
+    font-weight: 900;
+    margin-bottom: 20px;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.search-main-title i {
+    color: var(--primary);
+    font-size: 24px;
+}
+
+/* حاوية شريط البحث */
+.search-input-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+/* أيقونة البحث اللي جوه الشريط (يمين) */
+.search-icon {
+    position: absolute;
+    right: 18px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+    font-size: 16px;
+    pointer-events: none; /* عشان متمنعش الضغط على الـ Input */
+}
+
+/* أيقونة مسح الكلام (يسار) */
+.clear-icon {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--primary);
+    font-size: 20px;
+    cursor: pointer;
+    padding: 8px; /* مساحة أكبر للضغط المريح */
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    z-index: 10;
+}
+
+.clear-icon:hover {
+    color: #ff4757;
+    transform: translateY(-50%) rotate(90deg) scale(1.1);
+}
+.clear-icon:active {
+    transform: translateY(-50%) rotate(90deg) scale(0.9);
+}
+
+/* شريط البحث نفسه */
+.custom-search-input {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 16px 45px 16px 45px; /* مسافات مظبوطة يمين وشمال للأيقونات */
+    border-radius: 20px;
+    color: #fff;
+    font-size: 15px;
+    font-weight: 500;
+    outline: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    font-family: inherit; /* بياخد نفس خط التطبيق */
+}
+
+.custom-search-input:focus {
+    background: rgba(0, 229, 255, 0.05);
+    border-color: var(--primary);
+    box-shadow: 0 0 20px rgba(0, 229, 255, 0.15);
+}
+
+.custom-search-input::placeholder {
+    color: var(--text-muted);
+}
+
+/* مساحة المحتوى الداخلي */
+.search-content-area {
+    padding: 20px;
+}
+
+/* هيدر سجل البحث */
+.history-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.history-header h2 {
+    font-size: 18px;
+    font-weight: 800;
+}
+
+.clear-history-text {
+    font-size: 13px;
+    color: #ff4757;
+    cursor: pointer;
+    font-weight: 700;
+    transition: 0.2s;
+    background: rgba(255, 71, 87, 0.1);
+    padding: 5px 10px;
+    border-radius: 10px;
+}
+
+.clear-history-text:hover {
+    background: rgba(255, 71, 87, 0.2);
+}
+
+/* حالة عدم وجود بحث (السماعة) */
+.empty-search-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-top: 60px;
+    color: var(--text-muted);
+    text-align: center;
+    animation: fadeInSlideUp 0.4s ease-out;
+}
+
+.empty-search-state i {
+    font-size: 65px;
+    margin-bottom: 20px;
+    background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(0, 229, 255, 0.2));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.results-title {
+    font-size: 18px;
+    font-weight: 800;
+    margin-bottom: 15px;
+}
+
+/* ================= تصميم تايمر النوم الحي (Live Sleep Timer) ================= */
+.live-timer-badge {
+    background: rgba(0, 229, 255, 0.15);
+    border: 1px solid var(--primary);
+    color: var(--primary);
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 800;
+    margin-left: 15px; /* عشان يبعد عن أيقونة الإضافة */
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    box-shadow: 0 0 10px rgba(0, 229, 255, 0.2);
+    /* أنيميشن النبض */
+    animation: pulseTimer 2s infinite;
+}
+
+.live-timer-badge i {
+    font-size: 14px;
+    margin: 0; /* عشان نشيل التهميش بتاع الأيقونات التانية */
+}
+
+@keyframes pulseTimer {
+    0% { box-shadow: 0 0 0 0 rgba(0, 229, 255, 0.5); }
+    70% { box-shadow: 0 0 0 10px rgba(0, 229, 255, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(0, 229, 255, 0); }
+}
+
+/* تظبيط شكل الإدخال للأرقام بس */
+#customTimerInput {
+    text-align: center;
+    font-size: 24px;
+    font-weight: 800;
+    letter-spacing: 2px;
+}
+
+/* ================= تصميم المصحف الديجيتال الفاخر (Premium UI) ================= */
+
+/* 1. استدعاء خط قرآني أصيل وعالي الجودة من جوجل fonts */
+@import url('https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&display=swap');
+
+/* حاوية الكلمات / المصحف */
+.lyrics-container {
+    padding: 20px 15px 40px;
+    overflow-y: auto;
+    height: calc(100% - 70px);
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 229, 255, 0.2) transparent;
+    direction: ltr; /* عشان السكرول بار يظهر عالشمال */
+}
+
+/* تعديل السكرول بار في جوجل كروم */
+.lyrics-container::-webkit-scrollbar { width: 4px; }
+.lyrics-container::-webkit-scrollbar-thumb {
+    background: rgba(0, 229, 255, 0.2);
+    border-radius: 4px;
+}
+
+/* كارت المصحف الفاخر ( luxury texture) */
+.quran-page {
+    position: relative;
+    background: radial-gradient(circle at center, rgba(16, 20, 31, 0.9) 0%, rgba(9, 12, 21, 0.98) 100%);
+    border: 1px solid rgba(0, 229, 255, 0.1); /* برواز بلون التطبيق الأساسي */
+    border-radius: 20px;
+    padding: 35px 25px;
+    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.5), inset 0 0 30px rgba(0, 229, 255, 0.05);
+    margin-bottom: 30px;
+    direction: rtl; /* نرجع النص يمين تاني */
+    overflow: hidden;
+}
+
+/* زوايا مذهبة لإعطاء شكل المصحف الحقيقي (اختياري) */
+.quran-page::before {
+    content: '';
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    width: 30px;
+    height: 30px;
+    border-top: 2px solid var(--primary);
+    border-right: 2px solid var(--primary);
+    border-radius: 0 10px 0 0;
+    opacity: 0.5;
+}
+
+/* البسملة الفاخرة */
+.basmala-box {
+    text-align: center;
+    margin-bottom: 30px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    padding-bottom: 15px;
+}
+
+.basmala-text {
+    font-family: 'Amiri', serif;
+    color: var(--primary-glow);
+    font-size: 28px;
+    font-weight: 700;
+    text-shadow: 0 0 10px rgba(0, 229, 255, 0.3);
+}
+
+/* تنسيق الخط القرآني (الاحترافي) */
+.quran-text {
+    font-family: 'Amiri', 'Traditional Arabic', serif; /* خط عربي أصيل */
+    font-size: 20px; /* مقاس مريح للعين */
+    font-weight: 400;
+    line-height: 2.8; /* مسافة واسعة بين السطور لمنع التداخل */
+    color: #e0e0e0; /* لون أبيض مريح (مش فاقع) */
+    text-align: justify; /* لضبط أطراف السطور */
+    text-justify: inter-word;
+    text-shadow: 0 1px 1px rgba(0,0,0,0.3);
+    -webkit-font-smoothing: antialiased; /* لتنعيم الخط */
+}
+
+/* رقم الآية (تصميم احترافي) */
+.ayah-number {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--primary); /* لون السيان بلون الـ play */
+    border: 1px solid rgba(0, 229, 255, 0.2);
+    border-radius: 50%; /* رقم مدور */
+    margin: 0 6px 0 6px;
+    position: relative;
+    top: -2px; /* لضبط سنترته مع الكلام */
+    background: rgba(0, 229, 255, 0.05);
+    box-shadow: 0 0 5px rgba(0, 229, 255, 0.1);
+}
+
+
+/* ================= تصميم قسم التحميلات (Offline Mode) ================= */
+
+/* مربع البحث المصغر */
+.mini-search-box {
+    position: relative;
+    width: 100%;
+}
+.mini-search-box i {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+}
+.mini-search-box input {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 12px 40px 12px 15px;
+    border-radius: 15px;
+    color: #fff;
+    outline: none;
+    transition: 0.3s;
+}
+.mini-search-box input:focus { border-color: var(--primary); }
+
+/* شبكة الكروت */
+.downloads-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+/* الكارت الفاخر */
+.dl-card {
+    background: linear-gradient(145deg, rgba(255,255,255,0.05), rgba(0,0,0,0.2));
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 18px;
+    padding: 12px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.2s;
+}
+.dl-card:active { transform: scale(0.98); }
+
+/* كارت مثبت (Pinned) */
+.dl-card.pinned {
+    border-color: rgba(255, 215, 0, 0.5); /* لون ذهبي شيك */
+    background: linear-gradient(145deg, rgba(255, 215, 0, 0.05), rgba(0,0,0,0.2));
+}
+
+.dl-image {
+    width: 60px;
+    height: 60px;
+    border-radius: 12px;
+    object-fit: cover;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+.dl-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.dl-title { font-size: 15px; font-weight: 800; color: #fff; margin-bottom: 4px; }
+.dl-artist { font-size: 12px; color: var(--text-muted); }
+.dl-size { font-size: 11px; color: var(--primary); margin-top: 4px; font-weight: bold; }
+
+/* زرار الـ 3 نقط */
+.dl-options-btn {
+    padding: 10px;
+    color: var(--text-muted);
+    font-size: 18px;
+    cursor: pointer;
+}
+
+/* أيقونة الدبوس */
+.pin-badge {
+    position: absolute;
+    top: -1px;
+    left: 15px;
+    background: rgba(255, 215, 0, 0.8);
+    color: #000;
+    font-size: 10px;
+    padding: 4px 8px;
+    border-radius: 0 0 8px 8px;
+    font-weight: bold;
+}
+
+/* ================= تصميم الأزرار الفاخرة (Premium Buttons) ================= */
+.premium-btn {
+    background: linear-gradient(135deg, var(--primary), #00b4d8);
+    color: #090c15; /* لون غامق عشان الكلام ينطق على الخلفية الفاتحة */
+    border: none; /* عشان نشيل البرواز الـ 3D المستفز */
+    outline: none;
+    padding: 14px 20px;
+    border-radius: 15px;
+    font-size: 15px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    box-shadow: 0 4px 15px rgba(0, 229, 255, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-family: inherit;
+    width: 100%;
+}
+
+.premium-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 229, 255, 0.4);
+}
+
+.premium-btn:active {
+    transform: translateY(1px);
+    box-shadow: 0 2px 10px rgba(0, 229, 255, 0.2);
+}
+
+/* ================= تصميم نظام التحميل المطور (Liquified Neon Loader) ================= */
+
+/* 1. حاوية شريط التحميل (الجسم الأساسي) */
+.progress-bar-container {
+    background: rgba(255, 255, 255, 0.03) !important; /* خلفية شفافة جداً */
+    height: 12px !important; /* وسعنا الشريط سنة */
+    border-radius: 20px;
+    overflow: hidden;
+    margin-bottom: 15px;
+    position: relative;
+    border: 1px solid rgba(0, 229, 255, 0.08); /* برواز خفيف جداً بلون النيون */
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.3); /* ظل داخلي للعمق */
+}
+
+/* 2. أنيميشن التموجات السائلة جوه الشريط */
+@keyframes liquidFlow {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 200% 50%; } /* حركة سريعة ومتموجة */
+}
+
+/* 3. شريط التحميل اللي بيتحرك (المتغير) */
+#downloadProgressBar {
+    background: linear-gradient(
+        110deg, 
+        var(--primary) 0%, 
+        #a200ff 30%, 
+        var(--primary) 60%, 
+        #a200ff 90%,
+        var(--primary) 100%
+    ) !important; /* تدرج لوني بين السيان والبنفسجي */
+    background-size: 200% 100% !important; /* عشان التموج يظهر */
+    height: 100%;
+    border-radius: 20px;
+    transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important; /* حركة مرنة للأمام */
+    animation: liquidFlow 1s linear infinite !important; /* تفعيل التموج المستمر */
+    box-shadow: 0 0 15px rgba(0, 229, 255, 0.4); /* إضاءة نيون خلف الشريط */
+    position: relative;
+}
+
+/* 4. الشرارة الضوئية عند الاكتمال */
+@keyframes sparkler {
+    0% { left: -100px; opacity: 0; }
+    50% { opacity: 1; }
+    100% { left: 100%; opacity: 0; }
+}
+
+/* بنعمل عنصر وهمي بيمشي على الشريط ويعمل شرارة */
+#downloadProgressBar::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100px;
+    width: 80px;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, #fff, transparent);
+    opacity: 0.8;
+    filter: blur(5px);
+    display: none; /* مخفي، بيظهر بس لما يوصل 100% */
+}
+
+/* الكلاس اللي الجافاسكريبت هيضيفه لما يوصل 100% عشان يشغل الشرارة */
+#downloadProgressBar.finished::after {
+    display: block;
+    animation: sparkler 0.8s ease-out forwards;
+}
+
+/* 5. أنيميشن النبض الضوئي للنص (%0) */
+@keyframes neonPulse {
+    0% { opacity: 1; color: var(--text-main); }
+    50% { opacity: 0.6; color: var(--text-muted); }
+    100% { opacity: 1; color: var(--text-main); }
+}
+
+#downloadProgressText {
+    font-size: 14px;
+    font-weight: bold;
+    color: var(--text-main);
+    animation: neonPulse 1.5s ease-in-out infinite; /* الـ %0 هتنطق وتطفي بروقان */
+}
+
+/* ================= تصميم محرك البحث (الكروت والأنيميشن) ================= */
+
+/* أنيميشن زرار الـ X (المسح السحري) */
+.clear-icon {
+    transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+.clear-icon.erase-anim {
+    animation: swipeErase 0.4s ease-out;
+}
+@keyframes swipeErase {
+    0% { transform: translateY(-50%) scale(1) rotate(0deg); opacity: 1; }
+    50% { transform: translateY(-50%) scale(0.5) rotate(-90deg); opacity: 0; left: 30px; }
+    100% { transform: translateY(-50%) scale(1) rotate(0deg); opacity: 1; left: 10px; }
+}
+
+/* كارت نتيجة البحث المطور (Premium Search Card) */
+.search-result-card {
+    background: linear-gradient(145deg, rgba(255,255,255,0.03), rgba(0,0,0,0.4));
+    border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 16px;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 12px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+.search-result-card:hover, .search-result-card:active {
+    border-color: var(--primary);
+    background: rgba(0, 229, 255, 0.08);
+    transform: translateX(-5px); /* حركة بسيطة لليسار عند الضغط */
+}
+
+/* صورة الكارت */
+.search-result-img {
+    width: 55px;
+    height: 55px;
+    border-radius: 12px;
+    object-fit: cover;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
+
+/* نصوص الكارت */
+.search-result-info { flex: 1; display: flex; flex-direction: column; justify-content: center; }
+.search-result-title { font-size: 15px; font-weight: 800; color: #fff; margin-bottom: 4px; font-family: inherit; }
+.search-result-artist { font-size: 12px; color: var(--text-muted); font-family: inherit; }
+
+/* زرار الـ 3 نقط */
+.search-options-btn {
+    padding: 10px 15px;
+    color: var(--text-muted);
+    font-size: 18px;
+    transition: 0.2s;
+}
+.search-options-btn:hover { color: var(--primary); }
+
+
+/* ================= تصميم شاشة سرعة التشغيل الفاخرة (Premium UI) ================= */
+
+/* حاوية الأزرار - تنسيق أفقي مركزي مع تباعد */
+.speed-btns-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px; /* تباعد بين الأزرار */
+    margin: 25px 0;
+    flex-wrap: wrap; /* للسماح بالتفاف الأزرار على الشاشات الصغيرة */
+}
+
+/* تصميم الزر الأساسي - فخامة داكنة */
+.speed-btn {
+    background: rgba(255, 255, 255, 0.05); /* خلفية داكنة شفافة */
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #fff;
+    padding: 12px 20px;
+    border-radius: 14px;
+    font-size: 16px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); /* حركة سلسة */
+    font-family: inherit;
+}
+
+/* تأثير التمرير (Hover) - توهج نيون سيان بلون الـ play */
+.speed-btn:hover {
+    border-color: var(--primary); 
+    color: #fff;
+    transform: translateY(-3px); /* حركة خفيفة للأعلى */
+    box-shadow: 0 5px 15px rgba(0, 229, 255, 0.2); /* تأثير توهج سيان */
+}
+
+/* تصميم الزر المحدد (Active) - لون بنفسجي من لقطة الشاشة 4 */
+.speed-btn.active {
+    background: rgba(162, 0, 255, 0.2); /* خلفية بنفسجية شفافة */
+    border-color: #a200ff; /* برواز بنفسجي */
+    color: #fff;
+    transform: translateY(-3px); /* حركة للأعلى */
+    box-shadow: 0 5px 15px rgba(162, 0, 255, 0.3); /* تأثير توهج بنفسجي */
+}
+
+/* شارة السرعة في المشغل الكبير - لون بنفسجي مميز */
+.speed-badge {
+    background: rgba(162, 0, 255, 0.15) !important;
+    border-color: #a200ff !important;
+    color: #d896ff !important;
+    animation: none !important; /* نلغي تأثير النبض عشان التمييز */
+}
+/* ================= إصلاح أبعاد المشغل الكبير (منع السكرول) ================= */
+
+/* 1. إجبار المشغل إنه ياخد طول الشاشة بالظبط */
+/* ================= تصميم المشغل الكبير (مؤمن ضد السحب) ================= */
+.full-player-overlay { 
+    /* 1. التثبيت الصارم عشان ميتحركش من مكانه */
+    position: fixed !important; 
+    top: 0 !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    height: 100dvh !important;
+    width: 100% !important;
+    
+    /* 2. الـ Z-index الجبار عشان يغطي البار السفلي وأي حاجة تانية */
+  
+    
+    /* 3. منع المطاطية والسحب نهائياً (السحر كله هنا) */
+    overflow: hidden !important;
+    overscroll-behavior: none !important; 
+    touch-action: none !important; 
+
+    /* 4. باقي التنسيقات بتاعتك زي ما هي */
+    display: flex; 
+    flex-direction: column; 
+    padding: 20px; 
+    padding-top: max(40px, env(safe-area-inset-top));
+
+    /* 5. الألوان والأنيميشن */
+    background-color: #050b14 !important; 
+    --dynamic-bg: rgba(30, 19, 50, 0.5); 
+    background-image: linear-gradient(to bottom, var(--dynamic-bg) 0%, #050b14 80%) !important;
+    
+    transform: translateY(100%); 
+    transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1), background 0.8s ease-in-out !important; 
+}
+
+.full-player-overlay.active { 
+    transform: translateY(0); 
+}
+
+/* 2. تحجيم صورة السورة عشان متزقش الزراير لتحت */
+#fpBigImg {
+    max-height: 40vh; /* الصورة مش هتاخد أكتر من 40% من طول الشاشة */
+    width: auto;
+    aspect-ratio: 1/1;
+    object-fit: cover;
+    margin: 0 auto 20px auto; /* مسافة أمان تحت الصورة */
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+}
+
+/* 3. تظبيط مكان وتصميم الأزرار السفلية */
+.fp-bottom-actions {
+    margin-bottom: 50px;
+    display: flex;
+    
+    align-items: center;
+    width: 100%;
+    padding: 12px 10px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 20px;
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+}
+
+.action-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    padding: 8px 12px;
+    border-radius: 14px;
+    width: 70px;
+}
+
+.action-btn i {
+    font-size: 20px;
+    transition: all 0.3s ease;
+}
+
+.action-btn span {
+    font-size: 11px;
+    font-weight: 700;
+    font-family: inherit;
+}
+
+.action-btn:hover, .action-btn:active {
+    color: var(--primary);
+    background: rgba(0, 229, 255, 0.08);
+    transform: translateY(-4px);
+}
+
+.action-btn:hover i, .action-btn:active i {
+    transform: scale(1.15);
+    text-shadow: 0 0 10px rgba(0, 229, 255, 0.4);
+}
+
+
+/* قانون عام لأي قائمة منبثقة أو شاشة كاملة */
+.sheet-overlay, 
+.full-player-overlay, 
+.modal, 
+[id*="Sheet"], 
+[class*="options"] {
+    overscroll-behavior: none !important;
+    touch-action: none !important; /* بيمنع السحب العشوائي للمتصفح */
+}
+
+/* حركة ذكية: تجميد الصفحة الرئيسية لما أي قائمة تفتح */
+body.modal-open {
+    overflow: hidden !important;
+    height: 100vh !important;
+    overscroll-behavior: none !important;
+    position: fixed; /* بيثبت الصفحة الرئيسية في مكانها تماماً */
+    width: 100%;
+}
+
+/* ================= تصميم الكروت الـ Prime ================= */
+.library-cards-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    padding: 15px 20px;
+}
+
+.lib-card-prime {
+    background: linear-gradient(145deg, rgba(25, 30, 45, 0.8), rgba(10, 15, 25, 0.9));
+    border: 1px solid rgba(255, 255, 255, 0.04);
+    border-radius: 22px;
+    padding: 22px 18px;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), border-color 0.3s;
+}
+
+.lib-card-prime:active {
+    transform: scale(0.94);
+}
+
+/* الأيقونة العملاقة في الخلفية (بتتحرك بهدوء) */
+.card-bg-icon {
+    position: absolute;
+    right: -15px;
+    bottom: -15px;
+    font-size: 85px;
+    opacity: 0.04;
+    color: #fff;
+    transform: rotate(-10deg);
+    animation: floatBg 6s ease-in-out infinite alternate;
+    pointer-events: none;
+}
+
+@keyframes floatBg {
+    0% { transform: rotate(-10deg) translateY(0px) scale(1); }
+    100% { transform: rotate(-5deg) translateY(-10px) scale(1.05); }
+}
+
+/* الأيقونة الصغيرة اللي بتنور */
+.prime-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 20px;
+    margin-bottom: 15px;
+    position: relative;
+    z-index: 2;
+}
+
+/* ألوان الثيمات الفخمة */
+.fav-theme .prime-icon { background: rgba(255, 71, 87, 0.15); color: #ff4757; }
+.down-theme .prime-icon { background: rgba(0, 198, 255, 0.15); color: #00c6ff; }
+.play-theme .prime-icon { background: rgba(142, 45, 226, 0.15); color: #a155e8; }
+.hist-theme .prime-icon { background: rgba(247, 151, 30, 0.15); color: #f7971e; }
+
+/* لمسة glow خفيفة لما تلمس الكارت */
+.fav-theme:hover { border-color: rgba(255, 71, 87, 0.3); }
+.down-theme:hover { border-color: rgba(0, 198, 255, 0.3); }
+.play-theme:hover { border-color: rgba(142, 45, 226, 0.3); }
+.hist-theme:hover { border-color: rgba(247, 151, 30, 0.3); }
+
+.prime-text { position: relative; z-index: 2; display: flex; flex-direction: column; gap: 3px; }
+.prime-text span { font-size: 17px; font-weight: 700; color: #fff; letter-spacing: 0.5px; }
+.prime-text p { font-size: 11px; color: #8892b0; margin: 0; }
+
+/* ================= الناڤبار الـ Premium ================= */
+.prime-navbar {
+    display: flex;
+    align-items: center;
+    padding: 15px 20px;
+    padding-top: max(30px, env(safe-area-inset-top));
+    background: rgba(5, 11, 20, 0.85);
+    backdrop-filter: blur(15px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.nav-btn {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: #fff;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.nav-btn:active { background: rgba(255, 255, 255, 0.15); transform: scale(0.9); }
+
+.navbar-title {
+    flex: 1;
+    text-align: center;
+    font-size: 19px;
+    font-weight: 700;
+    color: #fff;
+    margin: 0;
+}
+
+.nav-spacer { width: 38px; }
+
+/* ================= أنيميشن الآيفون (Slide In Smooth) ================= */
+
+/* ================= أنيميشن الآيفون (مع معالجة الوميض الأبيض) ================= */
+.sub-lib-page {
+    position: fixed; 
+    inset: 0;
+    background-color: #050b14 !important; /* تأكيد صارم على اللون الداكن */
+    z-index: 4000;
+    display: flex; 
+    flex-direction: column;
+    
+    /* 1. إجبار كارت الشاشة على معالجة الحركة (بيمنع التقطيع والوميض) */
+    -webkit-transform: translate3d(100%, 0, 0);
+    transform: translate3d(100%, 0, 0); 
+    
+    /* 2. إخفاء ظهر العنصر عشان المتصفح ميتلخبطش */
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    
+    /* 3. تنبيه المتصفح إن في حركة هتحصل هنا عشان يجهز نفسه */
+    will-change: transform;
+    
+    transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+
+}
+
+.sub-lib-page.active {
+    /* تصفير الحركة (ظهور الشاشة) */
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0); 
+}
+
+/* ================= تأمين أخير لجسم الموقع ================= */
+/* ضيف الكود ده لو مش عندك عشان نضمن إن أساس الموقع كحلي مش أبيض */
+html, body {
+    background-color: #050b14 !important; 
+}
+
+.sub-page-content {
+    flex: 1; overflow-y: auto; padding: 20px; padding-bottom: 120px; overscroll-behavior-y: contain;
+}
+
+
+/* ================= تصميم كارت السورة الفخم (Premium Track Card) ================= */
+.premium-track-card {
+    display: flex;
+    align-items: center;
+    padding: 12px 15px;
+    margin-bottom: 8px;
+    background: transparent;
+    border-radius: 12px;
+    transition: background 0.2s ease;
+    cursor: pointer;
+}
+
+.premium-track-card:active {
+    background: rgba(255, 255, 255, 0.05); /* إضاءة خفيفة عند اللمس */
+}
+
+/* الصورة على اليمين */
+.pt-image {
+    width: 50px;
+    height: 50px;
+    border-radius: 8px;
+    object-fit: cover;
+    margin-left: 15px; /* مسافة بينها وبين الكلام */
+}
+
+/* المعلومات في النص */
+.pt-info {
+    flex: 1; /* بياخد باقي المساحة */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.pt-title {
+    color: #fff;
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 4px;
+}
+
+.pt-artist {
+    color: #8892b0;
+    font-size: 13px;
+}
+
+/* الأيقونات على الشمال */
+.pt-actions {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.pt-icon {
+    color: #fff;
+    font-size: 18px;
+    padding: 5px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.pt-icon:active { transform: scale(0.8); opacity: 0.7; }
+.pt-icon.heart-active { color: #ff4757; } /* لون القلب لو في المفضلة */
+
+/* ================= شاشة الخيارات السفلية (Options Sheet) ================= */
+.track-options-sheet {
+    position: fixed;
+    bottom: -100%;
+    left: 0;
+    width: 100%;
+    background: #121212; /* لون داكن جداً زي الصورة */
+    border-radius: 24px 24px 0 0;
+    z-index: 6000; /* فوق أي حاجة في الموقع */
+    transition: bottom 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+    padding-bottom: env(safe-area-inset-bottom);
+    display: flex;
+    flex-direction: column;
+}
+
+.track-options-sheet.active {
+    bottom: 0;
+}
+
+/* خلفية سودا شفافة ورا القائمة */
+.sheet-backdrop {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.6);
+    z-index: 5999;
+    opacity: 0; visibility: hidden;
+    transition: 0.3s;
+}
+.sheet-backdrop.active { opacity: 1; visibility: visible; }
+
+/* هيدر القائمة */
+.os-header {
+    display: flex;
+    align-items: center;
+    padding: 20px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+.os-header img {
+    width: 60px; height: 60px; border-radius: 10px; margin-left: 15px; object-fit: cover;
+}
+
+.os-header-info { display: flex; flex-direction: column; }
+.os-header-title { color: #fff; font-size: 18px; font-weight: bold; margin-bottom: 5px; }
+.os-header-artist { color: #8892b0; font-size: 14px; }
+
+/* عناصر القائمة */
+.os-body { padding: 10px 0 20px 0; }
+.os-item {
+    display: flex;
+    align-items: center;
+    padding: 15px 25px;
+    color: #fff;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+.os-item:active { background: rgba(255,255,255,0.05); }
+.os-item i { font-size: 20px; margin-left: 15px; width: 25px; text-align: center; }
+
+
+/* ================= تصميم الكارت المتثبت (الدهبي) ================= */
+.premium-track-card {
+    position: relative; /* مهم جداً عشان البادج يظبط مكانه */
+}
+
+/* الحواف والتوهج للكارت المتثبت */
+.premium-track-card.is-pinned {
+    border: 1px solid rgba(246, 229, 141, 0.7) !important; /* إطار دهبي */
+    box-shadow: 0 0 15px rgba(246, 229, 141, 0.15); /* إضاءة دهبي خفيفة */
+    background: linear-gradient(145deg, rgba(40, 45, 60, 0.6), rgba(20, 25, 35, 0.4));
+}
+
+/* البادج الصغير (كلمة مثبت والدبوس) */
+.pinned-badge {
+    position: absolute;
+    top: -10px; /* بيطلع بره الكارت من فوق شوية */
+    right: 20px;
+    background: #f6e58d;
+    color: #121212;
+    font-size: 11px;
+    font-weight: bold;
+    padding: 3px 10px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    z-index: 10;
+}
+
+/* تأكد إن الـ Overlay بتاع الشيتات دايماً فوق كل حاجة */
+.bottom-sheet-overlay {
+    z-index: 9999 !important; /* رقم عالي جداً عشان يغطي على أي صفحة فرعية */
+}
+
+.bottom-sheet {
+    z-index: 10000 !important;
+}
+
+
+/* ================= 1. فلاتر القوائم (تصميم رايق وبسيط) ================= */
+.filter-chips-container {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    padding-bottom: 15px;
+    margin-bottom: 5px;
+    scrollbar-width: none;
+    scroll-behavior: smooth;
+}
+.filter-chips-container::-webkit-scrollbar { display: none; }
+
+.filter-chip {
+    background: rgba(255, 255, 255, 0.06); /* لون رمادي شفاف هادي جداً */
+    border: 1px solid transparent;
+    color: #b3b3b3; /* لون نص مريح للعين */
+    padding: 8px 18px;
+    border-radius: 20px; /* شكل كبسولة كيوت */
+    font-size: 14px;
+    font-weight: 500;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: all 0.25s ease-out; /* حركة ناعمة وسريعة */
+}
+
+/* لما الماوس ييجي عليها */
+.filter-chip:hover {
+    background: rgba(255, 255, 255, 0.12);
+    color: #fff;
+    transform: translateY(-1px);
+}
+
+/* الفلتر النشط (أبيض نقي وشيك جداً) */
+.filter-chip.active {
+    background: #fff;
+    color: #121212;
+    font-weight: bold;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* ================= 2. زر إنشاء قائمة (شكل دائري وأنيميشن لذيذ) ================= */
+.create-playlist-row {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 8px 0;
+    margin-bottom: 20px;
+    cursor: pointer;
+    border-radius: 12px;
+    transition: transform 0.2s ease;
+}
+
+.create-playlist-row:active {
+    transform: scale(0.97); /* لما تدوس عليه يكش سنة صغيرة (حركة كيوت) */
+}
+
+.create-icon-box {
+    width: 40px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.08);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%; /* خليناها دائرة كاملة أشيك بكتير */
+    font-size: 18px;
+    color: #fff;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* أنيميشن مرن */
+}
+
+.create-text {
+    font-size: 16px;
+    font-weight: 600;
+    color: #fff;
+    transition: color 0.3s ease;
+}
+
+/* السحر هنا: لما تقف عليه الأيقونة تلف وتتحول لأبيض والنص ينور */
+.create-playlist-row:hover .create-icon-box {
+    background: #fff;
+    color: #121212;
+    transform: rotate(90deg) scale(1.01); /* لفة ناعمة مع تكبير بسيط */
+}
+
+.create-playlist-row:hover .create-text {
+    color: #e0e0e0;
+}
+
+/* ================= 3. شريط البحث (ناعم ومينيمال) ================= */
+.pl-search-container {
+    position: relative;
+    margin-bottom: 25px;
+}
+
+.pl-search-container .search-icon {
+    position: absolute;
+    right: 18px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #8892b0;
+    font-size: 16px;
+    pointer-events: none;
+    transition: all 0.3s ease;
+}
+
+.pl-search-input {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid transparent; /* شلنا البوردر المزعج */
+    color: #fff;
+    padding: 14px 45px 14px 15px;
+    border-radius: 25px; /* شكل كبسولة زي الفلاتر */
+    font-size: 14px;
+    box-sizing: border-box;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+.pl-search-input::placeholder {
+    color: #8892b0;
+    font-weight: 400;
+}
+
+/* لما تضغط جوه شريط البحث */
+.pl-search-input:focus {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15); /* بوردر أبيض خفيف جداً */
+}
+
+.pl-search-container:focus-within .search-icon {
+    color: #fff; /* الأيقونة بتنور أبيض بدل الدهبي */
+    transform: translateY(-50%) scale(1.1);
+}
+
+/* ================= كارت القائمة (التصميم الأفقي) ================= */
+.pl-list-card {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 10px 0;
+    cursor: pointer;
+}
+.pl-list-img {
+    width: 55px;
+    height: 55px;
+    background: linear-gradient(135deg, #2c3e50, #3498db);
+    border-radius: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 24px;
+    color: rgba(255, 255, 255, 0.5);
+    position: relative;
+}
+.pl-list-info {
+    flex: 1;
+}
+.pl-list-title {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+.pl-list-subtitle {
+    font-size: 13px;
+    color: #a7a7a7; /* نفس لون Twist */
+}
+.pl-list-dots {
+    padding: 10px;
+    color: #a7a7a7;
+    font-size: 18px;
+}
+
+/* ================= هيدر الخيارات المطابق للصورة ================= */
+.pl-sheet-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 20px;
+    margin-bottom: 15px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+.close-sheet-btn {
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 22px;
+    cursor: pointer;
+    padding: 5px;
+}
+.pl-sheet-info {
+    flex: 1;
+    text-align: left; /* النص رايح لليسار زي الصورة */
+    padding-left: 15px;
+}
+.pl-sheet-info h3 {
+    margin: 0 0 5px 0;
+    font-size: 18px;
+}
+.pl-sheet-info p {
+    margin: 0;
+    font-size: 13px;
+    color: #a7a7a7;
+}
+.pl-sheet-img-box {
+    width: 60px;
+    height: 60px;
+    background: #282828;
+    border-radius: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 25px;
+    color: #555;
+}
+.icon-outline {
+    font-weight: 400 !important; /* عشان الأيقونات تبان مفرغة وشيك */
+}
+
+/* ================= تصميم النوافذ المنبثقة (Modals) ================= */
+.custom-modal-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(5px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 99999;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.3s ease;
+}
+.custom-modal-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+.custom-modal {
+    background: #1e1e1e;
+    width: 85%;
+    max-width: 350px;
+    padding: 20px;
+    border-radius: 16px;
+    transform: translateY(20px);
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255,255,255,0.05);
+}
+.custom-modal-overlay.active .custom-modal {
+    transform: translateY(0);
+}
+.premium-input {
+    width: 100%;
+    background: #2a2a2a;
+    border: 1px solid #333;
+    color: #fff;
+    padding: 12px 15px;
+    border-radius: 8px;
+    font-size: 15px;
+    margin-bottom: 20px;
+    outline: none;
+    box-sizing: border-box;
+}
+.premium-input:focus {
+    border-color: #f6e58d;
+}
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+.modal-btn {
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    border: none;
+}
+.cancel-btn { background: transparent; color: #a7a7a7; }
+.save-btn { background: #f6e58d; color: #121212; }
+.delete-btn { background: #ff4757; color: #fff; }
+
+/* ================= تصميم خيارات الإضافة للمشغل الكبير ================= */
+.playlists-list-container {
+    max-height: 250px;
+    overflow-y: auto;
+    padding-top: 10px;
+}
+.pl-add-card {
+    display: flex;
+    align-items: center;
+    padding: 12px 15px;
+    background: rgba(255,255,255,0.03);
+    border-radius: 10px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+.pl-add-card:hover, .pl-add-card:active {
+    background: rgba(255,255,255,0.08);
+}
+.pl-add-icon {
+    width: 40px; height: 40px;
+    background: #2c3e50;
+    border-radius: 6px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-left: 12px;
+    color: #fff;
+}
+
+/* ================= شاشة الخيارات السفلية (تصميم بريميوم) ================= */
+.premium-sheet {
+    background: #1c192e; /* لون أسود هادي ومريح مش قاطم */
+    border-radius: 24px 24px 0 0; /* كيرف ناعم جداً من فوق */
+    padding: 25px 20px 30px 20px;
+}
+
+/* ================= الهيدر بتاع الشيت ================= */
+.pl-sheet-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 20px;
+    margin-bottom: 10px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06); /* خط فاصل ناعم جداً */
+}
+
+.close-sheet-btn {
+    background: rgba(255, 255, 255, 0.08);
+    border: none;
+    color: #fff;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%; /* زرار قفل دائري شيك */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.close-sheet-btn:active {
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.pl-sheet-info {
+    flex: 1;
+    text-align: right;
+    padding-right: 15px; /* عشان النص يبعد عن زرار الإغلاق */
+}
+
+.pl-sheet-info h3 {
+    margin: 0 0 6px 0;
+    font-size: 18px;
+    font-weight: 700;
+    color: #ffffff;
+    letter-spacing: 0.3px;
+}
+
+.pl-sheet-info p {
+    margin: 0;
+    font-size: 13px;
+    color: #b3b3b3;
+}
+
+.dot-separator {
+    margin: 0 5px;
+    font-size: 10px;
+    opacity: 0.5;
+}
+
+.pl-sheet-img-box {
+    width: 55px;
+    height: 55px;
+    background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.03));
+    border-radius: 12px; /* زوايا ناعمة للصورة */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 22px;
+    color: #fff;
+
+}
+
+/* ================= عناصر القائمة (الزراير) ================= */
+.sheet-options-list {
+    display: flex;
+    flex-direction: column;
+    gap: 5px; /* مسافة بسيطة بين كل خيار والتاني */
+}
+
+.premium-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 12px 10px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.premium-item:active {
+    background: rgba(255, 255, 255, 0.05); /* تأثير ضغطة ناعم */
+    transform: scale(0.98);
+}
+
+.premium-item span {
+    font-size: 16px;
+    font-weight: 500;
+    color: #e0e0e0;
+}
+
+/* بوكس صغير بيحتوي الأيقونة عشان يديها شكل منظم وموحد */
+.os-icon-box {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 18px;
+    color: #b3b3b3;
+    transition: color 0.2s ease;
+}
+
+/* ================= تنسيق خاص لزرار الحذف ================= */
+.delete-item span {
+    color: #ff4d4d; /* لون أحمر هادي */
+}
+
+.delete-item .os-icon-box {
+    color: #ff4d4d;
+}
+
+.delete-item:active {
+    background: rgba(255, 77, 77, 0.1); /* خلفية حمراء شفافة عند الضغط */
+}
+
+/* ================= كارت القائمة (التصميم البريميوم الجديد) ================= */
+.pl-list-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 12px; /* مساحة تنفس داخلية للكارت */
+    margin-bottom: 8px; /* مسافة بين الكروت */
+    border-radius: 16px; /* زوايا ناعمة جداً */
+    background: transparent;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94); /* أنيميشن مرن وسلس */
+    -webkit-tap-highlight-color: transparent; /* إخفاء المربع الأزرق المزعج في الموبايل */
+}
+
+/* تأثيرات الماوس واللمس على الكارت نفسه */
+.pl-list-card:hover {
+    background: rgba(255, 255, 255, 0.03); /* إضاءة خفيفة جداً */
+}
+
+.pl-list-card:active {
+    background: rgba(255, 255, 255, 0.06);
+    transform: scale(0.98); /* الكارت يكش سنة لما تدوس عليه */
+}
+
+/* ================= صورة القائمة ================= */
+.pl-list-img {
+    width: 56px;
+    height: 56px;
+    background: linear-gradient(135deg, #1c2257, #242694); /* تدرج أسود/رمادي فخم */
+    border: 1px solid rgba(35, 29, 92, 0.04); /* إطار داخلي خفيف يعطي عمق */
+    border-radius: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 20px;
+    color: #888; /* لون الأيقونة هادي */
+    box-shadow: 0 4px 10px rgba(54, 54, 54, 0.2); /* ظل ناعم للصورة */
+    transition: all 0.3s ease;
+}
+
+/* الأيقونة تنور لما تقف على الكارت */
+.pl-list-card:hover .pl-list-img {
+    color: #fff;
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.3);
+}
+
+/* ================= معلومات القائمة (النصوص) ================= */
+.pl-list-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 4px; /* مسافة بسيطة بين العنوان والوصف */
+    overflow: hidden; /* عشان لو الاسم طويل ميخربش التصميم */
+}
+
+.pl-list-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #fff;
+    letter-spacing: 0.2px;
+    white-space: nowrap; /* منع نزول النص لسطر جديد */
+    overflow: hidden;
+    text-overflow: ellipsis; /* إضافة الـ (...) لو الاسم طويل */
+}
+
+.pl-list-subtitle {
+    font-size: 13px;
+    color: #a7a7a7;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+/* ================= زرار الـ 3 نقط ================= */
+.pl-list-dots {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #8892b0;
+    font-size: 18px;
+    border-radius: 50%; /* شكل دائري للزرار */
+    transition: all 0.2s ease;
+}
+
+/* تأثير زرار الـ 3 نقط لما تلمسه (زي التطبيقات الحقيقية) */
+.pl-list-dots:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: #fff;
+}
+
+.pl-list-dots:active {
+    background: rgba(255, 255, 255, 0.212);
+}
+
+/* ================= كروت الإضافة للقوائم (داخل المشغل الكبير) ================= */
+.playlists-list-container {
+    max-height: 280px;
+    overflow-y: auto;
+    padding: 5px 0 15px 0;
+    scrollbar-width: none; /* إخفاء السكرول بار لشكل أنظف */
+}
+.playlists-list-container::-webkit-scrollbar { display: none; }
+
+.premium-add-card {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 10px 12px;
+    margin-bottom: 8px;
+    background: rgba(255, 255, 255, 0.03); /* لون خلفية خفيف جداً */
+    border: 1px solid transparent;
+    border-radius: 14px; /* زوايا دائرية مريحة */
+    cursor: pointer;
+    transition: all 0.25s ease;
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* حركة الكارت لما الماوس ييجي عليه أو تلمسه */
+.premium-add-card:hover {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(255, 255, 255, 0.05);
+    transform: translateX(4px); /* نطة خفيفة لليمين بتدي إحساس بالتفاعل */
+}
+
+.premium-add-card:active {
+    transform: scale(0.97); /* الكارت يكش وقت الضغطة الفعلي */
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* ================= صورة/أيقونة الكارت ================= */
+.pl-add-img {
+    width: 45px;
+    height: 45px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 18px;
+    color: #b3b3b3;
+    transition: all 0.3s ease;
+}
+
+/* الأيقونة بتنور وتتحول لـ أبيض لما تقف على الكارت */
+.premium-add-card:hover .pl-add-img {
+    background: #fff;
+    color: #121212;
+    transform: scale(1.05);
+}
+
+/* ================= نصوص الكارت ================= */
+.pl-add-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.pl-add-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: #fff;
+}
+
+.pl-add-subtitle {
+    font-size: 12px;
+    color: #a7a7a7;
+}
+
+/* ================= أيقونة الزائد في الآخر ================= */
+.pl-add-action {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #a7a7a7;
+    font-size: 14px;
+    transition: all 0.2s ease;
+}
+
+.premium-add-card:hover .pl-add-action {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.1); /* دايرة خفيفة تظهر حوالين الزائد */
+}
+
+/* ================= دوائر التحديد في كروت السجل ================= */
+.hist-select-circle {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: 2px solid #8892b0;
+    display: none; /* مخفية في الوضع الطبيعي */
+    justify-content: center;
+    align-items: center;
+    margin-right: 10px;
+    transition: all 0.2s ease;
+}
+
+/* لما الكارت يتحدد، الدايرة تتملي وتنور */
+.hist-select-circle.selected {
+    background: #f6e58d;
+    border-color: #f6e58d;
+    color: #121212;
+}
+
+/* إظهار الدوائر وإخفاء الـ 3 نقط لما وضع التحديد يشتغل */
+.history-select-mode-active .hist-select-circle {
+    display: flex;
+}
+.history-select-mode-active .dl-options-btn {
+    display: none; /* بنخفي الـ 3 نقط عشان اليوزر ميتلخبطش */
+}
+
+/* حركة ناعمة للنافبار لما يتغير */
+#historySelectTools {
+    animation: fadeIn 0.3s ease;
+}
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
