@@ -1,0 +1,1129 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تطبيق وذكر</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="stylesheet" href="home/home.css">
+    <meta name="theme-color" content="#00e5ff">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+
+        <!-- ================= واجهات التطبيق (Views) ================= -->
+    <div id="viewsContainer">
+        
+        <!-- 1. الشاشة الرئيسية -->
+        <div id="homeView" class="view-section active">
+            
+
+                <!-- ================= الهيدر الاحترافي (Premium Header) ================= -->
+<header class="premium-top-bar">
+    <div class="greeting-box">
+        <h1 class="welcome-title">مرحباً بك في وذكر</h1>
+        <p class="welcome-subtitle">
+            <i class="fa-solid fa-feather-pointed" style="color: #f6e58d;"></i> 
+            استمع وارح بالك
+        </p>
+    </div>
+    
+    <div class="top-bar-actions">
+        
+        
+<button class="top-icon-btn search-action" onclick="openGlobalSearch()">
+    <i class="fa-solid fa-magnifying-glass"></i>
+</button>
+        <!-- أيقونة الملف الشخصي (بتصميم مجسم احترافي) -->
+        <button class="top-icon-btn user-action">
+            <i class="fa-solid fa-user"></i>
+        </button>
+    </div>
+</header>
+
+
+                <!-- ================= كارت إذاعة القرآن الكريم (الفيديو المتحرك) ================= -->
+<div class="section" style="margin-top: 20px;">
+    <div class="ultra-live-card" onclick="openRadioPlayer()">
+
+        <!-- طبقة "الفيديو" المتحركة في الخلفية (Aurora Effect) -->
+        <div class="fluid-bg">
+            <div class="fluid-blob color-red"></div>
+            <div class="fluid-blob color-blue"></div>
+            <div class="fluid-blob color-purple"></div>
+        </div>
+
+        <!-- محتوى الكارت (الطبقة الزجاجية اللي فوق الحركة) -->
+        <div class="ultra-card-content">
+            <!-- الهيدر (علامة اللايف + موجات الصوت) -->
+            <div class="radio-card-header">
+
+                                <div class="live-badge-pro">
+                    <span class="live-dot"></span> مباشر
+                </div>
+
+
+            </div>
+
+            <!-- المحتوى الأساسي -->
+            <div class="radio-card-body">
+                <div class="radio-icon-box">
+                    <i class="fa-solid fa-microphone-lines"></i>
+                </div>
+                
+                
+                <div class="radio-info">
+                    <h3>إذاعة القرآن الكريم</h3>
+                    <p>بث مباشر على مدار الساعة</p>
+                </div>
+                
+                    <div class="audio-waves">
+                    <span class="wave w1"></span>
+                    <span class="wave w2"></span>
+                    <span class="wave w3"></span>
+                    <span class="wave w4"></span>
+                    <span class="wave w5"></span>
+                </div>
+                <div class="radio-play-btn">
+                    <i class="fa-solid fa-play"></i>
+                    
+                </div>
+                
+            </div>
+        </div>
+        
+    </div>
+</div>
+
+
+            <!-- ================= 🤲 قسم الإبتهالات والأدعية (تصميم روحاني) ================= -->
+<div class="section premium-ibtehalat-section">
+    
+    <!-- الهيدر السماوي -->
+    <div class="section-header-pro">
+        <div class="title-box">
+            <div class="icon-glow-cyan"><i class="fa-solid fa-hands-praying"></i></div>
+            <h2 class="section-title-pro">قطوف إيمانية</h2>
+        </div>
+        <button class="see-all-btn cyan-btn" id="seeAllIbtehalatBtn">عرض الكل <i class="fa-solid fa-arrow-left-long"></i></button>
+    </div>
+
+    <!-- حاوية الكروت -->
+    <div class="reciters-scroll-pro ibtehalat-scroll" id="ibtehalatAutoScroll">
+        
+        <!-- كارت نصر الدين طوبار -->
+        <div class="ibtehal-card" onclick="openReciterPlaylist('نصر الدين طوبار')">
+            <div class="ibtehal-img-wrapper">
+                <img src="/Images/a.jpg" alt="نصر الدين طوبار" class="ibtehal-img">
+                
+                <div class="ibtehal-gradient"></div>
+                <div class="ibtehal-play-btn"><i class="fa-solid fa-play"></i></div>
+            </div>
+            <div class="ibtehal-info">
+                <div class="ibtehal-title">نصر الدين طوبار <i class="fa-solid fa-star verified-cyan"></i></div>
+                <div class="ibtehal-subtitle">ابتهالات الفجر</div>
+            </div>
+        </div>
+
+        <!-- كارت النقشبندي -->
+        <div class="ibtehal-card" onclick="openReciterPlaylist('النقشبندي')">
+            <div class="ibtehal-img-wrapper">
+                <img src="/Images/b.jpg" alt="النقشبندي" class="ibtehal-img">
+                
+                <div class="ibtehal-gradient"></div>
+                <div class="ibtehal-play-btn"><i class="fa-solid fa-play"></i></div>
+            </div>
+            <div class="ibtehal-info">
+                <div class="ibtehal-title">النقشبندي <i class="fa-solid fa-star verified-cyan"></i></div>
+                <div class="ibtehal-subtitle">سيتم إضافةإبتهالات الشيخ قريبا</div>
+            </div>
+        </div>
+
+        <!-- كارت محمد عمران -->
+        <div class="ibtehal-card" onclick="openReciterPlaylist('محمد عمران')">
+            <div class="ibtehal-img-wrapper">
+                <img src="/Images/c.jpg" alt="محمد عمران" class="ibtehal-img">
+                
+                <div class="ibtehal-gradient"></div>
+                <div class="ibtehal-play-btn"><i class="fa-solid fa-play"></i></div>
+            </div>
+            <div class="ibtehal-info">
+                <div class="ibtehal-title">محمد عمران <i class="fa-solid fa-star verified-cyan"></i></div>
+                <div class="ibtehal-subtitle">سيتم إضافة إبتهالات الشيخ قريبا</div>
+            </div>
+        </div>
+        
+                <div class="ibtehal-card" onclick="openReciterPlaylist('محمد عمران')">
+            <div class="ibtehal-img-wrapper">
+                <img src="/Images/c.jpg" alt="محمد عمران" class="ibtehal-img">
+                
+                <div class="ibtehal-gradient"></div>
+                <div class="ibtehal-play-btn"><i class="fa-solid fa-play"></i></div>
+            </div>
+            <div class="ibtehal-info">
+                <div class="ibtehal-title">محمد عمران <i class="fa-solid fa-star verified-cyan"></i></div>
+                <div class="ibtehal-subtitle">سيتم إضافة إبتهالات الشيخ قريبا</div>
+            </div>
+        </div>
+
+
+        <div class="ibtehal-card" onclick="openReciterPlaylist('محمد عمران')">
+            <div class="ibtehal-img-wrapper">
+                <img src="/Images/c.jpg" alt="محمد عمران" class="ibtehal-img">
+                
+                <div class="ibtehal-gradient"></div>
+                <div class="ibtehal-play-btn"><i class="fa-solid fa-play"></i></div>
+            </div>
+            <div class="ibtehal-info">
+                <div class="ibtehal-title">محمد عمران <i class="fa-solid fa-star verified-cyan"></i></div>
+                <div class="ibtehal-subtitle">سيتم إضافة إبتهالات الشيخ قريبا</div>
+            </div>
+        </div>
+
+
+        <div class="ibtehal-card" onclick="openReciterPlaylist('محمد عمران')">
+            <div class="ibtehal-img-wrapper">
+                <img src="/Images/c.jpg" alt="محمد عمران" class="ibtehal-img">
+                
+                <div class="ibtehal-gradient"></div>
+                <div class="ibtehal-play-btn"><i class="fa-solid fa-play"></i></div>
+            </div>
+            <div class="ibtehal-info">
+                <div class="ibtehal-title">محمد عمران <i class="fa-solid fa-star verified-cyan"></i></div>
+                <div class="ibtehal-subtitle">سيتم إضافة إبتهالات الشيخ قريبا</div>
+            </div>
+        </div>
+
+
+        <div class="ibtehal-card" onclick="openReciterPlaylist('محمد عمران')">
+            <div class="ibtehal-img-wrapper">
+                <img src="/Images/c.jpg" alt="محمد عمران" class="ibtehal-img">
+                
+                <div class="ibtehal-gradient"></div>
+                <div class="ibtehal-play-btn"><i class="fa-solid fa-play"></i></div>
+            </div>
+            <div class="ibtehal-info">
+                <div class="ibtehal-title">محمد عمران <i class="fa-solid fa-star verified-cyan"></i></div>
+                <div class="ibtehal-subtitle">سيتم إضافة إبتهالات الشيخ قريبا</div>
+            </div>
+        </div>
+
+
+        <div class="ibtehal-card" onclick="openReciterPlaylist('محمد عمران')">
+            <div class="ibtehal-img-wrapper">
+                <img src="/Images/c.jpg" alt="محمد عمران" class="ibtehal-img">
+                
+                <div class="ibtehal-gradient"></div>
+                <div class="ibtehal-play-btn"><i class="fa-solid fa-play"></i></div>
+            </div>
+            <div class="ibtehal-info">
+                <div class="ibtehal-title">محمد عمران <i class="fa-solid fa-star verified-cyan"></i></div>
+                <div class="ibtehal-subtitle">سيتم إضافة إبتهالات الشيخ قريبا</div>
+            </div>
+        </div>
+
+
+        <!-- تقدر تضيف كروت تانية هنا بنفس الشكل عشان التقليب يبان -->
+
+    </div>
+
+    <!-- نقط الإبتهالات (باللون السماوي) -->
+    <div class="slider-dots-container cyan-dots" id="ibtehalatDots"></div>
+
+</div>
+
+                  <!-- ================= قسم القرآن الكريم الفائق (التقليب + النقط + عرض الكل) ================= -->
+<div class="section premium-reciters-section">
+    
+    <!-- الهيدر -->
+    <div class="section-header-pro">
+        <div class="title-box">
+            <div class="icon-glow"><i class="fa-solid fa-book-quran"></i></div>
+            <h2 class="section-title-pro">القرآن الكريم</h2>
+        </div>
+        <!-- زرار عرض الكل أخد ID عشان نبرمجه -->
+        <button class="see-all-btn" id="seeAllRecitersBtn">عرض الكل <i class="fa-solid fa-arrow-left-long"></i></button>
+    </div>
+
+    <!-- حاوية الكروت -->
+    <div class="reciters-scroll-pro" id="recitersAutoScroll">
+        
+        <!-- كارت 1 -->
+        <div class="reciter-card-pro" onclick="openReciterPlaylist('المنشاوي')">
+            <div class="reciter-img-wrapper-pro">
+                <img src="/Images/menshawy.jpg" alt="المنشاوي" class="reciter-img-pro">
+                <div class="reciter-gradient-overlay"></div>
+                <div class="play-hover-btn-pro"><i class="fa-solid fa-play"></i></div>
+            </div>
+            <div class="reciter-info-pro">
+                <div class="reciter-title-pro">المنشاوي <i class="fa-solid fa-circle-check" style="color: rgb(0, 204, 255);"></i></div>
+                <div class="reciter-subtitle-pro">المصحف المرتل</div>
+            </div>
+        </div>
+
+        <!-- كارت 2 -->
+        <div class="reciter-card-pro" onclick="openReciterPlaylist('عبدالباسط')">
+            <div class="reciter-img-wrapper-pro">
+                <img src="/Images/basit.jpg" alt="عبدالباسط" class="reciter-img-pro">
+                <div class="reciter-gradient-overlay"></div>
+                <div class="play-hover-btn-pro"><i class="fa-solid fa-play"></i></div>
+            </div>
+            <div class="reciter-info-pro">
+                <div class="reciter-title-pro">عبدالباسط <i class="fa-solid fa-circle-check" style="color: rgb(0, 204, 255);"></i></div>
+                <div class="reciter-subtitle-pro">المصحف المجوّد</div>
+            </div>
+        </div>
+
+        <!-- كارت 3 -->
+        <div class="reciter-card-pro" onclick="openReciterPlaylist('مشاري')">
+            <div class="reciter-img-wrapper-pro">
+                <img src="/Images/mshary.png" alt="العفاسي" class="reciter-img-pro">
+                <div class="reciter-gradient-overlay"></div>
+                <div class="play-hover-btn-pro"><i class="fa-solid fa-play"></i></div>
+            </div>
+            <div class="reciter-info-pro">
+                <div class="reciter-title-pro">مشاري العفاسي <i class="fa-solid fa-circle-check" style="color: rgb(0, 204, 255);"></i></div>
+                <div class="reciter-subtitle-pro">المصحف المرتل</div>
+            </div>
+        </div>
+
+        <!-- كارت 4 -->
+        <div class="reciter-card-pro" onclick="openReciterPlaylist('الدوسري')">
+            <div class="reciter-img-wrapper-pro">
+                <img src="/Images/yasser.jpg" alt="الدوسري" class="reciter-img-pro">
+                <div class="reciter-gradient-overlay"></div>
+                <div class="play-hover-btn-pro"><i class="fa-solid fa-play"></i></div>
+            </div>
+            <div class="reciter-info-pro">
+                <div class="reciter-title-pro">ياسر الدوسري <i class="fa-solid fa-circle-check" style="color: rgb(0, 204, 255);"></i></div>
+                <div class="reciter-subtitle-pro">المصحف المرتل</div>
+            </div>
+        </div>
+
+        <!-- كارت 5 -->
+        <div class="reciter-card-pro" onclick="openReciterPlaylist('فارس')">
+            <div class="reciter-img-wrapper-pro">
+                <img src="/Images/fares.jpg" alt="فارس عباد" class="reciter-img-pro">
+                <div class="reciter-gradient-overlay"></div>
+                <div class="play-hover-btn-pro"><i class="fa-solid fa-play"></i></div>
+            </div>
+            <div class="reciter-info-pro">
+                <div class="reciter-title-pro">فارس عباد <i class="fa-solid fa-circle-check" style="color: rgb(0, 204, 255);"></i></div>
+                <div class="reciter-subtitle-pro">المصحف المرتل</div>
+            </div>
+        </div>
+
+        <!-- كارت 6 -->
+        <div class="reciter-card-pro" onclick="openReciterPlaylist('ماهر المعيقلي')">
+            <div class="reciter-img-wrapper-pro">
+                <img src="/Images/maher.jpg" alt="ماهر المعيقلي" class="reciter-img-pro">
+                <div class="reciter-gradient-overlay"></div>
+                <div class="play-hover-btn-pro"><i class="fa-solid fa-play"></i></div>
+            </div>
+            <div class="reciter-info-pro">
+                <div class="reciter-title-pro">ماهر المعيقلي <i class="fa-solid fa-circle-check" style="color: rgb(0, 204, 255);"></i></div>
+                <div class="reciter-subtitle-pro"></div>
+            </div>
+        </div>
+
+        <!-- كارت 7 -->
+        <div class="reciter-card-pro" onclick="openReciterPlaylist('ناصر القطامي')">
+            <div class="reciter-img-wrapper-pro">
+                <img src="/Images/nasser.jpg" alt="ناصر القطامي" class="reciter-img-pro">
+                <div class="reciter-gradient-overlay"></div>
+                <div class="play-hover-btn-pro"><i class="fa-solid fa-play"></i></div>
+            </div>
+            <div class="reciter-info-pro">
+                <div class="reciter-title-pro">ناصر القطامي <i class="fa-solid fa-circle-check" style="color: rgb(0, 204, 255);"></i></div>
+                <div class="reciter-subtitle-pro"></div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- النقط اللي تحت الكروت (الـ Indicators) -->
+    <div class="slider-dots-container" id="recitersDots">
+        <!-- الجافاسكريبت هيحط النقط هنا أوتوماتيك على حسب عدد الكروت -->
+    </div>
+
+</div>
+
+
+<!-- ================= 🤲 قسم الإبتهالات والأدعية (تصميم روحاني) ================= -->
+<div class="section premium-ibtehalat-section">
+    
+    <!-- الهيدر السماوي -->
+    <div class="section-header-pro">
+        <div class="title-box">
+            <div class="icon-glow-cyan"><i class="fa-solid fa-hands-praying"></i></div>
+            <h2 class="section-title-pro">الإبتهالات والأدعية</h2>
+        </div>
+        <button class="see-all-btn cyan-btn" id="seeAllIbtehalatBtn">عرض الكل <i class="fa-solid fa-arrow-left-long"></i></button>
+    </div>
+
+    <!-- حاوية الكروت -->
+    <div class="reciters-scroll-pro ibtehalat-scroll" id="ibtehalatAutoScroll">
+        
+        <!-- كارت نصر الدين طوبار -->
+        <div class="ibtehal-card" onclick="openReciterPlaylist('نصر الدين طوبار')">
+            <div class="ibtehal-img-wrapper">
+                <img src="/Images/a.jpg" alt="نصر الدين طوبار" class="ibtehal-img">
+                
+                <div class="ibtehal-gradient"></div>
+                <div class="ibtehal-play-btn"><i class="fa-solid fa-play"></i></div>
+            </div>
+            <div class="ibtehal-info">
+                <div class="ibtehal-title">نصر الدين طوبار <i class="fa-solid fa-star verified-cyan"></i></div>
+                <div class="ibtehal-subtitle">ابتهالات الفجر</div>
+            </div>
+        </div>
+
+        <!-- كارت النقشبندي -->
+        <div class="ibtehal-card" onclick="openReciterPlaylist('النقشبندي')">
+            <div class="ibtehal-img-wrapper">
+                <img src="/Images/b.jpg" alt="النقشبندي" class="ibtehal-img">
+                
+                <div class="ibtehal-gradient"></div>
+                <div class="ibtehal-play-btn"><i class="fa-solid fa-play"></i></div>
+            </div>
+            <div class="ibtehal-info">
+                <div class="ibtehal-title">النقشبندي <i class="fa-solid fa-star verified-cyan"></i></div>
+                <div class="ibtehal-subtitle">سيتم إضافةإبتهالات الشيخ قريبا</div>
+            </div>
+        </div>
+
+        <!-- كارت محمد عمران -->
+        <div class="ibtehal-card" onclick="openReciterPlaylist('محمد عمران')">
+            <div class="ibtehal-img-wrapper">
+                <img src="/Images/c.jpg" alt="محمد عمران" class="ibtehal-img">
+                
+                <div class="ibtehal-gradient"></div>
+                <div class="ibtehal-play-btn"><i class="fa-solid fa-play"></i></div>
+            </div>
+            <div class="ibtehal-info">
+                <div class="ibtehal-title">محمد عمران <i class="fa-solid fa-star verified-cyan"></i></div>
+                <div class="ibtehal-subtitle">سيتم إضافة إبتهالات الشيخ قريبا</div>
+            </div>
+        </div>
+
+        <!-- تقدر تضيف كروت تانية هنا بنفس الشكل عشان التقليب يبان -->
+
+    </div>
+
+    <!-- نقط الإبتهالات (باللون السماوي) -->
+    <div class="slider-dots-container cyan-dots" id="ibtehalatDots"></div>
+
+</div>
+
+           <!-- شاشة عرض سور القرآن الخاصة بالشيخ -->
+    <div class="bottom-sheet-overlay" id="artistListSheet" onclick="closeSheet('artistListSheet')">
+        <div class="bottom-sheet sheet-tall" onclick="event.stopPropagation()">
+            <div class="sheet-handle" onclick="closeSheet('artistListSheet')"></div>
+            <div class="sheet-title" id="artistListTitle">اسم القارئ</div>
+            <div class="track-list" id="artistTrackList">
+                <!-- سور القرآن الخاصة بالشيخ هتظهر هنا تلقائياً -->
+            </div>
+        </div>
+    </div>
+
+
+
+            
+    <!-- 5. شاشة مؤقت النوم (Sleep Timer) -->
+    <div class="bottom-sheet-overlay" id="timerSheet" onclick="closeSheet('timerSheet')">
+        <div class="bottom-sheet" onclick="event.stopPropagation()">
+            <div class="sheet-handle" onclick="closeSheet('timerSheet')"></div>
+            <div class="sheet-title">مؤقت النوم <i class="fa-solid fa-moon" style="color: var(--primary);"></i></div>
+            <p style="text-align:center; color:var(--text-muted); margin-bottom:20px; font-size:13px;">سيتم إيقاف الصوت تلقائياً بعد الوقت المحدد</p>
+            
+            <div class="sheet-action" onclick="setSleepTimer(15)"><i class="fa-solid fa-clock"></i> 15 دقيقة</div>
+            <div class="sheet-action" onclick="setSleepTimer(30)"><i class="fa-solid fa-clock"></i> 30 دقيقة</div>
+            <div class="sheet-action" onclick="setSleepTimer(60)"><i class="fa-solid fa-clock"></i> 60 دقيقة (ساعة واحدة)</div>
+            <div class="sheet-action highlight" onclick="openCustomTimerModal(); closeSheet('timerSheet');"><i class="fa-solid fa-keyboard"></i> وقت مخصص...</div>
+            
+            <!-- زرار الإلغاء -->
+            <div class="sheet-action danger" style="margin-top: 15px;" onclick="cancelSleepTimer()">
+                <i class="fa-solid fa-ban"></i> إيقاف المؤقت الحالي
+            </div>
+        </div>
+    </div>
+            <div class="section">
+                <h2 class="section-title">اقتراحات لك</h2>
+                <div class="track-list" id="mainTrackList"></div>
+            </div>
+        </div>
+
+        
+<!-- ================= شاشة البحث (تصميم احترافي جديد) ================= -->
+<div id="searchView" class="view-section">
+    <!-- هيدر البحث الثابت -->
+    <div class="search-header-container">
+        <h1 class="search-main-title">البحث <i class="fa-solid fa-magnifying-glass"></i></h1>
+
+        <div class="search-input-wrapper">
+            <i class="fa-solid fa-magnifying-glass search-icon"></i>
+            <input type="text" id="mainSearchInput" class="custom-search-input" placeholder="ابحث عن قارئ، سورة، أو ابتهال..." autocomplete="off">
+            <i class="fa-solid fa-xmark clear-icon" id="clearSearchBtn" style="display: none;"></i>
+        </div>
+    </div>
+
+    <!-- مساحة المحتوى (السجل والنتائج) -->
+    <div class="search-content-area">
+        
+        <!-- قسم سجل البحث -->
+        <div id="searchHistorySection" style="display: none; margin-bottom: 25px;">
+            <div class="history-header">
+                <h2>سجل البحث</h2>
+                <span class="clear-history-text" onclick="clearSearchHistory()">مسح السجل</span>
+            </div>
+            <div class="history-tags" id="searchHistoryTags">
+                <!-- الكلمات المحفوظة هتظهر هنا -->
+            </div>
+        </div>
+
+        <!-- قسم نتائج البحث -->
+        <div class="results-area">
+            <h3 id="searchTitle" class="results-title" style="display: none;">أفضل النتائج</h3>
+            
+            <div class="track-list" id="searchResultsContainer" style="padding: 0;">
+                <!-- الـ Placeholder الافتراضي (شكل السماعة) -->
+                <div class="empty-search-state">
+                    <i class="fa-solid fa-headphones-simple"></i>
+                    <p>اكتب اسم السورة أو المنشد للبحث في مكتبتك</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+        <!-- 2. شاشة مكتبتي -->
+<div id="libraryView" class="view-section">
+    <header class="glass-header">
+        <div class="greeting"><h1>مكتبتي <i class="fa-solid fa-layer-group"></i></h1></div>
+    </header>
+    
+    <div class="library-cards-grid">
+        <div class="lib-card-prime fav-theme" onclick="openLibPage('favoritesPage')">
+            <i class="fa-solid fa-heart card-bg-icon"></i>
+            <div class="prime-icon"><i class="fa-solid fa-heart"></i></div>
+            <div class="prime-text">
+                <span>المفضلة</span>
+                <p>تلاواتك المحببة</p>
+            </div>
+        </div>
+
+        <div class="lib-card-prime down-theme" onclick="openLibPage('downloadsPage')">
+            <i class="fa-solid fa-cloud-arrow-down card-bg-icon"></i>
+            <div class="prime-icon"><i class="fa-solid fa-cloud-arrow-down"></i></div>
+            <div class="prime-text">
+                <span>التحميلات</span>
+                <p>متاحة بلا إنترنت</p>
+            </div>
+        </div>
+
+        <div class="lib-card-prime play-theme" onclick="openPlaylistsPage()">
+            <i class="fa-solid fa-folder-open card-bg-icon"></i>
+            <div class="prime-icon"><i class="fa-solid fa-folder-open"></i></div>
+            <div class="prime-text">
+                <span>قوائمي</span>
+                <p>مجموعاتك الخاصة</p>
+            </div>
+        </div>
+
+        <div class="lib-card-prime hist-theme" onclick="openHistoryPage()">
+            <i class="fa-solid fa-clock-rotate-left card-bg-icon"></i>
+            <div class="prime-icon"><i class="fa-solid fa-clock-rotate-left"></i></div>
+            <div class="prime-text">
+                <span>السجل</span>
+                <p>آخر ما استمعت إليه</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="favoritesPage" class="sub-lib-page">
+    <div class="prime-navbar">
+        <button class="nav-btn" onclick="closeLibPage('favoritesPage')"><i class="fa-solid fa-chevron-right"></i></button>
+        <h2 class="navbar-title">المفضلة</h2>
+        <div class="nav-spacer"></div>
+    </div>
+    <div class="sub-page-content">
+        <div class="track-list" id="favoritesList"></div>
+    </div>
+</div>
+
+<div id="downloadsPage" class="sub-lib-page">
+    <div class="prime-navbar">
+        <button class="nav-btn" onclick="closeLibPage('downloadsPage')"><i class="fa-solid fa-chevron-right"></i></button>
+        <h2 class="navbar-title">التحميلات</h2>
+        <div class="nav-spacer"></div>
+    </div>
+    <div class="sub-page-content">
+        <div class="mini-search-box" style="margin-bottom: 20px;">
+            <i class="fa-solid fa-search"></i>
+            <input type="text" id="downloadsSearchInput" placeholder="ابحث في ملفاتك المحملة..." autocomplete="off">
+        </div>
+        <div class="downloads-grid" id="downloadsContainer">
+            <div class="empty-state">لا توجد مقاطع محملة بعد.</div>
+        </div>
+    </div>
+</div>
+
+<!-- ================= 1. صفحة القوائم (التصميم الجديد) ================= -->
+<div id="playlistsPage" class="sub-lib-page">
+    <!-- النافبار الشيك -->
+    <div class="prime-navbar">
+        <button class="nav-btn" onclick="closeLibPage('playlistsPage')"><i class="fa-solid fa-chevron-right"></i></button>
+        <h2 class="navbar-title" style="font-size: 22px; font-weight: 700;">قوائمك</h2>
+        <button class="nav-btn" onclick="openCustomModal()"><i class="fa-solid fa-plus"></i></button>
+    </div>
+    
+    <div class="sub-page-content" style="padding-top: 10px;">
+<!-- ================= شريط الفلاتر ================= -->
+<div class="filter-chips-container">
+    <button class="filter-chip active" onclick="filterPlaylists('all', this)">الكل</button>
+    <button class="filter-chip" onclick="filterPlaylists('yours', this)">من إنشائك</button>
+    <button class="filter-chip" onclick="filterPlaylists('app', this)">من وذكر</button>
+    <button class="filter-chip" onclick="goHomeFromPlaylists()">انتقل إلى الرئيسية</button>
+</div>
+
+<!-- ================= زرار إنشاء قائمة جديدة ================= -->
+<div class="create-playlist-row" onclick="openCustomModal()">
+    <div class="create-icon-box"><i class="fa-solid fa-plus"></i></div>
+    <span class="create-text">إنشاء قائمة جديدة</span>
+</div>
+
+<!-- ================= شريط البحث في القوائم ================= -->
+<div class="pl-search-container">
+    <i class="fa-solid fa-magnifying-glass search-icon"></i>
+    <input type="text" id="playlistsSearchInput" class="pl-search-input" placeholder="ابحث عن قائمة...">
+</div>
+
+        <!-- حاوية القوائم (هتترسم من الجافاسكريبت) -->
+        <div class="playlists-list" id="playlistsGrid"></div>
+    </div>
+</div>
+
+
+
+<!-- ================= 1. صفحة سجل الاستماع (مع وضع التحديد) ================= -->
+<div id="historyPage" class="sub-lib-page">
+    <div class="prime-navbar" id="historyNavbar">
+        <button class="nav-btn" onclick="closeLibPage('historyPage')"><i class="fa-solid fa-chevron-right"></i></button>
+        <h2 class="navbar-title" style="font-size: 22px; font-weight: 700;">سجل الاستماع</h2>
+        
+        <!-- أدوات وضع التحديد (مخفية في الوضع الطبيعي) -->
+        <div id="historySelectTools" style="display: none; align-items: center; gap: 15px; margin-right: auto; padding-left: 10px;">
+            <span onclick="selectAllHistory()" style="color: #f6e58d; font-size: 14px; font-weight: 600; cursor: pointer;">تحديد الكل</span>
+            <i class="fa-solid fa-trash" onclick="deleteSelectedHistory()" style="color: #ff4d4d; font-size: 18px; cursor: pointer;"></i>
+            <span onclick="toggleHistorySelectMode()" style="color: #a7a7a7; font-size: 14px; font-weight: 600; cursor: pointer;">إلغاء</span>
+        </div>
+
+        <!-- الأيقونة الاحترافية لزرار التحديد (قائمة وعليها علامة صح) -->
+        <button class="nav-btn" id="historyEnterSelectBtn" onclick="toggleHistorySelectMode()">
+            <i class="fa-solid fa-list-check" style="font-size: 18px; color: #b3b3b3;"></i>
+        </button>
+    </div>
+    
+    <div class="sub-page-content" style="padding-top: 10px;">
+        <!-- شريط فلاتر الوقت -->
+        <div class="filter-chips-container">
+            <button class="filter-chip active" onclick="filterHistory('all', this)">الكل</button>
+            <button class="filter-chip" onclick="filterHistory('today', this)">اليوم</button>
+            <button class="filter-chip" onclick="filterHistory('yesterday', this)">أمس</button>
+            <button class="filter-chip" onclick="filterHistory('3days', this)">منذ 3 أيام</button>
+            <button class="filter-chip" onclick="filterHistory('week', this)">منذ أسبوع</button>
+        </div>
+
+        <!-- حاوية الكروت -->
+        <div class="cards-scroll" id="recentList" style="display: flex; flex-direction: column; gap: 8px;"></div>
+    </div>
+</div>
+
+<!-- ================= 2. شاشة خيارات السجل (الـ 3 نقط الجديدة) ================= -->
+<div class="bottom-sheet-overlay" id="historyOptionsMenu" onclick="closeSheet('historyOptionsMenu')">
+    <div class="bottom-sheet premium-sheet" onclick="event.stopPropagation()">
+        <div class="pl-sheet-header">
+            <button class="close-sheet-btn" onclick="closeSheet('historyOptionsMenu')"><i class="fa-solid fa-xmark"></i></button>
+            <div class="pl-sheet-info">
+                <h3 id="histOptTitle">اسم المقطع</h3>
+                <p>سجل الاستماع</p>
+            </div>
+            <div class="pl-sheet-img-box"><i class="fa-solid fa-clock-rotate-left"></i></div>
+        </div>
+
+        <div class="sheet-options-list">
+            <div class="os-item premium-item" id="histOptPinBtn">
+                <div class="os-icon-box"><i class="fa-solid fa-thumbtack"></i></div><span>تثبيت في السجل</span>
+            </div>
+            <div class="os-item premium-item" onclick="openPlaylistSheetFromOptions()">
+                <div class="os-icon-box"><i class="fa-solid fa-folder-plus"></i></div><span>إضافة إلى قائمة تشغيل</span>
+            </div>
+            <div class="os-item premium-item" onclick="goToArtist()">
+                <div class="os-icon-box"><i class="fa-solid fa-headphones"></i></div><span>الانتقال إلى الشيخ</span>
+            </div>
+            <div class="os-item premium-item delete-item" id="histOptDelBtn">
+                <div class="os-icon-box"><i class="fa-solid fa-trash"></i></div><span>إزالة من السجل</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- ================= 2. شاشة خيارات القائمة (تصميم بريميوم رايق) ================= -->
+<div class="bottom-sheet-overlay" id="playlistOptionsMenu" onclick="closeSheet('playlistOptionsMenu')">
+    <div class="bottom-sheet premium-sheet" onclick="event.stopPropagation()">
+        
+        <!-- الهيدر الشيك -->
+        <div class="pl-sheet-header">
+
+                        <!-- صورة القائمة (تصميم ناعم) -->
+            <div class="pl-sheet-img-box">
+                <i class="fa-solid fa-music"></i>
+            </div>
+
+
+            
+            <div class="pl-sheet-info">
+                <h3 id="plOptTitle">اسم القائمة</h3>
+                <p>من إنشائك <span class="dot-separator">•</span> <span id="plOptCount">0 مقاطع</span></p>
+            </div>
+
+                        <button class="close-sheet-btn" onclick="closeSheet('playlistOptionsMenu')">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            
+
+        </div>
+
+        <!-- خيارات القائمة -->
+        <div class="sheet-options-list">
+            <div class="os-item premium-item" id="plOptPinBtn">
+                <div class="os-icon-box"><i class="fa-solid fa-thumbtack"></i></div>
+                <span>تثبيت فى أول القائمة</span>
+            </div>
+            
+            <div class="os-item premium-item" onclick="shareSpecificPlaylist()">
+                <div class="os-icon-box"><i class="fa-solid fa-share-nodes"></i></div>
+                <span>مشاركة القائمة</span>
+            </div>
+            
+            <div class="os-item premium-item" id="plOptEditBtn">
+                <div class="os-icon-box"><i class="fa-solid fa-pen"></i></div>
+                <span>تعديل الاسم</span>
+            </div>
+            
+            <!-- زرار الحذف (بلون أحمر خفيف ومميز) -->
+            <div class="os-item premium-item delete-item" id="plOptDelBtn">
+                <div class="os-icon-box"><i class="fa-solid fa-trash"></i></div>
+                <span>حذف من القوائم</span>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+    </div>
+
+
+
+
+    <!-- الإشعارات المتتالية -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <!-- نافذة إدخال مخصصة (بديل الـ Prompt) -->
+    <div class="custom-modal-overlay" id="createPlaylistModal">
+        <div class="custom-modal">
+            <h3>إنشاء قائمة جديدة</h3>
+            <p>أدخل اسم قائمة التشغيل الجديدة:</p>
+            <input type="text" id="newPlaylistInput" placeholder="مثال: تلاوه هادئة">
+            <div class="modal-actions">
+                <button class="cancel-btn" onclick="closeCustomModal()">إلغاء</button>
+                <button class="save-btn" onclick="confirmCreatePlaylist()">إنشاء</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= الشاشات السفلية (Bottom Sheets) ================= -->
+    
+    <!-- 1. خيارات المقطع -->
+    <div class="bottom-sheet-overlay" id="trackOptionsSheet" onclick="closeSheet('trackOptionsSheet')">
+        <div class="bottom-sheet" onclick="event.stopPropagation()">
+            <div class="sheet-handle" onclick="closeSheet('trackOptionsSheet')"></div>
+            <div class="sheet-header-info">
+                <div class="sheet-track-img" id="sheetOptionsImg"><i class="fa-solid fa-music"></i></div>
+                <div>
+                    <h3 id="sheetOptionsTitle">اسم المقطع</h3>
+                    <p id="sheetOptionsArtist">القارئ</p>
+                </div>
+            </div>
+            <div class="sheet-action" onclick="toggleFavorite()"><i class="fa-regular fa-heart" id="sheetFavIcon"></i> أعجبني</div>
+            <div class="sheet-action" onclick="openSheet('playlistSheet'); closeSheet('trackOptionsSheet');"><i class="fa-solid fa-folder-plus"></i> أضف إلى قائمة تشغيل</div>
+            
+                        <div class="sheet-action" onclick="openSheet('speedSheet'); closeSheet('trackOptionsSheet');"><i class="fa-solid fa-gauge-high"></i> سرعة التشغيل</div>
+
+
+            <div class="sheet-action"><i class="fa-solid fa-share-nodes"></i> مشاركة</div>
+        </div>
+    </div>
+
+    <!-- 2. إضافة إلى قائمة تشغيل -->
+    <div class="bottom-sheet-overlay" id="playlistSheet" onclick="closeSheet('playlistSheet')">
+        <div class="bottom-sheet" onclick="event.stopPropagation()">
+            <div class="sheet-handle" onclick="closeSheet('playlistSheet')"></div>
+            <div class="sheet-title">أضف إلى قائمة تشغيل</div>
+            <div class="sheet-action highlight" onclick="openCustomModal(); closeSheet('playlistSheet');"><i class="fa-solid fa-plus"></i> إنشاء قائمة جديدة</div>
+            <div id="userPlaylistsContainer" class="playlists-list-container">
+                <!-- القوائم هتظهر هنا للإضافة -->
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. عرض محتوى قائمة التشغيل (الجديدة) -->
+    <div class="bottom-sheet-overlay" id="playlistDetailsSheet" onclick="closeSheet('playlistDetailsSheet')">
+        <div class="bottom-sheet sheet-tall" onclick="event.stopPropagation()">
+            <div class="sheet-handle" onclick="closeSheet('playlistDetailsSheet')"></div>
+            <div class="sheet-title" id="detailsSheetTitle">اسم القائمة</div>
+            <div class="track-list" id="playlistTracksContainer">
+                <!-- الأغاني اللي جوة القائمة هتظهر هنا -->
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= المشغل الكبير (Full Player UI) ================= -->
+    <div class="full-player-overlay" id="fullPlayer">
+        <div class="fp-header">
+            <i class="fa-solid fa-chevron-down" onclick="closeFullPlayer()"></i>
+            <div class="fp-header-text">
+                <span class="fp-playing-from">تطبيق وذكر</span>
+                <span class="fp-playlist-name" id="fpTopPlaylistName">الاستماع الآن</span>
+            </div>
+            <i class="fa-solid fa-ellipsis-vertical" onclick="openSheet('trackOptionsSheet')"></i>
+        </div>
+
+        <div class="fp-artwork-container">
+            <div class="fp-cover" id="fpCoverIcon"><i class="fa-solid fa-music"></i></div>
+        </div>
+
+<div class="fp-info-row">
+            <div class="fp-text">
+                <h2 id="fpBigTitle">اسم المقطع</h2>
+                <p id="fpBigArtist">اسم القارئ</p>
+            </div>
+                        <div class="fp-actions" style="display: flex; align-items: center; gap: 15px;">
+                
+                <span id="liveSpeedBadge" class="live-timer-badge speed-badge" style="display: none;" onclick="openSheet('speedSheet')">
+                    <i class="fa-solid fa-gauge-high"></i> <span id="speedIndicator">1.5x</span>
+                </span>
+
+                <span id="liveSleepTimer" class="live-timer-badge" style="display: none;" onclick="openSheet('timerSheet')">
+                    <i class="fa-solid fa-stopwatch"></i> <span id="timerCountdown">00:00</span>
+                </span>
+                
+                <i class="fa-solid fa-folder-plus" onclick="openSheet('playlistSheet')"></i>
+                <i class="fa-regular fa-heart" id="fpFavIcon" onclick="toggleFavorite()"></i>
+            </div>
+
+        </div>
+
+        <div class="fp-progress-container">
+            <div class="fp-progress-bar" id="fpProgressBar" onclick="seek(event, 'fp')">
+                <div class="fp-progress-current" id="fpProgressCurrent">
+                    <div class="fp-progress-handle"></div>
+                </div>
+            </div>
+            <div class="fp-time-row">
+                <span id="fpCurrentTime">00:00</span>
+                <span id="fpTotalTime">00:00</span>
+            </div>
+        </div>
+
+        <div class="fp-main-controls">
+            <i class="fa-solid fa-shuffle fp-secondary-btn" id="shuffleBtn" onclick="toggleShuffle()"></i>
+            <i class="fa-solid fa-forward-step fp-nav-btn" onclick="prevTrack()"></i>
+            <div class="fp-play-btn-wrapper" onclick="togglePlayPause()">
+                <i class="fa-solid fa-play" id="fpPlayIcon"></i>
+            </div>
+            <i class="fa-solid fa-backward-step fp-nav-btn" onclick="nextTrack()"></i>
+            <i class="fa-solid fa-repeat fp-secondary-btn" onclick="repeatTrack()"></i>
+        </div>
+                    
+                            <div class="fp-bottom-actions">
+            <div class="action-btn" id="downloadBtn" onclick="startDownload()">
+                <i class="fa-solid fa-cloud-arrow-down"></i>
+                <span>تحميل</span>
+            </div>
+            
+            <div class="action-btn" onclick="openLyrics()">
+                <i class="fa-solid fa-book-open"></i>
+                <span>المصحف</span>
+            </div>
+            
+            <div class="action-btn" onclick="openSheet('timerSheet')">
+                <i class="fa-solid fa-stopwatch"></i>
+                <span>المؤقت</span>
+            </div>
+            
+            <div class="action-btn" onclick="openSheet('trackOptionsSheet')">
+                <i class="fa-solid fa-ellipsis-vertical"></i>
+                <span>خيارات</span>
+            </div>
+        </div>
+
+    </div>
+<!-- نافذة إدخال وقت المؤقت المخصص -->
+    <div class="custom-modal-overlay" id="customTimerModal">
+        <div class="custom-modal">
+            <h3>وقت مخصص <i class="fa-solid fa-stopwatch" style="color: var(--primary);"></i></h3>
+            <p>أدخل الوقت بالدقائق (مثال: 120 لساعتين):</p>
+            <input type="number" id="customTimerInput" placeholder="أدخل الدقائق..." min="1" max="600">
+            <div class="modal-actions">
+                <button class="cancel-btn" onclick="closeCustomTimerModal()">إلغاء</button>
+                <button class="save-btn" onclick="confirmCustomTimer()">بدء المؤقت</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 6. شاشة عرض الكلمات / المصحف -->
+    <div class="bottom-sheet-overlay" id="lyricsSheet" onclick="closeSheet('lyricsSheet')">
+        <div class="bottom-sheet sheet-tall" onclick="event.stopPropagation()">
+            <div class="sheet-handle" onclick="closeSheet('lyricsSheet')"></div>
+            <div class="sheet-title" id="lyricsTitle">الكلمات</div>
+            
+            <div class="lyrics-container" id="lyricsContent">
+                <!-- النص هيتم تحميله هنا برمجياً -->
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ================= النوافذ المنبثقة (المودالز) لتعديل وحذف القوائم ================= -->
+
+<!-- 1. مودال تعديل اسم القائمة -->
+<div class="custom-modal-overlay" id="editPlaylistModal" onclick="closeCustomModals()">
+    <div class="custom-modal" onclick="event.stopPropagation()">
+        <h3 style="margin-top: 0; margin-bottom: 15px; font-size: 18px;">تعديل اسم القائمة</h3>
+        <input type="text" id="editPlInput" class="premium-input" placeholder="اكتب الاسم الجديد هنا...">
+        <div class="modal-actions">
+            <button class="modal-btn cancel-btn" onclick="closeCustomModals()">إلغاء</button>
+            <button class="modal-btn save-btn" onclick="saveNewPlaylistName()">حفظ التعديل</button>
+        </div>
+    </div>
+</div>
+
+<!-- 2. مودال تأكيد الحذف -->
+<div class="custom-modal-overlay" id="deletePlaylistModal" onclick="closeCustomModals()">
+    <div class="custom-modal" onclick="event.stopPropagation()">
+        <h3 style="margin-top: 0; margin-bottom: 10px; font-size: 18px; color: #ff4757;">حذف القائمة</h3>
+        <p id="deletePlText" style="color: #a7a7a7; font-size: 14px; margin-bottom: 20px; line-height: 1.5;">هل أنت متأكد أنك تريد حذف هذه القائمة؟</p>
+        <div class="modal-actions">
+            <button class="modal-btn cancel-btn" onclick="closeCustomModals()">إلغاء</button>
+            <button class="modal-btn delete-btn" onclick="confirmDeletePlAction()">نعم، احذف</button>
+        </div>
+    </div>
+</div>
+
+    <!-- المشغل السفلي -->
+    <div class="bottom-player glass-player" id="miniPlayer" onclick="openFullPlayer()">
+        <div class="player-info">
+            <div class="player-img" id="playerIcon"><i class="fa-solid fa-book-open"></i></div>
+            <div class="player-text">
+                <h4 id="playerTitle">لم يتم التحديد</h4>
+                <p id="playerArtist">اضغط لتشغيل القرآن</p>
+            </div>
+        </div>
+        <div class="player-controls" onclick="event.stopPropagation()">
+            <i class="fa-solid fa-forward-step control-btn" onclick="nextTrack()"></i>
+            <div class="play-btn-circle" onclick="togglePlayPause()">
+                <i class="fa-solid fa-play" id="mainPlayBtn"></i>
+            </div>
+            <i class="fa-solid fa-backward-step control-btn" onclick="prevTrack()"></i>
+        </div>
+        <div class="player-progress" id="progressBar" onclick="seek(event, 'mini')">
+            <div class="progress-current" id="progressCurrent"></div>
+        </div>
+    </div>
+
+    <!-- شريط التنقل -->
+    <div class="bottom-nav">
+        <a href="#" class="nav-item active" onclick="switchTab('homeView', this)"><i class="fa-solid fa-house"></i><span>الرئيسية</span></a>
+        <a href="#" class="nav-item" onclick="switchTab('searchView', this)"><i class="fa-solid fa-magnifying-glass"></i><span>البحث</span></a>
+        
+        
+        <a href="#" class="nav-item" onclick="switchTab('libraryView', this)"><i class="fa-solid fa-book-bookmark"></i><span>مكتبتي</span></a>
+    </div>
+    
+    
+        <div class="custom-modal-overlay" id="downloadProgressModal">
+        <div class="custom-modal" style="text-align: center;">
+            <i class="fa-solid fa-cloud-arrow-down" style="font-size: 40px; color: var(--primary); margin-bottom: 15px;"></i>
+            <h3 id="downloadingTitle">جاري التحميل...</h3>
+            <p id="downloadingArtist" style="font-size: 13px; color: var(--text-muted); margin-bottom: 20px;">القارئ</p>
+            
+            <div class="progress-bar-container" style="background: rgba(255,255,255,0.1); height: 8px; border-radius: 10px; overflow: hidden; margin-bottom: 10px;">
+                <div id="downloadProgressBar" style="width: 0%; height: 100%; background: var(--primary-glow); transition: width 0.3s ease;"></div>
+            </div>
+            <p id="downloadProgressText" style="font-size: 14px; font-weight: bold;">0%</p>
+            
+                    <button id="goToDownloadsBtn" class="premium-btn" style="display: none; margin-top: 20px;" onclick="goToDownloads()">
+                <i class="fa-solid fa-folder-open"></i> انتقل إلى التحميلات
+            </button>
+
+        </div>
+    </div>
+
+<!-- ================= شاشة خيارات التحميلات (الـ 3 نقط) ================= -->
+<div class="bottom-sheet-overlay" id="downloadOptionsSheet" onclick="closeSheet('downloadOptionsSheet')">
+    <div class="bottom-sheet" onclick="event.stopPropagation()">
+        <div class="sheet-handle" onclick="closeSheet('downloadOptionsSheet')"></div>
+        <div class="sheet-title" id="dlOptionTitle">اسم المقطع</div>
+        
+        <!-- زرار التثبيت (بيتم التحكم فيه من الـ JS) -->
+        <div class="os-item" id="dlPinBtn"></div>
+        
+        <!-- الأزرار الجديدة اللي ضفناها -->
+        <div class="os-item" onclick="shareCurrentTrack()">
+            <i class="fa-solid fa-share-nodes"></i>
+            <span>مشاركة</span>
+        </div>
+        
+        <div class="os-item" onclick="openPlaylistSheetFromOptions()"> 
+            <i class="fa-solid fa-folder-plus"></i>
+            <span>أضف إلى قائمة التشغيل</span>
+        </div>
+        
+        <div class="os-item" onclick="goToArtist()">
+            <i class="fa-solid fa-headphones"></i>
+            <span>الانتقال إلى قائمة الشيخ</span>
+        </div>
+        
+        <!-- زرار الحذف -->
+        <div class="os-item" id="dlDeleteBtn">
+            <i class="fa-solid fa-trash-can" style="color: #ff4757;"></i>
+            <span style="color: #ff4757;">حذف من التحميلات</span>
+        </div>
+    </div>
+</div>
+
+    <div class="custom-modal-overlay" id="confirmDeleteModal">
+        <div class="custom-modal">
+            <h3>تأكيد الحذف <i class="fa-solid fa-triangle-exclamation" style="color: #ff4757;"></i></h3>
+            <p id="confirmDeleteText">هل تريد حذف هذا المقطع؟</p>
+            <div class="modal-actions">
+                <button class="cancel-btn" onclick="closeModal('confirmDeleteModal')">إلغاء</button>
+                <button class="save-btn" style="background: #ff4757;" id="confirmDeleteBtn">تأكيد الحذف</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="bottom-sheet-overlay" id="speedSheet" onclick="closeSheet('speedSheet')">
+    <div class="bottom-sheet sheet-tall" onclick="event.stopPropagation()">
+        <div class="sheet-handle" onclick="closeSheet('speedSheet')"></div>
+        <div class="sheet-title">سرعة التشغيل <i class="fa-solid fa-gauge-high" style="color: #a200ff;"></i></div>
+        
+        <div class="speed-btns-container">
+            <button class="speed-btn" onclick="setPlaybackSpeed(0.5, this)">0.5x</button>
+            <button class="speed-btn" onclick="setPlaybackSpeed(0.75, this)">0.75x</button>
+            <button class="speed-btn active" onclick="setPlaybackSpeed(1.0, this)">1.0x</button> <button class="speed-btn" onclick="setPlaybackSpeed(1.25, this)">1.25x</button>
+            <button class="speed-btn" onclick="setPlaybackSpeed(1.5, this)">1.5x</button>
+        </div>
+        
+        <p style="text-align: center; color: var(--text-muted); font-size: 13px; margin-top: 10px;">
+            السرعة الطبيعية هي 1.0x
+        </p>
+    </div>
+</div>
+
+<div id="radioPlayerOverlay" class="radio-full-overlay">
+    <div class="radio-header">
+        <i class="fa-solid fa-chevron-down" onclick="closeRadioUI()"></i>
+        <span>بث مباشر الآن</span>
+        <i class="fa-solid fa-arrow-up-from-bracket" onclick="shareLiveRadio()"></i>
+    </div>
+
+    <div class="radio-main-card">
+        <div class="radio-img-container">
+            <img src="/Images/live.png" >
+            <div class="radio-glow-effect"></div>
+        </div>
+        
+        <div class="radio-titles">
+            <h1>إذاعة القرآن الكريم</h1>
+            <p>جمهورية مصر العربية</p>
+        </div>
+    </div>
+
+    <div class="radio-equalizer">
+        <span class="bar"></span><span class="bar"></span><span class="bar"></span>
+        <span class="bar"></span><span class="bar"></span><span class="bar"></span>
+        <span class="bar"></span><span class="bar"></span><span class="bar"></span>
+    </div>
+
+    <div class="radio-controls-section">
+        <div class="radio-play-trigger" id="radioMainToggle" onclick="toggleRadioPlay()">
+            <i class="fa-solid fa-play"></i>
+        </div>
+        <div class="radio-status-text">
+            <i class="fa-solid fa-signal"></i> متصل الان بالخادم     </div>
+    </div>
+
+    <button class="exit-radio-btn" onclick="stopRadioAndExit()">إيقاف البث والعودة للرئيسية</button>
+</div>
+
+<div class="sheet-backdrop" id="optionsBackdrop" onclick="closeTrackOptions()"></div>
+
+<div class="track-options-sheet" id="globalTrackOptions">
+    <div class="os-header">
+        <img src="" id="osImage" alt="cover">
+        <div class="os-header-info">
+            <div class="os-header-title" id="osTitle">اسم السورة</div>
+            <div class="os-header-artist" id="osArtist">اسم الشيخ</div>
+        </div>
+    </div>
+    
+    <div class="os-body">
+    <div class="os-item" onclick="removeTrackFromList()">
+        <i class="fa-solid fa-heart-crack" style="color: #ff4757;"></i>
+        <span style="color: #ff4757;">إزالة من المفضلة</span>
+    </div>
+    
+
+    
+    <div class="os-item" onclick="goToArtist()">
+        <i class="fa-solid fa-music"></i>
+        <span>الإنتقال إلى قائمة التشغيل</span>
+    </div>
+    
+    <div class="os-item" onclick="openPlaylistSheetFromOptions()"> 
+        <i class="fa-solid fa-folder-plus"></i>
+        <span>أضف إلى قائمة التشغيل</span>
+    </div>
+
+    
+          <div class="os-item" onclick="pinCurrentTrack()">
+    <i class="fa-solid fa-thumbtack" id="pinOptionIcon" style="color: #f6e58d;"></i>
+    <span id="pinOptionText" style="color: #f6e58d; font-weight: 600;">تثبيت في الأعلى</span>
+</div>
+
+    <div class="os-item" onclick="shareCurrentTrack()">
+        <i class="fa-solid fa-share"></i>
+        <span>مشاركة</span>
+    </div>
+    
+
+
+</div>
+
+
+
+    <audio id="mainAudio"></audio>
+
+    <script src="script.js"></script>
+
+    <script src="js/app.js"></script>
+</body>
+</html>
