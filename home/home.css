@@ -1,0 +1,532 @@
+
+/* ================= Header ================= */
+
+.premium-top-bar {
+    padding: 25px 20px 15px;
+    position: sticky;
+    z-index: 100;
+    /* خلفية زجاجية غاية في النقاء (لون ليلي عميق) */
+    background: rgba(10, 14, 23, 0.65); 
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15); /* ظل ناعم يفصل الهيدر عن التطبيق */
+}
+
+/* ================= نصوص الترحيب الفخمة ================= */
+.greeting-box {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.welcome-title {
+    font-size: 26px;
+    font-weight: 900;
+    margin: 0;
+    /* تدرج لوني خرافي (أبيض نقي إلى دهبي هادي جداً) */
+    background: linear-gradient(135deg, #ffffff 40%, #f6e58d 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: 0.5px;
+    text-shadow: 0px 4px 15px rgba(246, 229, 141, 0.15); /* توهج خفيف للكلمة */
+}
+
+.welcome-subtitle {
+    font-size: 13px;
+    font-weight: 500;
+    color: #a7a7a7;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    opacity: 0.9;
+}
+
+/* ================= الأزرار والآكشنز (تصميم مجسم 3D) ================= */
+.top-bar-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.top-icon-btn {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 18px;
+    cursor: pointer;
+    border: none;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* أنيميشن مرن جداً */
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* زرار البحث (تصميم زجاجي بسيط عشان ميسرقش العين من اليوزر) */
+.search-action {
+    background: rgba(255, 255, 255, 0.03);
+    color: #b3b3b3;
+    border: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.search-action:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* زرار الملف الشخصي (السحر كله هنا - كأنه صورة حقيقية) */
+.user-action {
+    background: linear-gradient(135deg, #22385ca6, #3d287596); /* تدرج كحلي غامق فخم */
+    color: #fff;
+  
+}
+
+
+/* ================= 📻 كارت الإذاعة  ( Live Card) ================= */
+.ultra-live-card {
+    position: relative;
+    border-radius: 24px;
+    overflow: hidden;
+    cursor: pointer;
+    margin: 20px ;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    -webkit-tap-highlight-color: transparent;
+    background: #0f172a; /* لون أساسي احتياطي */
+}
+
+.ultra-live-card:hover {
+    transform: translateY(-4px) scale(1.01);
+    border-color: rgba(255, 71, 87, 0.3);
+
+}
+
+.ultra-live-card:active {
+    transform: scale(0.98);
+}
+
+/* ================= تأثير الفيديو المتحرك (Fluid Aurora Background) ================= */
+.fluid-bg {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    z-index: 0;
+    overflow: hidden;
+    filter: blur(40px); /* السحر كله هنا: تسييح الألوان في بعضها */
+    opacity: 0.7;
+}
+
+/* الكتل اللونية اللي بتتحرك */
+.fluid-blob {
+    position: absolute;
+    border-radius: 50%;
+    animation: floatBlob 10s infinite alternate ease-in-out;
+}
+
+/* كتلة حمراء بتدي إحساس اللايف */
+.color-red {
+    width: 150px; height: 150px;
+    background: #ff4757;
+    top: -50px; left: -20px;
+    animation-duration: 8s;
+}
+
+/* كتلة زرقاء للهدوء والسكينة */
+.color-blue {
+    width: 200px; height: 200px;
+    background: #3498db;
+    bottom: -80px; right: -50px;
+    animation-duration: 12s;
+    animation-delay: -4s;
+}
+
+/* كتلة بنفسجية للعمق */
+.color-purple {
+    width: 120px; height: 120px;
+    background: #8e44ad;
+    top: 40px; right: 20px;
+    animation-duration: 10s;
+    animation-delay: -2s;
+}
+
+/* حركة الكتل (بتكبر وتصغر وتتحرك بشكل عشوائي وهادي) */
+@keyframes floatBlob {
+    0% { transform: translate(0, 0) scale(1); }
+    50% { transform: translate(30px, -20px) scale(1.2); }
+    100% { transform: translate(-20px, 30px) scale(0.9); }
+}
+
+/* ================= الطبقة الزجاجية اللي فوق الحركة ================= */
+.ultra-card-content {
+    position: relative;
+    z-index: 1; /* عشان تكون فوق الألوان المتحركة */
+    padding: 20px;
+    background: rgba(10, 14, 23, 0.5); /* زجاج أسود شفاف */
+
+    -webkit-backdrop-filter: blur(10px);
+}
+
+/* ================= محتويات الهيدر (نفس حركة اللايف والموجات) ================= */
+.radio-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.live-badge-pro {
+    background: rgba(255, 71, 87, 0.2);
+    color: #ff4757;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    border: 1px solid rgba(255, 71, 87, 0.3);
+    
+}
+
+.live-dot {
+    width: 6px; height: 6px;
+    background: #ff4757;
+    border-radius: 50%;
+    box-shadow: 0 0 10px #ff4757;
+    animation: blinkDot 1s infinite alternate;
+}
+
+@keyframes blinkDot {
+    0% { opacity: 0.3; }
+    100% { opacity: 1; }
+}
+
+.audio-waves { display: flex; align-items: flex-end; gap: 3px; height: 18px; }
+.wave { width: 3px; background: #fff; border-radius: 3px; animation: playWave 0.8s infinite alternate ease-in-out; opacity: 0.8; }
+.w1 { height: 6px; animation-delay: 0.0s; }
+.w2 { height: 12px; animation-delay: 0.2s; }
+.w3 { height: 18px; animation-delay: 0.4s; }
+.w4 { height: 10px; animation-delay: 0.1s; }
+.w5 { height: 8px; animation-delay: 0.3s; }
+@keyframes playWave { 0% { height: 4px; } 100% { height: 100%; } }
+
+/* ================= المحتوى الأساسي (الأيقونة والنصوص) ================= */
+.radio-card-body {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.radio-icon-box {
+    width: 50px;
+    height: 50px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 14px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 22px;
+    color: #fff;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.radio-info { flex: 1; }
+.radio-info h3 { font-size: 17px; font-weight: 700; color: #fff; margin: 0 0 4px 0; }
+.radio-info p { font-size: 12px; color: #b3b3b3; margin: 0; }
+
+/* زرار التشغيل الدائري الشيك */
+.radio-play-btn {
+    width: 36px;
+    height: 36px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #fff;
+    font-size: 14px;
+    padding-left: 3px; /* تظبيطة لزرار الـ Play عشان يكون في النص بالظبط */
+    transition: all 0.3s ease;
+}
+
+.ultra-live-card:hover .radio-play-btn {
+    background: #fff;
+    color: #0f172a;
+    transform: scale(1.1);
+    
+}
+/* الشاشة الكاملة للراديو */
+.radio-full-overlay {
+    position: fixed;
+    top: 0; left: 0;
+    border-radius: 40px 40px 0 0;
+    width: 100%; height: 100dvh;
+    background: radial-gradient(circle at top, #1c1a35 0%, #101627 100%);
+    z-index: 5000;
+    display: none; /* مخفي */
+    flex-direction: column;
+    padding: 25px;
+    box-sizing: border-box;
+    animation: slideUp 0.4s ease-out;
+}
+
+.radio-header { display: flex; justify-content: space-between; align-items: center; color: #fff; margin-bottom: 40px; }
+
+.radio-img-container {
+    width: 210px; height: 210px;
+    margin: 0 auto 30px;
+    position: relative;
+}
+.radio-img-container img { width: 100%; height: 100%; border-radius: 43px 43px 44px 44px;  position: relative; z-index: 5; }
+.radio-glow-effect {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    width: 120%; height: 120%; background: radial-gradient(circle, rgba(255,71,87,0.15), transparent 70%);
+    animation: radioPulse 2s infinite;
+}
+
+.radio-titles { text-align: center; }
+.radio-titles h1 { font-size: 30px; color: #fff; margin-bottom: 10px; }
+.radio-titles p { color: #ff4757; font-weight: bold; }
+
+/* Equalizer */
+.radio-equalizer { display: flex; justify-content: center; align-items: flex-end; gap: 10px; height: 50px; margin: 40px 0; }
+.radio-equalizer .bar { width: 6px; background: var(--primary); border-radius: 10px; animation: equalize 1s infinite; }
+.radio-equalizer .bar:nth-child(even) { animation-duration: 0.7s; }
+
+.radio-play-trigger {
+    width: 75px; height: 75px; background: #ff4757;
+    border-radius: 50%; display: flex; justify-content: center; align-items: center;
+    font-size: 30px; color: #fff; margin: 0 auto 20px;
+    
+}
+
+.radio-status-text { text-align: center; color: var(--text-muted); font-size: 13px; }
+
+.exit-radio-btn {
+    margin-top: auto; background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1); color: #fff;
+    padding: 16px; border-radius: 15px; font-weight: bold; cursor: pointer;
+}
+
+@keyframes equalize { 0%, 100% { height: 10px; } 50% { height: 45px; } }
+@keyframes radioPulse { 0%, 100% { transform: translate(-50%, -50%) scale(1); } 50% { transform: translate(-50%, -50%) scale(1.1); } }
+@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+@keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+
+
+
+/* ================= 📖 قسم القرآن الكريم (تصميم فاخر) ================= */
+.premium-reciters-section { margin-top: 35px; }
+
+/* --- الهيدر --- */
+.section-header-pro { display: flex; justify-content: space-between; align-items: center; padding: 0 20px; margin-bottom: 18px; }
+.title-box { display: flex; align-items: center; gap: 12px; }
+.icon-glow { width: 34px; height: 34px; background: linear-gradient(135deg, rgba(246, 229, 141, 0.15), rgba(246, 229, 141, 0.05)); color: #f6e58d; border-radius: 10px; display: flex; justify-content: center; align-items: center; font-size: 16px; border: 1px solid rgba(246, 229, 141, 0.2); }
+.section-title-pro { font-size: 23px; font-weight: 800; color: #fff; margin: 0; text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
+.see-all-btn { background: transparent; border: none; color: #8892b0; font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all 0.3s ease; }
+.see-all-btn:hover { color: #f6e58d; transform: translateX(-4px); }
+
+/* --- سكرول الشيوخ المتصل --- */
+.reciters-scroll-pro { 
+    display: flex; gap: 18px; overflow-x: auto; padding: 0 20px 30px 20px; 
+    scrollbar-width: none; -webkit-overflow-scrolling: touch; 
+    scroll-behavior: smooth; /* عشان التقليب التلقائي يكون ناعم */
+}
+.reciters-scroll-pro::-webkit-scrollbar { display: none; }
+
+/* --- كارت الشيخ (الحجم الكبير والفخامة) --- */
+.reciter-card-pro { 
+    min-width: 150px; max-width: 150px; cursor: pointer; -webkit-tap-highlight-color: transparent; 
+}
+
+.reciter-img-wrapper-pro {
+    width: 100%; aspect-ratio: 1 / 1.05; /* أطول سنة بسيطة لفخامة أكتر */
+    border-radius: 24px; overflow: hidden; position: relative; margin-bottom: 14px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.reciter-img-pro { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
+
+.reciter-badge-pro {
+    position: absolute; top: 10px; right: 10px; background: rgba(10, 14, 23, 0.65);
+    backdrop-filter: blur(10px); color: #f6e58d; font-size: 11px; font-weight: 700;
+    padding: 5px 10px; border-radius: 10px; border: 1px solid rgba(246, 229, 141, 0.2); z-index: 2;
+}
+
+.reciter-gradient-overlay {
+    position: absolute; bottom: 0; left: 0; width: 100%; height: 60%;
+    background: linear-gradient(to top, rgba(9, 12, 21, 0.95), transparent);
+    z-index: 1; opacity: 0.8; transition: opacity 0.3s ease;
+}
+
+.play-hover-btn-pro {
+    position: absolute; bottom: 15px; left: 15px; width: 42px; height: 42px;
+    background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(5px);
+    color: #fff; border-radius: 50%; border: 1px solid rgba(255, 255, 255, 0.2);
+    display: flex; justify-content: center; align-items: center; font-size: 16px;
+    z-index: 3; opacity: 0; transform: translateY(20px) scale(0.9);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.play-hover-btn-pro i { padding-left: 3px; }
+
+/* تأثيرات الهوفر */
+.reciter-card-pro:hover .reciter-img-pro { transform: scale(1.1); }
+.reciter-card-pro:hover .reciter-gradient-overlay { opacity: 1; }
+.reciter-card-pro:hover .play-hover-btn-pro { 
+    opacity: 1; transform: translateY(0) scale(1); 
+    background: #f6e58d; color: #090c15; border-color: #f6e58d;
+    box-shadow: 0 5px 20px rgba(246, 229, 141, 0.5);
+}
+
+/* --- النصوص (اسم الشيخ وعلامة التوثيق) --- */
+.reciter-info-pro { display: flex; flex-direction: column; gap: 4px; padding: 0 5px; text-align: center; }
+.reciter-title-pro { font-size: 15px; font-weight: 800; color: #fff; display: flex; align-items: center; justify-content: center; gap: 6px; }
+.verified-icon { color: #f6e58d; font-size: 13px; } /* خليتها دهبي بتدي شياكة أكتر */
+.reciter-subtitle-pro { font-size: 12px; color: #8892b0; }
+
+
+/* ================= النقط المتحركة (Dots Indicators) ================= */
+.slider-dots-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+    margin-top: -10px; /* بنرفعها فوق شوية عشان تبقى قريبة من الكروت */
+    padding-bottom: 20px;
+    transition: opacity 0.3s ease;
+}
+
+.slider-dot {
+    width: 8px;
+    height: 8px;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 4px;
+    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    cursor: pointer;
+}
+
+/* النقطة الفعالة بتبقى شبه الكبسولة وبتنور دهبي */
+.slider-dot.active {
+    width: 24px;
+    background: #f6e58d;
+    box-shadow: 0 0 10px rgba(246, 229, 141, 0.4);
+}
+
+/* ================= وضع عرض الكل (Grid Mode) ================= */
+/* لما اليوزر يدوس عرض الكل، الـ JS هيضيف الكلاس ده للحاوية */
+.reciters-scroll-pro.grid-mode {
+    flex-wrap: wrap; /* الكروت تنزل تحت بعضها */
+    justify-content: center; /* يتوسطنوا في الشاشة */
+    overflow-x: visible; /* نلغي السكرول الأفقي */
+    padding-bottom: 10px;
+}
+
+/* أنيميشن ناعم جداً لظهور الكروت وهي بتترص */
+.reciters-scroll-pro.grid-mode .reciter-card-pro {
+    animation: popIn 0.4s ease backwards;
+}
+
+/* ده عشان ندي كل كارت تأخير في الظهور كأنهم بينزلوا ورا بعض */
+.reciters-scroll-pro.grid-mode .reciter-card-pro:nth-child(1) { animation-delay: 0.05s; }
+.reciters-scroll-pro.grid-mode .reciter-card-pro:nth-child(2) { animation-delay: 0.1s; }
+.reciters-scroll-pro.grid-mode .reciter-card-pro:nth-child(3) { animation-delay: 0.15s; }
+.reciters-scroll-pro.grid-mode .reciter-card-pro:nth-child(4) { animation-delay: 0.2s; }
+.reciters-scroll-pro.grid-mode .reciter-card-pro:nth-child(5) { animation-delay: 0.25s; }
+.reciters-scroll-pro.grid-mode .reciter-card-pro:nth-child(6) { animation-delay: 0.3s; }
+.reciters-scroll-pro.grid-mode .reciter-card-pro:nth-child(7) { animation-delay: 0.35s; }
+
+@keyframes popIn {
+    0% { opacity: 0; transform: translateY(20px) scale(0.9); }
+    100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+
+/* ================= 🤲 قسم الإبتهالات (اللون السماوي الروحاني) ================= */
+.premium-ibtehalat-section { margin-top: 40px; }
+
+/* الأيقونة السماوية */
+.icon-glow-cyan {
+    width: 34px; height: 34px;
+    background: linear-gradient(135deg, rgba(0, 229, 255, 0.15), rgba(0, 229, 255, 0.02));
+    color: #00e5ff;
+    border-radius: 50%; /* خليناها دائرية للتميز */
+    display: flex; justify-content: center; align-items: center; font-size: 15px;
+    border: 1px solid rgba(0, 229, 255, 0.3);
+    box-shadow: 0 0 15px rgba(0, 229, 255, 0.15);
+}
+
+/* زرار عرض الكل السماوي */
+.cyan-btn:hover { color: #00e5ff; transform: translateX(-4px); }
+
+/* --- تصميم كارت الإبتهال (شكل المحراب) --- */
+.ibtehal-card {
+    min-width: 140px; max-width: 140px; cursor: pointer; -webkit-tap-highlight-color: transparent;
+}
+
+.ibtehal-img-wrapper {
+    width: 100%; aspect-ratio: 1 / 1.1;
+    /* السحر هنا: كيرف كبير من فوق وصغير من تحت بيدي شكل المحراب */
+    border-radius: 20px 20px 20px 20px; 
+    overflow: hidden; position: relative; margin-bottom: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(0, 229, 255, 0.1); /* إطار سماوي خفيف */
+}
+
+/* تأثير كلاسيكي (Vintage) على صور المنشدين، ولما تقف عليها ألوانها تنطق */
+.ibtehal-img { 
+    width: 100%; height: 100%; object-fit: cover; 
+    transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    filter: contrast(1.1) sepia(30%); 
+}
+
+.ibtehal-gradient {
+    position: absolute; bottom: 0; left: 0; width: 100%; height: 70%;
+    background: linear-gradient(to top, rgba(9, 12, 21, 0.95), transparent);
+    z-index: 1; transition: opacity 0.3s ease;
+}
+
+/* البادج السماوي */
+.ibtehal-badge {
+    position: absolute; top: 12px; left: 12px; /* خليناه على الشمال للتميز */
+    background: rgba(10, 14, 23, 0.65); backdrop-filter: blur(8px);
+    color: #00e5ff; font-size: 10px; font-weight: 700; padding: 4px 10px;
+    border-radius: 10px; border: 1px solid rgba(0, 229, 255, 0.3); z-index: 2;
+}
+
+/* زرار التشغيل (بيظهر من النص بحركة نبض) */
+.ibtehal-play-btn {
+    position: absolute; top: 80%; right: 45%;
+    transform: translate(-50%, -50%) scale(0.5); /* بيبدأ صغير */
+    width: 44px; height: 44px;
+    background: rgba(0, 229, 255, 0.9);
+    color: #090c15; border-radius: 50%;
+    display: flex; justify-content: center; align-items: center; font-size: 16px;
+    z-index: 3; opacity: 0;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 0 20px rgba(0, 229, 255, 0.5);
+}
+.ibtehal-play-btn i { padding-left: 3px; }
+
+/* تأثيرات الهوفر لكارت الإبتهال */
+.ibtehal-card:hover .ibtehal-img { transform: scale(1.08); filter: contrast(1.1) sepia(0%); }
+.ibtehal-card:hover .ibtehal-play-btn { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+
+/* --- النصوص --- */
+.ibtehal-info { text-align: center; display: flex; flex-direction: column; gap: 4px; padding: 0 5px; }
+.ibtehal-title { font-size: 14px; font-weight: 800; color: #fff; display: flex; justify-content: center; align-items: center; gap: 6px; }
+.verified-cyan { color: #00e5ff; font-size: 11px; } /* نجمة سماوي */
+.ibtehal-subtitle { font-size: 11px; color: #8892b0; }
+
+/* لون النقط السماوي */
+.cyan-dots .slider-dot.active { background: #00e5ff; box-shadow: 0 0 10px rgba(0, 229, 255, 0.5); }
+
+
